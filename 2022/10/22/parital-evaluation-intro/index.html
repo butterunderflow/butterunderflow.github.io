@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/uploads/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/avatar.jpg">
+  <link rel="mask-icon" href="/uploads/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"butterunderflow.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="今天看的是 Partial Evaluation 的第一章: Introduction 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入in1是可以提前确定的, 那么可以生成一个针对in优化的程序, 这个过程叫做specialization. 针对in1优化的&quot;优化器&quot;可以叫做spacializer. 所以Partial Evaluati">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Partial Evaluation Introduction">
+<meta property="og:url" content="https://butterunderflow.github.io/2022/10/22/parital-evaluation-intro/index.html">
+<meta property="og:site_name" content="Butter&#39;s Space">
+<meta property="og:description" content="今天看的是 Partial Evaluation 的第一章: Introduction 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入in1是可以提前确定的, 那么可以生成一个针对in优化的程序, 这个过程叫做specialization. 针对in1优化的&quot;优化器&quot;可以叫做spacializer. 所以Partial Evaluati">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221023232021.png">
+<meta property="article:published_time" content="2022-10-22T12:55:39.000Z">
+<meta property="article:modified_time" content="2022-10-23T19:13:40.086Z">
+<meta property="article:author" content="butter">
+<meta property="article:tag" content="Partial-Evaluation">
+<meta property="article:tag" content="笔记">
+<meta property="article:tag" content="Compiler">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://butterunderflow.github.io/images/image-20221023232021.png">
+
+<link rel="canonical" href="https://butterunderflow.github.io/2022/10/22/parital-evaluation-intro/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Partial Evaluation Introduction | Butter's Space</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Butter's Space" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Butter's Space</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://butterunderflow.github.io/2022/10/22/parital-evaluation-intro/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+      <meta itemprop="name" content="butter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Butter's Space">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Partial Evaluation Introduction
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-10-22 20:55:39" itemprop="dateCreated datePublished" datetime="2022-10-22T20:55:39+08:00">2022-10-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-10-24 03:13:40" itemprop="dateModified" datetime="2022-10-24T03:13:40+08:00">2022-10-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>今天看的是 <em>Partial Evaluation</em> 的第一章: <em>Introduction</em> 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入<code>in1</code>是可以提前确定的, 那么可以生成一个针对<code>in</code>优化的程序, 这个过程叫做specialization. 针对in1优化的"优化器"可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2. 为提前知道的输入进行特化版本的程序</p>
+<p>如果是解释器的话, 那么一个解释器可以通过下图描述: <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">           +--------+</span><br><span class="line">P      --&gt; | interp | --&gt; out</span><br><span class="line">input  --&gt; |        |           </span><br><span class="line">           +--------+</span><br></pre></td></tr></table></figure></p>
+<p>如果有了一个interpreter, 有了一个针对解释器的源程序输入的specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, <code>PE</code>就是我们的specializer.</p>
+<p>图1: <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">           +----+</span><br><span class="line">interp --&gt; | PE | --&gt; interpP</span><br><span class="line">     P --&gt; |    |           </span><br><span class="line">           +----+</span><br></pre></td></tr></table></figure> 那么也可以看到, 这个specialzer本身也是多参数的函数, 那么如果我们已经有了一个specialzer, 如果再把这个specializer对interp参数进行specialization, 我们就可以得到一个编译器(图中的PEinterp).</p>
+<p>图2: <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">           +----+</span><br><span class="line">PE     --&gt; | PE | --&gt; PEinterp</span><br><span class="line">interp --&gt; |    |           </span><br><span class="line">           +----+</span><br></pre></td></tr></table></figure></p>
+<p>这里的PE又是一个多参数的函数, 我们又可以对其进行Specialization. 如果有一个Specialzer, 可以让PE对PE进行进行Specialization, 那么就可以得到一个编译器的生成器(图中的PE_PE). <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">        +----+</span><br><span class="line">PE  --&gt; | PE | --&gt; PE_PE</span><br><span class="line">PE  --&gt; |    |      </span><br><span class="line">        +----+</span><br></pre></td></tr></table></figure></p>
+<p>这里的每个PE的输入都是两个程序, 其中一个程序<code>in1</code>是另外一个程序<code>in2</code>的输入; PE的功能都是为<code>in2</code>生成一个特化在<code>in1</code>的版本, 这个特化的版本往往会比<code>in1 |&gt; in2</code>更加高效.</p>
+<p>有个关键的概念需要区分: program text和running program</p>
+<p>Partial Evaluation和Partial Application还是很不一样的 在Partial Application中, 得到的是一个同一个语言的函数; 而partial evaluation中, 得到的是一个<strong>新的程序</strong> <img src="/images/image-20221023232021.png" /> 这里就要理解一个program text和一个正在运行的程序的区别, program text只是程序的表示, 而运行起来的程序才能抽象成一个函数. 可以通过语义函数(图中的双中括号)把程序从program text转变成函数.</p>
+<p>比如说, 我们说PE的输入是程序, 但是图中的PE的类型可以看作<code>L</code>(因为PE是程序的表示), 通过语义函数变成类型为<code>L -&gt; L -&gt; L</code>的函数, 其中<code>L</code>是程序表示的类型.</p>
+<p>然后粗略的读了一下第二章, 主要是一些概念的介绍. 从集合论的角度介绍了一下类型还有一些类型上的运算(sum, product type),以及一些类型推导的简要介绍. 我觉得有一个关键是强调了<code>program</code>和<code>function</code>之间的区别: program是一个syntactic world里的东西, 比如说符号, 表达式, function是数学意义上的东西.</p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Partial-Evaluation/" rel="tag"># Partial-Evaluation</a>
+              <a href="/tags/%E7%AC%94%E8%AE%B0/" rel="tag"># 笔记</a>
+              <a href="/tags/Compiler/" rel="tag"># Compiler</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/10/17/substructural-type-system-0/" rel="prev" title="Substructural Type System: Linear Type">
+      <i class="fa fa-chevron-left"></i> Substructural Type System: Linear Type
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/11/08/Language-and-Interpreters/" rel="next" title="Language and Interpreters">
+      Language and Interpreters <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="butter"
+      src="/uploads/avatar.jpg">
+  <p class="site-author-name" itemprop="name">butter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">butter</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://butterunderflow.github.io/2022/10/22/parital-evaluation-intro/";
+    this.page.identifier = "2022/10/22/parital-evaluation-intro/";
+    this.page.title = "Partial Evaluation Introduction";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://Butter.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>

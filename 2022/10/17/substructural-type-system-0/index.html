@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/uploads/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/avatar.jpg">
+  <link rel="mask-icon" href="/uploads/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"butterunderflow.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Backgournd Structural Property:  Exchange: 环境中的binding可以任意交换顺序, 保持得到的类型命题(类似 x:T 的东西)不变 Weakening: 给环境中增加binding不会影响类型命题 Contraction: 把环境中相同类型的两个相邻binding x2和x3拿掉, 原地替换成另一个相同类型的binding x3, 然后把ter">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Substructural Type System: Linear Type">
+<meta property="og:url" content="https://butterunderflow.github.io/2022/10/17/substructural-type-system-0/index.html">
+<meta property="og:site_name" content="Butter&#39;s Space">
+<meta property="og:description" content="Backgournd Structural Property:  Exchange: 环境中的binding可以任意交换顺序, 保持得到的类型命题(类似 x:T 的东西)不变 Weakening: 给环境中增加binding不会影响类型命题 Contraction: 把环境中相同类型的两个相邻binding x2和x3拿掉, 原地替换成另一个相同类型的binding x3, 然后把ter">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221017221730470.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221022184224.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221017221805510.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221017221829275.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221017221850154.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221017221910839.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221017221932944.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221017222038812.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221017222110008.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221017222121620.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221017222136833.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/image-20221017222209344.png">
+<meta property="article:published_time" content="2022-10-17T14:53:45.000Z">
+<meta property="article:modified_time" content="2022-10-23T15:30:46.785Z">
+<meta property="article:author" content="butter">
+<meta property="article:tag" content="Type-System">
+<meta property="article:tag" content="Programming-Language">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://butterunderflow.github.io/images/image-20221017221730470.png">
+
+<link rel="canonical" href="https://butterunderflow.github.io/2022/10/17/substructural-type-system-0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Substructural Type System: Linear Type | Butter's Space</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><link rel="alternate" href="/atom.xml" title="Butter's Space" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Butter's Space</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://butterunderflow.github.io/2022/10/17/substructural-type-system-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+      <meta itemprop="name" content="butter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Butter's Space">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Substructural Type System: Linear Type
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-10-17 22:53:45" itemprop="dateCreated datePublished" datetime="2022-10-17T22:53:45+08:00">2022-10-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-10-23 23:30:46" itemprop="dateModified" datetime="2022-10-23T23:30:46+08:00">2022-10-23</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="backgournd">Backgournd</h2>
+<p>Structural Property:</p>
+<ol type="1">
+<li>Exchange: 环境中的binding可以任意交换顺序, 保持得到的类型命题(类似 <code>x:T</code> 的东西)不变</li>
+<li>Weakening: 给环境中增加binding不会影响类型命题</li>
+<li>Contraction: 把环境中相同类型的两个相邻binding x2和x3拿掉, 原地替换成另一个相同类型的binding x3, 然后把term中的x1和x2替换成x3, 不影响类型命题.</li>
+</ol>
+<p>contraction严格定义: <img src="/images/image-20221017221730470.png" /></p>
+<p>substructural type system指的就是满足一条或多条structural property的类型系统. 可以通过满足的数量分为不同的类型系统, E(xchange), W(eakening), C(ontraction):</p>
+<p><img src="/images/image-20221022184224.png" /></p>
+<h2 id="linear-type">Linear Type</h2>
+<p>Linear Type是指的只满足Exchange的类型系统. 在linear type system中, 类型被一个quantifier标注, 标注一个类型是否是linear的, 由于不满足Weakening和Contraction, 具有linear的类型的值必定只能被使用一次: 1. 不满足Weakening: 不能随时通过"增强"环境创造类型命题 2. 不满足Contraction: 不能随时通过"裁剪"环境创造类型命题.</p>
+<p>如下图所示, type分为了qualified type和pretypes</p>
+<p><img src="/images/image-20221017221805510.png" /></p>
+<p>在类型检查中有两个关键的Invariant需要保证: <img src="/images/image-20221017221829275.png" /></p>
+<p>下面是具体的linear type system的规则, 环境中绑定的变量都是qualified type, 可以通过在证明树上induction证明invariant是满足的. <img src="/images/image-20221017221850154.png" /></p>
+<p><img src="/images/image-20221017221910839.png" /> 其中<code>M-Lin</code>规则保证了一个Linear Type的binding只会出现在 <span class="math inline">\(\circ\)</span> 连接的Environments中的一个Environment</p>
+<p>其中对lambda的检查规则<code>T-ABS</code>是很重要的, lambda表达式的quantifier必须和其capture的变量的类型quantifier保持一致, 因为lambda表达式创建的实际上是一个闭包. 比如说如果lambda的quantifier是lin, 那么环境中就不能有变量绑定到lin.</p>
+<h2 id="linear-type-checker的实现">Linear Type Checker的实现</h2>
+<p><img src="/images/image-20221017221932944.png" /> 实现的直觉是这样的:</p>
+<ol type="1">
+<li><p>将先前的declarative的规则转换成algorithmic规则的时候有一个难点, 我们无法确定我们应该如何用 <span class="math inline">\(\circ\)</span> 运算符来拆分一个环境, 使有linear type的variable只能出现在一个环境中. 从而导致不知道应该如何将问题拆分为子问题.</p></li>
+<li><p>所以说拆分一个环境的最终目的是为了让<strong>linear type binding只出现在一个</strong>环境中, 来保证这个linear type的variable只会被使用一次.</p></li>
+</ol>
+<p>那么可行的一种做法就是: 先不考虑lin type binding的分配问题, 而是先检查, 如果用到了一个lin变量就把environment中的这个lin变量消除, 这样如果碰到了使用两次lin变量的使用就无法type checked(也就是检查出了类型错误). 所以, 在一个environment中检查一个term, 不仅会会check一个term的类型, 还可能会对环境带来改变(通过返回一个新的环境).</p>
+<p>可以通过证明soundness和completeness来证明这种实现和之前的declarative rule是一致的, 书上也给出了证明思路: <img src="/images/image-20221017222038812.png" /></p>
+<h2 id="linear-type和实际语义之间的联系">Linear Type和实际语义之间的联系</h2>
+<p>为了将linear type和内存管理之间的关系联系起来, 书上用了一个带有explicit store的抽象机来实现lambda calculus.</p>
+<p><img src="/images/image-20221017222110008.png" /><br />
+以上是值的定义和求值顺序的定义(evaluation context)</p>
+<p><img src="/images/image-20221017222121620.png" /> 上面有个波浪线运算符<span class="math inline">\(\sim\)</span>, 可以根据quantifier消除store中的绑定:</p>
+<p><img src="/images/image-20221017222136833.png" /></p>
+<p>以上是实际的operational语义, 为了证明类型系统满足safety, 需要证明两点: 1. preservation: well type(这里指的是下面的Program typing)的term的经过一步求值后依然是well type的.</p>
+<ol start="2" type="1">
+<li>progress: well type的term不会stuck, 要么可以继续小步求值, 要么已经求值结束.</li>
+</ol>
+<p>证明并不复杂, 按求值规则做induction就可以</p>
+<p>具体的Program Typing规则如下, 注意: Store包含的是name to value的binding, Environment是name to type的binding. 其中Environment不仅有"告诉我们Store中的一个name是什么type"的作用, 还有"告诉我们Store中<strong>哪些name是有效的</strong>"作用</p>
+<p><img src="/images/image-20221017222209344.png" /></p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>Welcome to my other publishing channels</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Type-System/" rel="tag"># Type-System</a>
+              <a href="/tags/Programming-Language/" rel="tag"># Programming-Language</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/31/Pointer%20Analysis%20Introduction/" rel="prev" title="Pointer Analysis Introduction">
+      <i class="fa fa-chevron-left"></i> Pointer Analysis Introduction
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/10/22/parital-evaluation-intro/" rel="next" title="Partial Evaluation Introduction">
+      Partial Evaluation Introduction <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    
+  <div class="comments">
+    <div id="disqus_thread">
+      <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+    </div>
+  </div>
+  
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#backgournd"><span class="nav-number">1.</span> <span class="nav-text">Backgournd</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linear-type"><span class="nav-number">2.</span> <span class="nav-text">Linear Type</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linear-type-checker%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">Linear Type Checker的实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linear-type%E5%92%8C%E5%AE%9E%E9%99%85%E8%AF%AD%E4%B9%89%E4%B9%8B%E9%97%B4%E7%9A%84%E8%81%94%E7%B3%BB"><span class="nav-number">4.</span> <span class="nav-text">Linear Type和实际语义之间的联系</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="butter"
+      src="/uploads/avatar.jpg">
+  <p class="site-author-name" itemprop="name">butter</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">butter</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://butterunderflow.github.io/2022/10/17/substructural-type-system-0/";
+    this.page.identifier = "2022/10/17/substructural-type-system-0/";
+    this.page.title = "Substructural Type System: Linear Type";
+    };
+  NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
+    if (window.DISQUS) {
+      DISQUS.reset({
+        reload: true,
+        config: disqus_config
+      });
+    } else {
+      var d = document, s = d.createElement('script');
+      s.src = 'https://Butter.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', '' + +new Date());
+      (d.head || d.body).appendChild(s);
+    }
+  });
+</script>
+
+</body>
+</html>
