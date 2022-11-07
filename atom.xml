@@ -49,14 +49,14 @@
     <link href="https://butterunderflow.github.io/2022/10/22/parital-evaluation-intro/"/>
     <id>https://butterunderflow.github.io/2022/10/22/parital-evaluation-intro/</id>
     <published>2022-10-22T12:55:39.000Z</published>
-    <updated>2022-10-23T19:13:40.086Z</updated>
+    <updated>2022-11-07T22:10:14.241Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;今天看的是 &lt;em&gt;Partial Evaluation&lt;/em&gt; 的第一章: &lt;em&gt;Introduction&lt;/em&gt; 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话,</summary>
+    <summary type="html">&lt;p&gt;&lt;em&gt;Partial Evaluation&lt;/em&gt; 的第一章 &lt;em&gt;Introduction&lt;/em&gt; 的笔记. 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话,</summary>
         
       
     

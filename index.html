@@ -255,7 +255,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-10-24 03:13:40" itemprop="dateModified" datetime="2022-10-24T03:13:40+08:00">2022-10-24</time>
+                <time title="Modified: 2022-11-08 06:10:14" itemprop="dateModified" datetime="2022-11-08T06:10:14+08:00">2022-11-08</time>
               </span>
 
           
@@ -269,7 +269,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>今天看的是 <em>Partial Evaluation</em> 的第一章: <em>Introduction</em> 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入<code>in1</code>是可以提前确定的, 那么可以生成一个针对<code>in</code>优化的程序, 这个过程叫做specialization. 针对in1优化的"优化器"可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2. 为提前知道的输入进行特化版本的程序</p>
+          <p><em>Partial Evaluation</em> 的第一章 <em>Introduction</em> 的笔记. 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入<code>in1</code>是可以提前确定的, 那么可以生成一个针对<code>in</code>优化的程序, 这个过程叫做specialization. 针对in1优化的"优化器"可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2. 为提前知道的输入进行特化版本的程序</p>
 <p>如果是解释器的话, 那么一个解释器可以通过下图描述: <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">           +--------+</span><br><span class="line">P      --&gt; | interp | --&gt; out</span><br><span class="line">input  --&gt; |        |           </span><br><span class="line">           +--------+</span><br></pre></td></tr></table></figure></p>
 <p>如果有了一个interpreter, 有了一个针对解释器的源程序输入的specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, <code>PE</code>就是我们的specializer.</p>
 <p>图1: <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">           +----+</span><br><span class="line">interp --&gt; | PE | --&gt; interpP</span><br><span class="line">     P --&gt; |    |           </span><br><span class="line">           +----+</span><br></pre></td></tr></table></figure> 那么也可以看到, 这个specialzer本身也是多参数的函数, 那么如果我们已经有了一个specialzer, 如果再把这个specializer对interp参数进行specialization, 我们就可以得到一个编译器(图中的PEinterp).</p>
