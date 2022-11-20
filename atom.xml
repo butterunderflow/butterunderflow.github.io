@@ -6,7 +6,7 @@
   <link href="https://butterunderflow.github.io/atom.xml" rel="self"/>
   
   <link href="https://butterunderflow.github.io/"/>
-  <updated>2022-11-07T22:01:11.206Z</updated>
+  <updated>2022-11-20T23:49:38.560Z</updated>
   <id>https://butterunderflow.github.io/</id>
   
   <author>
@@ -17,11 +17,39 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Partial Evaluation Techniques</title>
+    <link href="https://butterunderflow.github.io/2022/11/19/partial-evaluation-techniques/"/>
+    <id>https://butterunderflow.github.io/2022/11/19/partial-evaluation-techniques/</id>
+    <published>2022-11-19T11:59:04.000Z</published>
+    <updated>2022-11-20T23:49:38.560Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;&lt;em&gt;partial evaluation&lt;/em&gt; 的第四章 &lt;em&gt;Partial Evaluation for a Flow Chart Language&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;这一章介绍了一个叫做 &lt;em&gt;Flow Chart&lt;/em&gt; 的语言,</summary>
+        
+      
+    
+    
+    
+    
+    <category term="Partial-Evaluation" scheme="https://butterunderflow.github.io/tags/Partial-Evaluation/"/>
+    
+    <category term="笔记" scheme="https://butterunderflow.github.io/tags/%E7%AC%94%E8%AE%B0/"/>
+    
+    <category term="Compiler" scheme="https://butterunderflow.github.io/tags/Compiler/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Language and Interpreters</title>
     <link href="https://butterunderflow.github.io/2022/11/08/Language-and-Interpreters/"/>
     <id>https://butterunderflow.github.io/2022/11/08/Language-and-Interpreters/</id>
     <published>2022-11-07T19:08:39.000Z</published>
-    <updated>2022-11-07T22:01:11.206Z</updated>
+    <updated>2022-11-19T12:01:52.492Z</updated>
     
     
       

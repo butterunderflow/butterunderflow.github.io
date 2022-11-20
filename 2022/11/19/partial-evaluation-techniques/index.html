@@ -20,19 +20,28 @@
     var CONFIG = {"hostname":"butterunderflow.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quic">
+  <meta name="description" content="partial evaluation 的第四章 Partial Evaluation for a Flow Chart Language 的笔记. 这一章介绍了一个叫做 Flow Chart 的语言, 是一个以基本块组成的语言. 然后通过两个二村映射来介绍partial evaluation的技巧. 然后就是程序点和程序状态的概念: 程序点就是程序执行的位置, 程序状态指的是程序执行的状态,">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="https://butterunderflow.github.io/2022/08/25/hello-world/index.html">
+<meta property="og:title" content="Partial Evaluation Techniques">
+<meta property="og:url" content="https://butterunderflow.github.io/2022/11/19/partial-evaluation-techniques/index.html">
 <meta property="og:site_name" content="Butter&#39;s Space">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quic">
+<meta property="og:description" content="partial evaluation 的第四章 Partial Evaluation for a Flow Chart Language 的笔记. 这一章介绍了一个叫做 Flow Chart 的语言, 是一个以基本块组成的语言. 然后通过两个二村映射来介绍partial evaluation的技巧. 然后就是程序点和程序状态的概念: 程序点就是程序执行的位置, 程序状态指的是程序执行的状态,">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-08-25T14:49:20.728Z">
-<meta property="article:modified_time" content="2022-10-17T15:00:05.606Z">
+<meta property="og:image" content="https://butterunderflow.github.io/images/Pasted%20image%2020221120194634.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/Pasted%20image%2020221120194652.png">
+<meta property="og:image" content="https://butterunderflow.github.io/2022/11/19/partial-evaluation-techniques/images/Pasted%20image%2020221120195636.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/Pasted%20image%2020221120195702.png">
+<meta property="og:image" content="https://butterunderflow.github.io/images/Pasted%20image%2020221121074932.png">
+<meta property="article:published_time" content="2022-11-19T11:59:04.000Z">
+<meta property="article:modified_time" content="2022-11-20T23:49:38.560Z">
 <meta property="article:author" content="butter">
+<meta property="article:tag" content="Partial-Evaluation">
+<meta property="article:tag" content="笔记">
+<meta property="article:tag" content="Compiler">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://butterunderflow.github.io/images/Pasted%20image%2020221120194634.png">
 
-<link rel="canonical" href="https://butterunderflow.github.io/2022/08/25/hello-world/">
+<link rel="canonical" href="https://butterunderflow.github.io/2022/11/19/partial-evaluation-techniques/">
 
 
 <script id="page-configurations">
@@ -45,7 +54,7 @@
   };
 </script>
 
-  <title>Hello World | Butter's Space</title>
+  <title>Partial Evaluation Techniques | Butter's Space</title>
   
 
 
@@ -160,7 +169,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://butterunderflow.github.io/2022/08/25/hello-world/">
+    <link itemprop="mainEntityOfPage" href="https://butterunderflow.github.io/2022/11/19/partial-evaluation-techniques/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/uploads/avatar.jpg">
@@ -173,7 +182,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Hello World
+          Partial Evaluation Techniques
         </h1>
 
         <div class="post-meta">
@@ -183,14 +192,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2022-08-25 22:49:20" itemprop="dateCreated datePublished" datetime="2022-08-25T22:49:20+08:00">2022-08-25</time>
+              <time title="Created: 2022-11-19 19:59:04" itemprop="dateCreated datePublished" datetime="2022-11-19T19:59:04+08:00">2022-11-19</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-10-17 23:00:05" itemprop="dateModified" datetime="2022-10-17T23:00:05+08:00">2022-10-17</time>
+                <time title="Modified: 2022-11-21 07:49:38" itemprop="dateModified" datetime="2022-11-21T07:49:38+08:00">2022-11-21</time>
               </span>
 
           
@@ -204,20 +213,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="quick-start">Quick Start</h2>
-<h3 id="create-a-new-post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="run-server">Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="generate-static-files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="deploy-to-remote-sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+        <p><em>partial evaluation</em> 的第四章 <em>Partial Evaluation for a Flow Chart Language</em> 的笔记.</p>
+<p>这一章介绍了一个叫做 <em>Flow Chart</em> 的语言, 是一个以基本块组成的语言. 然后通过两个二村映射来介绍partial evaluation的技巧.</p>
+<p>然后就是程序点和程序状态的概念: 程序点就是程序执行的位置, 程序状态指的是程序执行的状态, 具体的状态的值域取决于语义的定义. 这一点和静态分析里的定义是类似的.</p>
+<p>程序的状态可能有很多, 但大部分的语言都可以通过 <code>变量 - 值</code> 的映射来表示. 其中对于每个 program point, 变量的值可以分为 static 和 dynamic 分为两类. static 表示变量的值可以在静态确定, 而 dynamic 的值只能在运行时确定. 将每个 program point 的变量区分为 static 和 dynamic 的过程叫做 <em>division</em>.</p>
+<p>这就引出了一个概念叫做 <em>poly</em>, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大确认多少程序点的 static 变量? 可以通过一个由 <code>程序点-static value</code> 序对组成的集合来表示 <em>poly</em>. <em>poly</em> 对应着 residual program (specialized program point) 的 program point. 一个直觉的描述是: 对于 subject program 在每个 program point, 把这个 program point 对应的 basic block 根据不同的 static state "展开"的结果就是 residual program; "展开"之后, static 的属性会"嵌入"到 <em>residual program</em> 中, 而不是通过 division 来表达.</p>
+<p><em>division</em> 的结果并不一定唯一, 只要满足以下 congruent 条件就行: &gt; any variable that depends on a dynamic variable must itself be dynamic.</p>
+<p>这个定义其实有一些模糊. 比如说, 如果一个循环中的变量, 第一次循环的值是确定的, 然后在循环中会通过赋值更新这个变量(这个 <em>Flow Chart</em> 的语言是允许赋值的), 那么这个变量算是什么呢?</p>
+<p>这可能又要分很多种情况, 比如说这个循环的循环次数和对变量更新的值都是可以确定的 <code>k</code> 次, 那么我们就可以把这个循环展开 <code>k</code> 次, 展开后的程序的循环变量显然都是 static 的.</p>
+<p>但是如果每次循环对变量更新的值是可以 static 确定的, 但是循环的次数可能有无限多次, 这个变量我们应该标记为 static 吗?</p>
+<p>对于这种情况, 给定任意的 k, 我们都能确定这个变量第 k 次循环的值, 但是, 把他们当作 static 的, subject program 的 <em>poly</em> 将会是无限的, 从而无法有效的计算出一个 residual program (程序都是有限的), 所以, 从计算residual program的角度来说, 有无限多种可能的 static variable 是没有意义的.</p>
+<p>所以我们只能把他们标记为 dynamic. 这样就有了一种最简单的处理方式: 所有麻烦的东西都当成 dynamic 就好了! 但是从 partial evaluation 最基本的直觉出发, 我们标注为 dynamic 的东西越多, 我们能够 specialize 的东西就越少, partial evaluation 所能带来的优化也就更少. 所以, 我们的 <em>division</em> 应该尽可能的让 dynamic 少.</p>
+<p>那有没有什么通用的办法, 让我们给出 division 的同时, 还能保证这个 division 的 dynamic 是 <em>最少</em> 的?</p>
+<p>这个问题是 <em>不可判定</em> 问题, 不过书上说他们之后会给个办法给一个可接受的解(前面提到了, 合理的 division 并不唯一). 现在先假设每个 program point 都有着相同的 <em>division</em>, 通过一个叫 BTA (Bind Time Analysis) 的分析来确认这个 <em>division</em>.</p>
+<p>总结一下 partial evaluation 的步骤: 1. 根据输入, 确定变量的 division; 也就是把变量区分为 static 和 dynamic 两类 2. 计算 poly, 也就是 specialized program 的 program points 3. 根据 poly, 生成 specialized program 4. (optional) transition compression 5. (optional) relabel the program</p>
+<p>然后是一些例子.</p>
+<p>一个简单的程序可以被解释的程序: <img src="/images/Pasted%20image%2020221120194634.png" /> 一个 specialized 的解释器 <img src="/images/Pasted%20image%2020221120194652.png" /> 解释器的完整定义 <img src="images/Pasted%20image%2020221120195636.png" /> Program point of target 和 (Program point, static variable) of interpreter 之间的对应关系: <img src="/images/Pasted%20image%2020221120195702.png" /> 完整的 mixer 程序: <img src="/images/Pasted%20image%2020221121074932.png" /></p>
 
     </div>
 
@@ -245,17 +256,22 @@
 
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Partial-Evaluation/" rel="tag"># Partial-Evaluation</a>
+              <a href="/tags/%E7%AC%94%E8%AE%B0/" rel="tag"># 笔记</a>
+              <a href="/tags/Compiler/" rel="tag"># Compiler</a>
+          </div>
 
         
 
 
         
     <div class="post-nav">
-      <div class="post-nav-item"></div>
       <div class="post-nav-item">
-    <a href="/2022/08/26/%E6%B1%82%E8%81%8C%E6%80%BB%E7%BB%93/" rel="next" title="求职总结">
-      求职总结 <i class="fa fa-chevron-right"></i>
+    <a href="/2022/11/08/Language-and-Interpreters/" rel="prev" title="Language and Interpreters">
+      <i class="fa fa-chevron-left"></i> Language and Interpreters
     </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -321,7 +337,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#quick-start"><span class="nav-number">1.</span> <span class="nav-text">Quick Start</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#create-a-new-post"><span class="nav-number">1.1.</span> <span class="nav-text">Create a new post</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#run-server"><span class="nav-number">1.2.</span> <span class="nav-text">Run server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#generate-static-files"><span class="nav-number">1.3.</span> <span class="nav-text">Generate static files</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#deploy-to-remote-sites"><span class="nav-number">1.4.</span> <span class="nav-text">Deploy to remote sites</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -430,14 +445,67 @@
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
 <script>
   var disqus_config = function() {
-    this.page.url = "https://butterunderflow.github.io/2022/08/25/hello-world/";
-    this.page.identifier = "2022/08/25/hello-world/";
-    this.page.title = "Hello World";
+    this.page.url = "https://butterunderflow.github.io/2022/11/19/partial-evaluation-techniques/";
+    this.page.identifier = "2022/11/19/partial-evaluation-techniques/";
+    this.page.title = "Partial Evaluation Techniques";
     };
   NexT.utils.loadComments(document.querySelector('#disqus_thread'), () => {
     if (window.DISQUS) {
