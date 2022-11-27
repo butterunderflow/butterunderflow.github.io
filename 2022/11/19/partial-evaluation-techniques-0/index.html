@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://butterunderflow.github.io/images/Pasted%20image%2020221120195702.png">
 <meta property="og:image" content="https://butterunderflow.github.io/images/Pasted%20image%2020221121074932.png">
 <meta property="article:published_time" content="2022-11-19T11:59:04.000Z">
-<meta property="article:modified_time" content="2022-11-24T12:32:08.450Z">
+<meta property="article:modified_time" content="2022-11-27T14:30:21.420Z">
 <meta property="article:author" content="butter">
 <meta property="article:tag" content="Partial-Evaluation">
 <meta property="article:tag" content="笔记">
@@ -199,7 +199,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-11-24 20:32:08" itemprop="dateModified" datetime="2022-11-24T20:32:08+08:00">2022-11-24</time>
+                <time title="Modified: 2022-11-27 22:30:21" itemprop="dateModified" datetime="2022-11-27T22:30:21+08:00">2022-11-27</time>
               </span>
 
           
@@ -217,7 +217,7 @@
 <p>这一章介绍了一个叫做 <em>Flow Chart</em> 的语言, 是一个以基本块组成的语言. 然后通过两个二村映射来介绍partial evaluation的技巧.</p>
 <p>然后就是程序点和程序状态的概念: 程序点就是程序执行的位置, 程序状态指的是程序执行的状态, 具体的状态的值域取决于语义的定义. 这一点和静态分析里的定义是类似的.</p>
 <p>程序的状态可能有很多, 但大部分的语言都可以通过 <code>变量 - 值</code> 的映射来表示. 其中对于每个 program point, 变量的值可以分为 static 和 dynamic 分为两类. static 表示变量的值可以在静态确定, 而 dynamic 的值只能在运行时确定. 将每个 program point 的变量区分为 static 和 dynamic 的过程叫做 <em>division</em>.</p>
-<p>这就引出了一个概念叫做 <em>poly</em>, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大确认多少程序点的 static 变量? 可以通过一个由 <code>程序点-static value</code> 序对组成的集合来表示 <em>poly</em>. <em>poly</em> 对应着 residual program (specialized program point) 的 program point. 一个直觉的描述是: 对于 subject program 在每个 program point, 把这个 program point 对应的 basic block 根据不同的 static state "展开"的结果就是 residual program; "展开"之后, static 的属性会"嵌入"到 <em>residual program</em> 中, 而不是通过 division 来表达.</p>
+<p>这就引出了一个概念叫做 <em>poly</em>, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大程度确认多少程序点的 static 变量? 可以通过一个由 <code>程序点-static value</code> 序对组成的集合来表示 <em>poly</em>. <em>poly</em> 对应着 residual program (specialized program point) 的 program point. 一个直觉的描述是: 对于 subject program 在每个 program point, 把这个 program point 对应的 basic block 根据不同的 static state "展开"的结果就是 residual program; "展开"之后, static 的属性会"嵌入"到 <em>residual program</em> 中, 而不是通过 division 来表达.</p>
 <p><em>division</em> 的结果并不一定唯一, 只要满足以下 congruent 条件就行: &gt; any variable that depends on a dynamic variable must itself be dynamic.</p>
 <p>这个定义其实有一些模糊. 比如说, 如果一个循环中的变量, 第一次循环的值是确定的, 然后在循环中会通过赋值更新这个变量(这个 <em>Flow Chart</em> 的语言是允许赋值的), 那么这个变量算是什么呢?</p>
 <p>这可能又要分很多种情况, 比如说这个循环的循环次数和对变量更新的值都是可以确定的 (假设是 <code>k</code> 次), 那么我们就可以把这个循环展开 <code>k</code> 次, 展开后的程序的循环变量显然都是 static 的.</p>
@@ -226,12 +226,13 @@
 <p>所以我们只能把他们标记为 dynamic. 这样就有了一种最简单的处理方式: 所有麻烦的东西都当成 dynamic 就好了! 但是从 partial evaluation 最基本的直觉出发, 我们标注为 dynamic 的东西越多, 我们能够 specialize 的东西就越少, partial evaluation 所能带来的优化也就更少. 所以, 我们的 <em>division</em> 应该尽可能的让 dynamic 少.</p>
 <p>那有没有什么通用的办法, 让我们给出 division 的同时, 还能保证这个 division 的 dynamic 是 <em>最少</em> 的?</p>
 <p>这个问题是 <em>不可判定</em> 问题, 不过书上说他们之后会给个办法给一个可接受的解(前面提到了, 合理的 division 并不唯一). 现在先假设每个 program point 都有着相同的 <em>division</em>, 通过一个叫 BTA (Bind Time Analysis) 的分析来确认这个 <em>division</em>.</p>
-<p>总结一下 partial evaluation 的步骤: 1. 根据输入, 确定变量的 division; 也就是把变量区分为 static 和 dynamic 两类<br />
+<p>总结一下 partial evaluation 的步骤:<br />
+1. 根据输入, 确定变量的 division; 也就是把变量区分为 static 和 dynamic 两类<br />
 2. 计算 poly, 也就是 specialized program 的 program points<br />
 3. 根据 poly, 生成 specialized program<br />
 4. (optional) transition compression<br />
 5. (optional) relabel the program</p>
-<p>然后是一些例子.</p>
+<p>最后是一些例子.</p>
 <p>一个简单的程序可以被解释的程序: <img src="/images/Pasted%20image%2020221120194634.png" /> 一个 specialized 的解释器 <img src="/images/Pasted%20image%2020221120194652.png" /> 解释器的完整定义如下 <img src="/images/Pasted%20image%2020221120195636.png" /> Program point of target 和 (Program point, static variable) of interpreter 之间的对应关系: <img src="/images/Pasted%20image%2020221120195702.png" /> 完整的 mixer 程序, 完成了上面的几个流程的功能, 包含一些优化操作 : <img src="/images/Pasted%20image%2020221121074932.png" /></p>
 
     </div>
