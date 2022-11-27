@@ -178,10 +178,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2022-11-27 20:57:58 / Modified: 22:54:44" itemprop="dateCreated datePublished" datetime="2022-11-27T20:57:58+08:00">2022-11-27</time>
+              <time title="Created: 2022-11-27 20:57:58" itemprop="dateCreated datePublished" datetime="2022-11-27T20:57:58+08:00">2022-11-27</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-28 03:33:07" itemprop="dateModified" datetime="2022-11-28T03:33:07+08:00">2022-11-28</time>
+              </span>
 
           
 
@@ -194,8 +200,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><em>WIP Warning</em></p>
-<p><em>partial evaluation</em> 的第五章 <em>Partial Evaluation for a Flow Chart Language</em> 的笔记.</p>
+          <p><em>partial evaluation</em> 的第五章 <em>Partial Evaluation for a Flow Chart Language</em> 的笔记.</p>
 <p>前一章通过对 flow chart 语言的 partial evaluation 介绍了 partial evaluation 的技巧, 我觉得基本可以分为以下两步:<br />
 1. 确定源程序每个程序点可以静态确定的状态;<br />
 2. 依据这些静态状态, 把源程序的每个基本块"展开"到目标程序, 这些静态状态在目标程序中不再被显式的表达, 而是"嵌入"到了目标程序中.</p>
@@ -207,9 +212,18 @@
 <p>所以在明确问题边界的时候就把上面两个问题答案给出了:<br />
 1. 对于闭包, 由于不支持内部函数, 所以实际上每个函数 capture 的变量是显而易见的;<br />
 2. 对于程序点, 在 Flow Chart 语言中对应到 label; 而在 Scheme0 中对应到每个函数</p>
-<p>而对 Scheme0 做 partial evaluation 就是把程序 specialize 到静态函数参数的过程. 看起来好像没有什么新的东西? 多出来的部分就是要把高阶函数给处理一下, 关于这点我能想到的一个直接的做法就是控制流分析.</p>
-<p>(好了, 这是初步扫过第一小节的大概感想, 做一下这一章节的预期管理, 之后的内容看完了再写)</p>
+<p>而对 Scheme0 做 partial evaluation 就是把程序 specialize 到静态函数参数的过程. 看起来好像没有什么新的东西? 多出来的部分就是要把高阶函数给处理一下, 关于这点我能想到的一个直接的做法就是控制流分析. (不过从语法上来看, 这一点在这一章也没解决.)</p>
+<p>(好了, 这是初步扫过第一小节的大概感想)</p>
 <hr />
+<p><em>WIP Warning</em></p>
+<p><em>monovariant division</em> 和 <em>polyvariant division</em>. 对于这个 Scheme0 语言, 提出了两种 division. 一种是<em>monovariant division</em>, 指的是所有函数的参数都只有一种 division. <em>polyvariant division</em> 指的是一个函数的参数可能有多种 static 和 dynamic 的划分.</p>
+<p>congruent</p>
+<p>Annotations for expressing divisions</p>
+<p>Binding time analysis by abstract interpretation</p>
+<p>分析函数 <img src="/images/Pasted%20image%2020221128011429.png" /> 这里其实会面临和之前 Flow Chart 语言一样的问题: 就是即使能静态确定某个程序点的状态 (也就是这个分析函数判断某个 subexpression 是 static), 但这些静态状态的数量是无限的, 所以依然不能用这些状态生成 residual program.</p>
+<p>最后是 specialization 算法, 这块基本思路和之前没什么不同, 就是按 specialized program point 展开.</p>
+<p>这个时候之前 division 分析函数的"坑"就体现了, 因为该函数判断是为 static 的参数, 其可能的状态可能有无限多个. 所以按照这些状态展开, 我们的 specialization 算法无法停机. 我们需要一些方法来保证 specialization 算法是停机的. (对于这个问题书上提出了两种方法, 但是我感觉都没有说清楚为什么). 不过我觉得简单的限制展开"深度"应该可以得到一个可行的答案, 比如说对同一个函数展开了两次就不展开了, 而是保留函数调用.</p>
+<p>还有另一个问题是代码重复的问题, 如何保证展开后的代码尽量不要包含重复的代码和重复的计算?</p>
 
       
     </div>
