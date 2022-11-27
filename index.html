@@ -343,7 +343,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-11-19 20:01:52" itemprop="dateModified" datetime="2022-11-19T20:01:52+08:00">2022-11-19</time>
+                <time title="Modified: 2022-11-27 22:50:57" itemprop="dateModified" datetime="2022-11-27T22:50:57+08:00">2022-11-27</time>
               </span>
 
           
@@ -358,16 +358,21 @@
 
       
           <p><em>partial evaluation</em> 的第三章 <em>Programming Languages and Interpreters</em> 的笔记.</p>
-<p>这一章主要是形式化的介绍了一下程序, 解释和编译. 程序只是一种表示, 在这里程序的语义指的是 <em>Operational Semantic</em>, 代表了程序应该如何规约(reduction).</p>
-<p>解释是指的用另外一个程序来实现程序的语义, 解释器本身也是在某种抽象机上(解释)执行的. 对于某个目标程序 <code>P</code>, 解释器 <code>int</code> 在对应抽象机上的解释 <code>P</code> 的执行步数, 一般要比 <code>P</code> 在 <code>P</code> 对应的抽象机上的执行步数要成倍数的增长. 比如说对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步; 而在解释器中, 会<strong>对应</strong>到5步:<br />
+<p>这一章主要是形式化的介绍了一下程序, 解释和编译的概念.</p>
+<p>程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是 <em>Operational Semantic</em>, 具体指的是一套指导程序应该如何规约(reduction)的规则. 所有编程语言的语义隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的"解释器"(有的资料也称之为"元解释器", 但我还没想明白"元"在哪里), 这也是为什么说所有语言本质上都是解释执行的原因.</p>
+<p>与直接用这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 <em>解释执行</em>, 解释器本身也是在某种抽象机上执行的. 对于某个目标程序 <code>P</code>, 解释器 <code>int</code> 在对应抽象机上的解释 <code>P</code> 的执行步数, 一般要比 <code>P</code> 在 <code>P</code> 对应的抽象机上的执行步数要成倍数的增长.<br />
+比如说对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步; 而在解释器中, 会<strong>对应</strong>到5步:<br />
 1. 解释函数 (如 <code>eval</code>) 的调用<br />
 2. 模式匹配判断当前表达式是一个变量<br />
 3. 读取环境<br />
 4. 读取变量名<br />
 5. 读取环境中对应变量名的值</p>
 <p>可以通过case by case的分析各种语义的对应步数得到一个大致的倍数, 从而估算解释的开销(overhead).</p>
-<p>刚刚提到了开销, 这个开销实际上是不可以忽略的, 首先在真实世界的编程语言中, 这个开销的倍数可能非常大(比如说可能是几十倍); 另一方面, 如果涉及到多层的解释, 那么这个开销的倍数也会相乘, 最终开销也会呈指数增长. 将源程序直接编译为可执行的程序(比如说机器指令)就是减少在开销上做乘法的一种思路(减少解释的开销).</p>
-<p>然后介绍了一下编译器自举(bootstrapping)的概念, 自举大概指的是一个compiler <code>h</code> 可以通过被其compiled version <code>t</code> 编译得到其compiled version <code>t</code> 的. 书上通过举了个例子说明如何通过扩展 <code>S</code> 语言实现的 <code>S</code> 语言的编译器并完成自举的过程: 首先我们已有 <code>S</code> 语言编译器的源码 <code>h</code> 和编译后的代码 <code>t</code> <img src="/images/Pasted%20image%2020221108053150.png" /> 1. 然后我们在 <code>h</code>上扩展, 得到了一个 <code>S'</code>的编译器 <code>h'</code> <img src="/images/Pasted%20image%2020221108053354.png" /> 2. 然后用一开始的 <code>t</code> 把 <code>h'</code> 编译, 得到 <code>t1'</code> <img src="/images/Pasted%20image%2020221108053451.png" /> 3. 再用 <code>t1'</code> 编译一遍 <code>h'</code>. 这里第一次用了扩展后的编译器 <code>h'</code>的语义. <code>t1'</code> 也是h'的compiled program, 但因为 <code>t1'</code> 不是由h'的语义编译生成的(是由<code>h</code>的语义即 <code>t</code> 编译生成的). 所以这里还算不上自举 <img src="/images/Pasted%20image%2020221108053602.png" /> 4. 最后用 <code>t2'</code>编译 <code>h'</code>, 这里就有了自举了. 因为 <code>t3'</code> 是完全等于 <code>t2'</code>的, 因为 <code>t1'</code>的语义和 <code>t2'</code> 的<strong>语义</strong>相同. <img src="/images/Pasted%20image%2020221108053955.png" /></p>
+<p>刚刚提到了开销, 这个开销实际上是不可以忽略的, 首先在真实世界的编程语言中, 这个开销的倍数可能非常大(比如说可能是几十倍); 另一方面, 当语言的实现涉及到多层中间表示的时候, 解释也会有多层, 那么这个开销的倍数也会相乘, 最终开销也会呈指数增长. 将源程序直接编译为可执行的程序(比如说机器指令)就是减少在开销上做乘法的一种思路(减少解释的开销). 这个过程也叫 <em>lowering</em>, 把更高层的表示 <em>lowering</em> 到底层的表示.</p>
+<p>最后书上介绍了一下编译器自举(bootstrapping)的概念, 自举指的是一个compiler <code>h</code> 可以通过被其 compiled version <code>t</code> 编译, 并且得到 compiled version <code>t</code>.</p>
+<p>现在发现其实很多介绍没有把这一点讲透, 很多人都说: "自举就是编译器可以编译自己." 让人感觉不到这其中的微妙之处: "自己编译自己有什么神奇的吗?" 实际上更完整的描述应该是: 一个编译器(compiled version)可以通过编译自己(source)<strong>得到自己</strong>(compiled version)</p>
+<p>书上通过举了个例子说明如何通过扩展 <code>S</code> 语言实现的 <code>S</code> 语言的编译器并完成自举的过程:</p>
+<p>首先我们已有 <code>S</code> 语言编译器的源码 <code>h</code> 和编译后的代码 <code>t</code> <img src="/images/Pasted%20image%2020221108053150.png" /> 1. 然后我们在 <code>h</code>上扩展, 得到了一个 <code>S'</code>的编译器 <code>h'</code> <img src="/images/Pasted%20image%2020221108053354.png" /> 2. 然后用一开始的 <code>t</code> 把 <code>h'</code> 编译, 得到 <code>t1'</code> <img src="/images/Pasted%20image%2020221108053451.png" /> 3. 再用 <code>t1'</code> 编译一遍 <code>h'</code>. 这里第一次用了扩展后的编译器 <code>h'</code>的语义. <code>t1'</code> 也是h'的compiled program, 但因为 <code>t1'</code> 不是由h'的语义编译生成的(是由<code>h</code>的语义即 <code>t</code> 编译生成的). 所以这里还算不上自举 <img src="/images/Pasted%20image%2020221108053602.png" /> 4. 最后用 <code>t2'</code>编译 <code>h'</code>, 这里就有了自举了. 因为 <code>t3'</code> 是完全等于 <code>t2'</code>的, 因为 <code>t1'</code>的语义和 <code>t2'</code> 的<strong>语义</strong>相同. <img src="/images/Pasted%20image%2020221108053955.png" /></p>
 
       
     </div>
