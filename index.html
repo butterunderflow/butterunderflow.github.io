@@ -155,7 +155,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://butterunderflow.github.io/2022/11/19/partial-evaluation-techniques/">
+    <link itemprop="mainEntityOfPage" href="https://butterunderflow.github.io/2022/11/27/partial-evaluation-techniques-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/uploads/avatar.jpg">
@@ -169,7 +169,79 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2022/11/19/partial-evaluation-techniques/" class="post-title-link" itemprop="url">Partial Evaluation Techniques</a>
+            <a href="/2022/11/27/partial-evaluation-techniques-2/" class="post-title-link" itemprop="url">Partial Evaluation Techniques (2)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-11-27 20:57:58 / Modified: 22:27:38" itemprop="dateCreated datePublished" datetime="2022-11-27T20:57:58+08:00">2022-11-27</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><em>partial evaluation</em> 的第五章 <em>Partial Evaluation for a Flow Chart Language</em> 的笔记.</p>
+<p>前一章通过对 flow chart 语言的 partial evaluation 介绍了 partial evaluation 的技巧, 我觉得基本可以分为以下两步:<br />
+1. 确定源程序每个程序点可以静态确定的状态;<br />
+2. 依据这些静态状态, 把源程序的每个基本块"展开"到目标程序, 这些静态状态在目标程序中不再被显式的表达, 而是"嵌入"到了目标程序中.</p>
+<ul>
+<li>Flow Chart 其实就是基本块, 所以说上一章节的技术已经可以用了很大一部分编程语言了.</li>
+</ul>
+<p>所以不禁想问: 在函数式编程语言中, 这些技术会不会有所不同呢? 比如说, 如何处理高阶函数? 如何处理闭包? 如何定义程序点?</p>
+<p>这一章的开头首先明确了一下问题边界, 待partial evaluation的语言是一个类似scheme的语言, 其抽象语法如下: <img src="images/Pasted%20image%2020221127220632.png" /></p>
+<p>所以在明确问题边界的时候就把上面两个问题答案给出了. 1. 对于闭包, 由于不支持内部函数, 所以实际上每个函数 capture 的变量是显而易见的;<br />
+2. 对于程序点, 在 Flow Chart 语言中对应到 label; 而在 Scheme0 中对应到每个函数</p>
+<p>而对 Scheme0 做 partial evaluation 就是把程序 specialize 到静态函数参数的过程. 看起来好像没有什么新的东西? 多出来的部分就是要把高阶函数给处理一下, 关于这点我能想到的一个直接的做法就是控制流分析.</p>
+<p>(好了, 这是初步扫过第一小节的大概感想, 做一下这一章节的预期管理, 之后的内容看完了再写)</p>
+<hr />
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://butterunderflow.github.io/2022/11/19/partial-evaluation-techniques-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+      <meta itemprop="name" content="butter">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Butter's Space">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/11/19/partial-evaluation-techniques-0/" class="post-title-link" itemprop="url">Partial Evaluation Techniques (0)</a>
         </h2>
 
         <div class="post-meta">
@@ -186,7 +258,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-11-21 09:21:23" itemprop="dateModified" datetime="2022-11-21T09:21:23+08:00">2022-11-21</time>
+                <time title="Modified: 2022-11-24 20:32:08" itemprop="dateModified" datetime="2022-11-24T20:32:08+08:00">2022-11-24</time>
               </span>
 
           
@@ -219,7 +291,7 @@
 4. (optional) transition compression<br />
 5. (optional) relabel the program</p>
 <p>然后是一些例子.</p>
-<p>一个简单的程序可以被解释的程序: <img src="/images/Pasted%20image%2020221120194634.png" /> 一个 specialized 的解释器 <img src="/images/Pasted%20image%2020221120194652.png" /> 解释器的完整定义 <img src="/images/Pasted%20image%2020221120195636.png" /> Program point of target 和 (Program point, static variable) of interpreter 之间的对应关系: <img src="/images/Pasted%20image%2020221120195702.png" /> 完整的 mixer 程序: <img src="/images/Pasted%20image%2020221121074932.png" /></p>
+<p>一个简单的程序可以被解释的程序: <img src="/images/Pasted%20image%2020221120194634.png" /> 一个 specialized 的解释器 <img src="/images/Pasted%20image%2020221120194652.png" /> 解释器的完整定义如下 <img src="/images/Pasted%20image%2020221120195636.png" /> Program point of target 和 (Program point, static variable) of interpreter 之间的对应关系: <img src="/images/Pasted%20image%2020221120195702.png" /> 完整的 mixer 程序, 完成了上面的几个流程的功能, 包含一些优化操作 : <img src="/images/Pasted%20image%2020221121074932.png" /></p>
 
       
     </div>
@@ -778,7 +850,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
