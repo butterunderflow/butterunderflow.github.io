@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://butterunderflow.github.io/images/Pasted%20image%2020221127220632.png">
 <meta property="article:published_time" content="2022-11-27T12:57:58.000Z">
-<meta property="article:modified_time" content="2022-11-27T14:51:50.111Z">
+<meta property="article:modified_time" content="2022-11-27T14:52:30.137Z">
 <meta property="article:author" content="butter">
 <meta property="article:tag" content="Partial-Evaluation">
 <meta property="article:tag" content="笔记">
@@ -189,7 +189,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2022-11-27 20:57:58 / Modified: 22:51:50" itemprop="dateCreated datePublished" datetime="2022-11-27T20:57:58+08:00">2022-11-27</time>
+              <time title="Created: 2022-11-27 20:57:58 / Modified: 22:52:30" itemprop="dateCreated datePublished" datetime="2022-11-27T20:57:58+08:00">2022-11-27</time>
             </span>
 
           
@@ -212,7 +212,8 @@
 </ul>
 <p>所以不禁想问: 在函数式编程语言中, 这些技术会不会有所不同呢? 比如说, 如何处理高阶函数? 如何处理闭包? 如何定义程序点?</p>
 <p>这一章的开头首先明确了一下问题边界, 待partial evaluation的语言是一个类似scheme的语言, 其抽象语法如下: <img src="/images/Pasted%20image%2020221127220632.png" /></p>
-<p>所以在明确问题边界的时候就把上面两个问题答案给出了. 1. 对于闭包, 由于不支持内部函数, 所以实际上每个函数 capture 的变量是显而易见的;<br />
+<p>所以在明确问题边界的时候就把上面两个问题答案给出了:<br />
+1. 对于闭包, 由于不支持内部函数, 所以实际上每个函数 capture 的变量是显而易见的;<br />
 2. 对于程序点, 在 Flow Chart 语言中对应到 label; 而在 Scheme0 中对应到每个函数</p>
 <p>而对 Scheme0 做 partial evaluation 就是把程序 specialize 到静态函数参数的过程. 看起来好像没有什么新的东西? 多出来的部分就是要把高阶函数给处理一下, 关于这点我能想到的一个直接的做法就是控制流分析.</p>
 <p>(好了, 这是初步扫过第一小节的大概感想, 做一下这一章节的预期管理, 之后的内容看完了再写)</p>
