@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Abstrtact-Interpretation on Butter&#39;s space</title>
+    <link>http://butter-xz.com/tags/abstrtact-interpretation/</link>
+    <description>Recent content in Abstrtact-Interpretation on Butter&#39;s space</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <managingEditor>azhong.934@gmail.com (butterunderflow)</managingEditor>
+    <webMaster>azhong.934@gmail.com (butterunderflow)</webMaster>
+    <lastBuildDate>Wed, 30 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://butter-xz.com/tags/abstrtact-interpretation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Partial Evaluation for Functional Language</title>
+      <link>http://butter-xz.com/articles/partial-evaluation-for-functional/</link>
+      <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate>
+      <author>azhong.934@gmail.com (butterunderflow)</author>
+      <guid>http://butter-xz.com/articles/partial-evaluation-for-functional/</guid>
+      <description>partial evaluation 的第五章 Partial Evaluation for a First-Order Functional Language 的笔记.
+前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:
+确定源程序每个程序点可以静态确定的状态(Binding Time Analysis); 依据这些静态状态, 把源程序的每个基本块&amp;quot;展开&amp;quot;到目标程序, 这些静态状态在目标程序中不再需要被计算, 而是直接&amp;quot;嵌入&amp;quot;到了目标程序中. 该目标程序被称之为&amp;quot;残差程序&amp;quot;(residual program). 那么对于更加复杂的语言应该如何做partial evaluation呢?
+这一章的介绍了一门比flow chart稍微强大(同时也复杂)一点的语言, 叫做Scheme0, 并展示了如何对这个语言进行partial evaluation. Scheme0仍然是采用lisp的语法, 支持全局的函数定义, 不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.
+从flow chart到Scheme0 在对Scheme0进行partial evaluation的过程中, 有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?
+所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念. 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.
+Flow Chart Scheme0 解释 Program point Function&amp;rsquo;s entry Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西 Global Variable Parameter Global Variable对应函数的Parameter, 也只有这里的静态值会&amp;quot;嵌入&amp;quot;至residual program Transition Compression Function&amp;rsquo;s Unfolding - Binding Time Analysis 通过抽象解释进行BTA 采用抽象解释的方式分析binding time, 此时抽象域为 参数 -&amp;gt; binding time 的partial mapping, 称之为 Binding Time Environment(BTEnv).</description>
+      <content:encoded><![CDATA[<p><em>partial evaluation</em> 的第五章 <em>Partial Evaluation for a First-Order Functional Language</em> 的笔记.</p>
+<p>前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial
+evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:<br /></p>
+<ol>
+<li>确定源程序每个程序点可以静态确定的状态(Binding Time Analysis);</li>
+<li>依据这些静态状态, 把源程序的每个基本块&quot;展开&quot;到目标程序,
+这些静态状态在目标程序中不再需要被计算, 而是直接&quot;嵌入&quot;到了目标程序中.
+该目标程序被称之为&quot;残差程序&quot;(residual program).</li>
+</ol>
+<p>那么对于更加复杂的语言应该如何做partial evaluation呢?</p>
+<p>这一章的介绍了一门比flow chart稍微强大(同时也复杂)一点的语言, 叫做Scheme0,
+并展示了如何对这个语言进行partial evaluation.
+Scheme0仍然是采用lisp的语法, 支持全局的函数定义,
+不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/Pasted-image-20221127220632.png"/> 
+</figure>
+
+<h2 id="从flow-chart到scheme0">从flow chart到Scheme0</h2>
+<p>在对Scheme0进行partial evaluation的过程中,
+有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?</p>
+<p>所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念.
+还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.</p>
+<table>
+<thead>
+<tr>
+<th>Flow Chart</th>
+<th>Scheme0</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Program point</td>
+<td>Function&rsquo;s entry</td>
+<td>Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西</td>
+</tr>
+<tr>
+<td>Global Variable</td>
+<td>Parameter</td>
+<td>Global Variable对应函数的Parameter, 也只有这里的静态值会&quot;嵌入&quot;至residual program</td>
+</tr>
+<tr>
+<td>Transition Compression</td>
+<td>Function&rsquo;s Unfolding</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h2 id="binding-time-analysis">Binding Time Analysis</h2>
+<h3 id="通过抽象解释进行bta">通过抽象解释进行BTA</h3>
+<p>采用抽象解释的方式分析binding time, 此时抽象域为 <code>参数 -&gt; binding time</code> 的partial mapping,
+称之为 <strong>Binding Time Environment(BTEnv)</strong>.
+而binding time的序也十分简单, 就是 \(D \ge S\).</p>
+<p>对于BTA的抽象解释, 分为了两种transfer function, 两种transfer function具有不同的含义:</p>
+<ol>
+<li>如何使用BTEnv: 在一个BTEnv中, 如何根据子表达式的binding time得到该表达式的binding bime</li>
+<li>如何更新BTEnv: 对于在binding time environment t中求值的表达式e, 对于某个函数g的调用,
+这个g的实参的binding time至少为多少.</li>
+</ol>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_17-02-59_screenshot.png"/> 
+</figure>
+
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_17-32-37_screenshot.png"/> 
+</figure>
+
+<p>从Bottom出发(也就是把所有的参数都初始化为Static)不断的应用上面第二个transfer
+function更新每个函数参数的BTEnv, 直到无法更新任何函数的BTEnv,
+此时称抽象解释达到了不动点(fixpoint).</p>
+<h3 id="通过类型系统对bta进行soundness-check">通过类型系统对BTA进行soundness check</h3>
+<p>可以把Binding Time Annotation看作是一种类型签名,
+然后通过类型系统检查程序Binding Time Annotation的soundness, 类型检查规则如下:</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_20-08-03_screenshot.png"/> 
+</figure>
+
+<p>注意, 这里只能 <strong>检查(check)</strong> 一个BTA是否sound,
+而不能 <strong>推导(infer)</strong> 出一个程序的BTA,
+因为上述规则没有 <strong>为没有Binding Time Annotation的程序生成Binding Time Annotation</strong> 的能力,</p>
+<h3 id="通过binding-time-annotation提高specialization算法的效率">通过Binding Time Annotation提高Specialization算法的效率</h3>
+<p>先前的Binding Time都是通过一种叫binding time envionment来表示的,
+这种表示在概念上很简洁, 但是因为在使用在实际运用binding time做specialization的时候是很低效的,
+因为要不断的查表来看某个变量是否是static的.</p>
+<p>一种提高效率的技巧是先通过binding time做一次程序变换,
+变换过程中为程序的每个节点加上binding time annotation来描述BTA的分析结果,
+这样在specialization 的过程中就只要看这个annotation就可以了.</p>
+<p>如下图所示, 每个表达式都有一个 <code>s</code> 或 <code>d</code> 来表示这个表达式是static还是dynamic的,
+函数的参数列表也被拆分成了static和dynamic参数两部分.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-13_screenshot.png"/> 
+</figure>
+
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-46_screenshot.png"/> 
+</figure>
+
+<h2 id="specialization算法">Specialization算法</h2>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_17-54-03_screenshot.png"/> 
+</figure>
+
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_18-17-50_screenshot.png"/> 
+</figure>
+
+<p>这里和之前的flow chart是十分相似的, 由于有函数的存在, 我觉得算法的表达反而更简洁了,
+直接看算法还是可以理解的, 由三个函数组成:</p>
+<ol>
+<li>一个主调函数specialize, 包含输入程序 <code>program</code> 和表示了入口函数的static参数的值 <code>vs_0</code> .</li>
+<li>一个 <strong>很像</strong> 尾递归的函数 <code>complete</code> :
+<ol>
+<li>complete将返回对 <code>pending</code> 中的specialized function entry进行specialization的结果;</li>
+<li><code>marked</code> 包含已经specialized program point</li>
+<li><code>program</code> 表示源程序, 这个参数不会改变</li>
+</ol>
+</li>
+<li>一个基于静态值对表达式进行程序变换的函数 <code>reduce</code> ,
+<code>reduce</code> 的内容很多但并其实不是特别复杂, 有一点需要注意的是,
+目前 <code>calls</code> 只会unfold dynamic parameter list为空的函数.
+而 unfold strategy 其实可以很多样.</li>
+</ol>
+<!--listend-->
+<ul>
+<li>注意: BTA只区分参数是static还是dynamic,
+而具体的static value的值只有在reduce函数中才会被求出.</li>
+</ul>
+<h2 id="static-bound-variation--the-trick">Static Bound Variation(The Trick)</h2>
+<p>在对Scheme0进行partial evaluation的过程中也会遇到Static Bound Variation的问题:</p>
+<blockquote>
+<p>当一个值是依赖于动态值, 但是其取值范围是静态的, 应该如何利用这样的静态信息.</p>
+</blockquote>
+<p>解法也是相似的(The Trick), 对包含Static Bound Variation的程序进行一次程序变换,
+对取值范围中的每一个值进行一次分支判定, 从而该Static Bound Variation就可以看作Static的,
+增加了可specialize的内容.</p>
+<p>Static Bound Variation是高质量的self-application的关键,
+因为如果不这么做的话会丢失掉很多specialize的机会,
+从而让self-application生成的程序生成十分trivial的residual program(即使从语义上来说是正确的).</p>
+<p>在对scheme0进行PE的过程中, 因为我们选取的specialation单元是一个函数,
+因此如果不想大改现有的算法的话, 需要对程序进行一些变换才能使用the trick.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_19-13-00_screenshot.png"/> 
+</figure>
+
+<ul>
+<li>这是不是就是这个 <a href="https://www.zhihu.com/answer/371277506">知乎回答</a> 中提到的 <strong>partial evaluation friendly</strong> 的意思?</li>
+</ul>
+<h2 id="function-unfolding-strategy">Function Unfolding Strategy</h2>
+<p>unfold 可以消除一些函数定义让residual program变得更简洁,
+比如说下面的两种函数显然可以被unfold:</p>
+<ol>
+<li>一个函数什么也没做, 只是调用另一个函数;</li>
+<li>一个函数只被调用过一次.</li>
+</ol>
+<p>之前提到的unfolding strategy只有在 <code>calls</code> 的目标没有动态参数的时候会进行unfold,
+然而unfold strategy的其实可以是比较复杂的.
+unfold strategy的最终目的还是为了提升residual程序的质量(比如说消除trivial function).
+而在这个过程中,
+有可能因为unfold反而降低了程序质量(产生了program duplication或computation duplication),
+又有各种各样的trick.
+这里就不详细介绍每个strategy了, 只介绍一些通用的unfolding strategy的基本要求:</p>
+<ol>
+<li>实参的计算存在副作用, 则需要保证这些副作用的顺序&amp;次数在unfold后的程序中不变;</li>
+<li>要保证unfold策略能够停机, 不会无限的unfold;</li>
+<li>尽量避免unfold过程中的program duplication和computation duplication.</li>
+</ol>
+<h2 id="related-notes-resource">Related Notes/Resource</h2>
+<p><a href="https://www.itu.dk/people/sestoft/pebook/">ND.Jones&rsquo;s book</a>: Partial Evaluation的教材</p>
+<p><a href="/articles/partial-evaluation/">Partial Evaluation</a>: Partial Evaluation的基本概念</p>
+<p><a href="/articles/partial-evaluation-for-flow-chart/">Partial Evaluation For Flow Chart Langauge</a>: Flow chart语言的Partial Evaluation</p>
+<p><a href="/404">Abstract Interpretation</a>: 抽象解释</p>
+]]></content:encoded>
+    </item>
+    
+  </channel>
+</rss>

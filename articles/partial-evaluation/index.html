@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="cn" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Partial Evaluation | Butter&#39;s space</title>
+<meta name="keywords" content="Partial-Evaluation">
+<meta name="description" content="Partial Evaluation 的第一章 Introduction 的笔记. 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in 优化的程序, 这个过程叫做specialization. 针对in1优化的&quot;优化器&quot;可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2. 为提前知道的输入进行特化版本的程序
+如果是解释器的话, 那么一个解释器可以通过下图描述:
+&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 如果有了一个interpreter, 有了一个针对解释器的源程序输入的specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的specializer.
+图1:
+&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 那么也可以看到, 这个specialzer本身也是多参数的函数, 那么如果我们已经有了一个specialzer, 如果再把这个specializer对interp参数进行specialization, 我们就可以得到一个编译器(图中的PEinterp).
+图2:
+&#43;----&#43; PE --&gt; | PE | --&gt; PEinterp interp --&gt; | | &#43;----&#43; 这里的PE又是一个多参数的函数, 我们又可以对其进行Specialization.">
+<meta name="author" content="butterunderflow">
+<link rel="canonical" href="http://butter-xz.com/articles/partial-evaluation/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.3613efbd0b1772781e8f49935e973cae632a7f61471c05b17be155505ccf87b5.css" integrity="sha256-NhPvvQsXcngej0mTXpc8rmMqf2FHHAWxe&#43;FVUFzPh7U=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.f413e19d0714851f6474e7ee9632408e58ac146fbdbe62747134bea2fa3415e0.js" integrity="sha256-9BPhnQcUhR9kdOfuljJAjlisFG&#43;9vmJ0cTS&#43;ovo0FeA="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="http://butter-xz.com/assets/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://butter-xz.com/assets/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://butter-xz.com/assets/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://butter-xz.com/assets/apple-touch-icon.png">
+<link rel="mask-icon" href="http://butter-xz.com/assets/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Partial Evaluation" />
+<meta property="og:description" content="Partial Evaluation 的第一章 Introduction 的笔记. 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in 优化的程序, 这个过程叫做specialization. 针对in1优化的&quot;优化器&quot;可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2. 为提前知道的输入进行特化版本的程序
+如果是解释器的话, 那么一个解释器可以通过下图描述:
+&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 如果有了一个interpreter, 有了一个针对解释器的源程序输入的specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的specializer.
+图1:
+&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 那么也可以看到, 这个specialzer本身也是多参数的函数, 那么如果我们已经有了一个specialzer, 如果再把这个specializer对interp参数进行specialization, 我们就可以得到一个编译器(图中的PEinterp).
+图2:
+&#43;----&#43; PE --&gt; | PE | --&gt; PEinterp interp --&gt; | | &#43;----&#43; 这里的PE又是一个多参数的函数, 我们又可以对其进行Specialization." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://butter-xz.com/articles/partial-evaluation/" /><meta property="article:section" content="articles" />
+<meta property="article:published_time" content="2022-10-22T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-10-22T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Partial Evaluation"/>
+<meta name="twitter:description" content="Partial Evaluation 的第一章 Introduction 的笔记. 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in 优化的程序, 这个过程叫做specialization. 针对in1优化的&quot;优化器&quot;可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2. 为提前知道的输入进行特化版本的程序
+如果是解释器的话, 那么一个解释器可以通过下图描述:
+&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 如果有了一个interpreter, 有了一个针对解释器的源程序输入的specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的specializer.
+图1:
+&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 那么也可以看到, 这个specialzer本身也是多参数的函数, 那么如果我们已经有了一个specialzer, 如果再把这个specializer对interp参数进行specialization, 我们就可以得到一个编译器(图中的PEinterp).
+图2:
+&#43;----&#43; PE --&gt; | PE | --&gt; PEinterp interp --&gt; | | &#43;----&#43; 这里的PE又是一个多参数的函数, 我们又可以对其进行Specialization."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Articles",
+      "item": "http://butter-xz.com/articles/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Partial Evaluation",
+      "item": "http://butter-xz.com/articles/partial-evaluation/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Partial Evaluation",
+  "name": "Partial Evaluation",
+  "description": "Partial Evaluation 的第一章 Introduction 的笔记. 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in 优化的程序, 这个过程叫做specialization. 针对in1优化的\u0026quot;优化器\u0026quot;可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2. 为提前知道的输入进行特化版本的程序\n如果是解释器的话, 那么一个解释器可以通过下图描述:\n+--------+ P --\u0026gt; | interp | --\u0026gt; out input --\u0026gt; | | +--------+ 如果有了一个interpreter, 有了一个针对解释器的源程序输入的specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的specializer.\n图1:\n+----+ interp --\u0026gt; | PE | --\u0026gt; interpP P --\u0026gt; | | +----+ 那么也可以看到, 这个specialzer本身也是多参数的函数, 那么如果我们已经有了一个specialzer, 如果再把这个specializer对interp参数进行specialization, 我们就可以得到一个编译器(图中的PEinterp).\n图2:\n+----+ PE --\u0026gt; | PE | --\u0026gt; PEinterp interp --\u0026gt; | | +----+ 这里的PE又是一个多参数的函数, 我们又可以对其进行Specialization.",
+  "keywords": [
+    "Partial-Evaluation"
+  ],
+  "articleBody": "Partial Evaluation 的第一章 Introduction 的笔记. 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in 优化的程序, 这个过程叫做specialization. 针对in1优化的\"优化器\"可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2. 为提前知道的输入进行特化版本的程序\n如果是解释器的话, 那么一个解释器可以通过下图描述:\n+--------+ P --\u003e | interp | --\u003e out input --\u003e | | +--------+ 如果有了一个interpreter, 有了一个针对解释器的源程序输入的specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的specializer.\n图1:\n+----+ interp --\u003e | PE | --\u003e interpP P --\u003e | | +----+ 那么也可以看到, 这个specialzer本身也是多参数的函数, 那么如果我们已经有了一个specialzer, 如果再把这个specializer对interp参数进行specialization, 我们就可以得到一个编译器(图中的PEinterp).\n图2:\n+----+ PE --\u003e | PE | --\u003e PEinterp interp --\u003e | | +----+ 这里的PE又是一个多参数的函数, 我们又可以对其进行Specialization. 如果有一个Specialzer, 可以让PE对PE进行进行Specialization, 那么就可以得到一个编译器的生成器(图中的PE_PE).\n+----+ PE --\u003e | PE | --\u003e PE_PE PE --\u003e | | +----+ 这里的每个PE的输入都是两个程序, 其中一个程序 in1 是另外一个程序 in2 的输入; PE的功能都是为 in2 生成一个特化在 in1 的版本, 这个特化的版本往往会比 in1 |\u003e in2 更加高效.\n有个关键的概念需要区分: program text和running program\nPartial Evaluation和Partial Application还是很不一样的 在Partial Application中, 得到的是一个同一个语言的函数; 而partial evaluation中, 得到的是一个*新的程序* 这里就要理解一个program text和一个正在运行的程序的区别, program text只是程序的表示, 而运行起来的程序才能抽象成一个函数. 可以通过语义函数(图中的双中括号)把程序从program text转变成函数.\n比如说, 我们说PE的输入是程序, 但是图中的PE的类型可以看作 L (因为PE是程序的表示), 通过语义函数变成类型为 L -\u003e L -\u003e L 的函数, 其中 L 是程序表示的类型.\n然后粗略的读了一下第二章, 主要是一些概念的介绍. 从集合论的角度介绍了一下类型还有一些类型上的运算(sum, product type),以及一些类型推导的简要介绍. 我觉得有一个关键是强调了 program 和 function 之间的区别: program是一个syntactic world里的东西, 比如说符号, 表达式, function是数学意义上的东西.\n",
+  "wordCount" : "160",
+  "inLanguage": "cn",
+  "datePublished": "2022-10-22T00:00:00Z",
+  "dateModified": "2022-10-22T00:00:00Z",
+  "author":[{
+    "@type": "Person",
+    "name": "butterunderflow"
+  }],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://butter-xz.com/articles/partial-evaluation/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Butter's space",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://butter-xz.com/assets/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://butter-xz.com/" accesskey="h" title="Butter&#39;s space (Alt + H)">Butter&#39;s space</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://butter-xz.com/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://butter-xz.com/archives/" title="Archives">
+                    <span>Archives</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://butter-xz.com/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Partial Evaluation
+    </h1>
+    <div class="post-meta"><span title='2022-10-22 00:00:00 +0000 UTC'>October 22, 2022</span>&nbsp;·&nbsp;butterunderflow
+
+</div>
+  </header> 
+
+  <div class="post-content"><p><em>Partial Evaluation</em> 的第一章 <em>Introduction</em> 的笔记. 从抽象上来看,
+程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话,
+那么如果程序的某个输入 <code>in1</code> 是可以提前确定的,
+那么可以生成一个针对 <code>in</code> 优化的程序, 这个过程叫做specialization.
+针对in1优化的&quot;优化器&quot;可以叫做spacializer. 所以Partial
+Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2.
+为提前知道的输入进行特化版本的程序</p>
+<p>如果是解释器的话, 那么一个解释器可以通过下图描述:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>           +--------+
+</span></span><span style="display:flex;"><span>P      --&gt; | interp | --&gt; out
+</span></span><span style="display:flex;"><span>input  --&gt; |        |
+</span></span><span style="display:flex;"><span>           +--------+
+</span></span></code></pre></div><p>如果有了一个interpreter, 有了一个针对解释器的源程序输入的specializer,
+那么就得到了一个可执行程序. 用图画出来就是这样,
+<code>PE</code> 就是我们的specializer.</p>
+<p>图1:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>           +----+
+</span></span><span style="display:flex;"><span>interp --&gt; | PE | --&gt; interpP
+</span></span><span style="display:flex;"><span>     P --&gt; |    |
+</span></span><span style="display:flex;"><span>           +----+
+</span></span></code></pre></div><p>那么也可以看到, 这个specialzer本身也是多参数的函数,
+那么如果我们已经有了一个specialzer,
+如果再把这个specializer对interp参数进行specialization,
+我们就可以得到一个编译器(图中的PEinterp).</p>
+<p>图2:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>           +----+
+</span></span><span style="display:flex;"><span>PE     --&gt; | PE | --&gt; PEinterp
+</span></span><span style="display:flex;"><span>interp --&gt; |    |
+</span></span><span style="display:flex;"><span>           +----+
+</span></span></code></pre></div><p>这里的PE又是一个多参数的函数, 我们又可以对其进行Specialization.
+如果有一个Specialzer, 可以让PE对PE进行进行Specialization,
+那么就可以得到一个编译器的生成器(图中的PE_PE).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>        +----+
+</span></span><span style="display:flex;"><span>PE  --&gt; | PE | --&gt; PE_PE
+</span></span><span style="display:flex;"><span>PE  --&gt; |    |
+</span></span><span style="display:flex;"><span>        +----+
+</span></span></code></pre></div><p>这里的每个PE的输入都是两个程序,
+其中一个程序 <code>in1</code> 是另外一个程序 <code>in2</code> 的输入;
+PE的功能都是为 <code>in2</code> 生成一个特化在 <code>in1</code> 的版本,
+这个特化的版本往往会比 <code>in1 |&gt; in2</code> 更加高效.</p>
+<p>有个关键的概念需要区分: program text和running program</p>
+<p>Partial Evaluation和Partial Application还是很不一样的 在Partial
+Application中, 得到的是一个同一个语言的函数; 而partial evaluation中,
+得到的是一个*新的程序* <img loading="lazy" src="/images/image-20221023232021.png" alt=""  />
+
+这里就要理解一个program text和一个正在运行的程序的区别, program
+text只是程序的表示, 而运行起来的程序才能抽象成一个函数.
+可以通过语义函数(图中的双中括号)把程序从program text转变成函数.</p>
+<p>比如说, 我们说PE的输入是程序,
+但是图中的PE的类型可以看作 <code>L</code> (因为PE是程序的表示),
+通过语义函数变成类型为 <code>L -&gt; L -&gt; L</code> 的函数, 其中 <code>L</code> 是程序表示的类型.</p>
+<p>然后粗略的读了一下第二章, 主要是一些概念的介绍.
+从集合论的角度介绍了一下类型还有一些类型上的运算(sum, product
+type),以及一些类型推导的简要介绍.
+我觉得有一个关键是强调了 <code>program</code> 和 <code>function</code> 之间的区别:
+program是一个syntactic world里的东西, 比如说符号, 表达式,
+function是数学意义上的东西.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://butter-xz.com/tags/partial-evaluation/">Partial-Evaluation</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="http://butter-xz.com/">Butter&#39;s space</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>想法 on Butter&#39;s space</title>
+    <link>http://butter-xz.com/tags/%E6%83%B3%E6%B3%95/</link>
+    <description>Recent content in 想法 on Butter&#39;s space</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <managingEditor>azhong.934@gmail.com (butterunderflow)</managingEditor>
+    <webMaster>azhong.934@gmail.com (butterunderflow)</webMaster>
+    <lastBuildDate>Sat, 02 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://butter-xz.com/tags/%E6%83%B3%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>讨论主题的重要性</title>
+      <link>http://butter-xz.com/articles/20230825121425-disscuss-on-mainline/</link>
+      <pubDate>Sat, 02 Sep 2023 00:00:00 +0000</pubDate>
+      <author>azhong.934@gmail.com (butterunderflow)</author>
+      <guid>http://butter-xz.com/articles/20230825121425-disscuss-on-mainline/</guid>
+      <description>最近经常和各类人高强度的讨论各种事情, 我在读研期间和经常需要线上/线下和我的导师讨论各种问题, 但是我也没有感受到像最近这样的疲惫感.
+我总结了一下, 主要原因还是在于讨论的时候没有确立讨论主题问题, 比如说对于一个问题X的解决方案的讨论, x提出了A解决方法, y指出了A解决方法中存在的问题P. 在听到了这些问题后, 如果x认为应该继续采用A方法, 正常的做法首先应该是论证P的影响, 比如说:
+P到底是否存在? P的影响有多大? 给问题X的解决造成了多大程度的负面影响? P是否是为了解决某个问题而必然引入的新问题? 如果P确实是一个不可忽视的问题, 然后应该讨论解决方法A的的&amp;quot;补救&amp;quot;措施:
+能否修改方案A以弥补问题P? 是否需要重新设计方案B以同时解决问题X和问题P? 如果沟通不是按照这个步骤结构化的进行, 那么必然产生心智负担. 实际沟通中常常会有如下几种情况:
+如果y提出问题P后, x通过与问题本身无关的方式否认这个问题, 比如说解决问题P不会成为我们的优势, 解决问题P也不会让别人更想用我们的产品. 这种情况相当于直接回避问题. 如果y是个负责的人, 必然会想方设法的说服x问题P的存在性. 另一方面这也会让y感觉到疲惫, 因为&amp;quot;问题P是否存在&amp;quot;和&amp;quot;解决问题P是否会成为优势&amp;quot;是两个十分不相同的事情, 所用到的知识也很有可能属于完全不同的领域, 而y在讨论前可能并没有准备好另一部分的知识. 如果x确认问题P的存在后, 但是并不直面这个问题P, 而是说谁谁的a,b,c方案是用类似于A方案这么解决的, 根本没事. 这就给y带来了心智负担: 如果y没有了解过a,b,c方案, 他还需要再去确认这些方案是否真的是如x所说, 如果不如x所说又要和x对这些a,b,c方案的做法进行对齐. 如果想用别人的方案来说明, 正常的做法应当是x首先尽量详细介绍一下a,b,c方案, 说服y这些方案确实是为了x而存在, 且真的与解法A存在同构. 最后一种情况, 也是最折磨人的情况: 那你搞一个方案解决问题X吧, 我只能想到这种解法. 工作中的分工是明确的, 此时如果y是个对产品负责的人, 必然会在自己的工作量基础上增加额外的工作量. </description>
+      <content:encoded><![CDATA[<p>最近经常和各类人高强度的讨论各种事情,
+我在读研期间和经常需要线上/线下和我的导师讨论各种问题,
+但是我也没有感受到像最近这样的疲惫感.</p>
+<p>我总结了一下, 主要原因还是在于讨论的时候没有确立讨论主题问题,
+比如说对于一个问题X的解决方案的讨论, x提出了A解决方法,
+y指出了A解决方法中存在的问题P.
+在听到了这些问题后, 如果x认为应该继续采用A方法,
+正常的做法首先应该是论证P的影响, 比如说:</p>
+<ol>
+<li>P到底是否存在?</li>
+<li>P的影响有多大? 给问题X的解决造成了多大程度的负面影响?</li>
+<li>P是否是为了解决某个问题而必然引入的新问题?</li>
+</ol>
+<p>如果P确实是一个不可忽视的问题, 然后应该讨论解决方法A的的&quot;补救&quot;措施:</p>
+<ol>
+<li>能否修改方案A以弥补问题P?</li>
+<li>是否需要重新设计方案B以同时解决问题X和问题P?</li>
+</ol>
+<p>如果沟通不是按照这个步骤结构化的进行, 那么必然产生心智负担.
+实际沟通中常常会有如下几种情况:</p>
+<ol>
+<li>如果y提出问题P后, x通过与问题本身无关的方式否认这个问题,
+比如说解决问题P不会成为我们的优势, 解决问题P也不会让别人更想用我们的产品.
+这种情况相当于直接回避问题. 如果y是个负责的人,
+必然会想方设法的说服x问题P的存在性. 另一方面这也会让y感觉到疲惫,
+因为&quot;问题P是否存在&quot;和&quot;解决问题P是否会成为优势&quot;是两个十分不相同的事情,
+所用到的知识也很有可能属于完全不同的领域, 而y在讨论前可能并没有准备好另一部分的知识.</li>
+<li>如果x确认问题P的存在后, 但是并不直面这个问题P, 而是说谁谁的a,b,c方案是用类似于A方案这么解决的, 根本没事.
+这就给y带来了心智负担: 如果y没有了解过a,b,c方案, 他还需要再去确认这些方案是否真的是如x所说,
+如果不如x所说又要和x对这些a,b,c方案的做法进行对齐.
+如果想用别人的方案来说明, 正常的做法应当是x首先尽量详细介绍一下a,b,c方案, 说服y这些方案确实是为了x而存在, 且真的与解法A存在同构.</li>
+<li>最后一种情况, 也是最折磨人的情况: 那你搞一个方案解决问题X吧, 我只能想到这种解法.
+工作中的分工是明确的, 此时如果y是个对产品负责的人, 必然会在自己的工作量基础上增加额外的工作量.</li>
+</ol>
+]]></content:encoded>
+    </item>
+    
+  </channel>
+</rss>

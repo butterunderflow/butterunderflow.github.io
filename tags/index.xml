@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Tags on Butter&#39;s space</title>
+    <link>http://butter-xz.com/tags/</link>
+    <description>Recent content in Tags on Butter&#39;s space</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <managingEditor>azhong.934@gmail.com (butterunderflow)</managingEditor>
+    <webMaster>azhong.934@gmail.com (butterunderflow)</webMaster>
+    <lastBuildDate>Tue, 05 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://butter-xz.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Type-Inference</title>
+      <link>http://butter-xz.com/tags/type-inference/</link>
+      <pubDate>Tue, 05 Sep 2023 00:00:00 +0000</pubDate>
+      <author>azhong.934@gmail.com (butterunderflow)</author>
+      <guid>http://butter-xz.com/tags/type-inference/</guid>
+      <description></description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>态度</title>
+      <link>http://butter-xz.com/tags/%E6%80%81%E5%BA%A6/</link>
+      <pubDate>Sat, 02 Sep 2023 00:00:00 +0000</pubDate>
+      <author>azhong.934@gmail.com (butterunderflow)</author>
+      <guid>http://butter-xz.com/tags/%E6%80%81%E5%BA%A6/</guid>
+      <description></description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>想法</title>
+      <link>http://butter-xz.com/tags/%E6%83%B3%E6%B3%95/</link>
+      <pubDate>Sat, 02 Sep 2023 00:00:00 +0000</pubDate>
+      <author>azhong.934@gmail.com (butterunderflow)</author>
+      <guid>http://butter-xz.com/tags/%E6%83%B3%E6%B3%95/</guid>
+      <description></description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>Abstrtact-Interpretation</title>
+      <link>http://butter-xz.com/tags/abstrtact-interpretation/</link>
+      <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate>
+      <author>azhong.934@gmail.com (butterunderflow)</author>
+      <guid>http://butter-xz.com/tags/abstrtact-interpretation/</guid>
+      <description></description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    
+    <item>
+      <title>Partial-Evaluation</title>
+      <link>http://butter-xz.com/tags/partial-evaluation/</link>
+      <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate>
+      <author>azhong.934@gmail.com (butterunderflow)</author>
+      <guid>http://butter-xz.com/tags/partial-evaluation/</guid>
+      <description></description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    
+  </channel>
+</rss>
