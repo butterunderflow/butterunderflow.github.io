@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Type-Inference on Butter&#39;s space</title>
-    <link>http://butter-xz.com/tags/type-inference/</link>
-    <description>Recent content in Type-Inference on Butter&#39;s space</description>
+    <title>Programming-Language on Butter&#39;s space</title>
+    <link>http://butter-xz.com/tags/programming-language/</link>
+    <description>Recent content in Programming-Language on Butter&#39;s space</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
     <managingEditor>azhong.934@gmail.com (butterunderflow)</managingEditor>
     <webMaster>azhong.934@gmail.com (butterunderflow)</webMaster>
-    <lastBuildDate>Tue, 05 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://butter-xz.com/tags/type-inference/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 05 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://butter-xz.com/tags/programming-language/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Local Type Inference</title>
       <link>http://butter-xz.com/articles/20230901095515-local_type_inference/</link>

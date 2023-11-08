@@ -116,8 +116,8 @@ Flow Chart Scheme0 解释 Program point Function&rsquo;s entry Flow Chart的prog
   "keywords": [
     "Partial-Evaluation", "Abstrtact-Interpretation"
   ],
-  "articleBody": "partial evaluation 的第五章 Partial Evaluation for a First-Order Functional Language 的笔记.\n前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:\n确定源程序每个程序点可以静态确定的状态(Binding Time Analysis); 依据这些静态状态, 把源程序的每个基本块\"展开\"到目标程序, 这些静态状态在目标程序中不再需要被计算, 而是直接\"嵌入\"到了目标程序中. 该目标程序被称之为\"残差程序\"(residual program). 那么对于更加复杂的语言应该如何做partial evaluation呢?\n这一章的介绍了一门比flow chart稍微强大(同时也复杂)一点的语言, 叫做Scheme0, 并展示了如何对这个语言进行partial evaluation. Scheme0仍然是采用lisp的语法, 支持全局的函数定义, 不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.\n从flow chart到Scheme0 在对Scheme0进行partial evaluation的过程中, 有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?\n所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念. 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.\nFlow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西 Global Variable Parameter Global Variable对应函数的Parameter, 也只有这里的静态值会\"嵌入\"至residual program Transition Compression Function’s Unfolding - Binding Time Analysis 通过抽象解释进行BTA 采用抽象解释的方式分析binding time, 此时抽象域为 参数 -\u003e binding time 的partial mapping, 称之为 Binding Time Environment(BTEnv). 而binding time的序也十分简单, 就是 \\(D \\ge S\\).\n对于BTA的抽象解释, 分为了两种transfer function, 两种transfer function具有不同的含义:\n如何使用BTEnv: 在一个BTEnv中, 如何根据子表达式的binding time得到该表达式的binding bime 如何更新BTEnv: 对于在binding time environment t中求值的表达式e, 对于某个函数g的调用, 这个g的实参的binding time至少为多少. 从Bottom出发(也就是把所有的参数都初始化为Static)不断的应用上面第二个transfer function更新每个函数参数的BTEnv, 直到无法更新任何函数的BTEnv, 此时称抽象解释达到了不动点(fixpoint).\n通过类型系统对BTA进行soundness check 可以把Binding Time Annotation看作是一种类型签名, 然后通过类型系统检查程序Binding Time Annotation的soundness, 类型检查规则如下:\n注意, 这里只能 检查(check) 一个BTA是否sound, 而不能 推导(infer) 出一个程序的BTA, 因为上述规则没有 为没有Binding Time Annotation的程序生成Binding Time Annotation 的能力,\n通过Binding Time Annotation提高Specialization算法的效率 先前的Binding Time都是通过一种叫binding time envionment来表示的, 这种表示在概念上很简洁, 但是因为在使用在实际运用binding time做specialization的时候是很低效的, 因为要不断的查表来看某个变量是否是static的.\n一种提高效率的技巧是先通过binding time做一次程序变换, 变换过程中为程序的每个节点加上binding time annotation来描述BTA的分析结果, 这样在specialization 的过程中就只要看这个annotation就可以了.\n如下图所示, 每个表达式都有一个 s 或 d 来表示这个表达式是static还是dynamic的, 函数的参数列表也被拆分成了static和dynamic参数两部分.\nSpecialization算法 这里和之前的flow chart是十分相似的, 由于有函数的存在, 我觉得算法的表达反而更简洁了, 直接看算法还是可以理解的, 由三个函数组成:\n一个主调函数specialize, 包含输入程序 program 和表示了入口函数的static参数的值 vs_0 . 一个 很像 尾递归的函数 complete : complete将返回对 pending 中的specialized function entry进行specialization的结果; marked 包含已经specialized program point program 表示源程序, 这个参数不会改变 一个基于静态值对表达式进行程序变换的函数 reduce , reduce 的内容很多但并其实不是特别复杂, 有一点需要注意的是, 目前 calls 只会unfold dynamic parameter list为空的函数. 而 unfold strategy 其实可以很多样. 注意: BTA只区分参数是static还是dynamic, 而具体的static value的值只有在reduce函数中才会被求出. Static Bound Variation(The Trick) 在对Scheme0进行partial evaluation的过程中也会遇到Static Bound Variation的问题:\n当一个值是依赖于动态值, 但是其取值范围是静态的, 应该如何利用这样的静态信息.\n解法也是相似的(The Trick), 对包含Static Bound Variation的程序进行一次程序变换, 对取值范围中的每一个值进行一次分支判定, 从而该Static Bound Variation就可以看作Static的, 增加了可specialize的内容.\nStatic Bound Variation是高质量的self-application的关键, 因为如果不这么做的话会丢失掉很多specialize的机会, 从而让self-application生成的程序生成十分trivial的residual program(即使从语义上来说是正确的).\n在对scheme0进行PE的过程中, 因为我们选取的specialation单元是一个函数, 因此如果不想大改现有的算法的话, 需要对程序进行一些变换才能使用the trick.\n这是不是就是这个 知乎回答 中提到的 partial evaluation friendly 的意思? Function Unfolding Strategy unfold 可以消除一些函数定义让residual program变得更简洁, 比如说下面的两种函数显然可以被unfold:\n一个函数什么也没做, 只是调用另一个函数; 一个函数只被调用过一次. 之前提到的unfolding strategy只有在 calls 的目标没有动态参数的时候会进行unfold, 然而unfold strategy的其实可以是比较复杂的. unfold strategy的最终目的还是为了提升residual程序的质量(比如说消除trivial function). 而在这个过程中, 有可能因为unfold反而降低了程序质量(产生了program duplication或computation duplication), 又有各种各样的trick. 这里就不详细介绍每个strategy了, 只介绍一些通用的unfolding strategy的基本要求:\n实参的计算存在副作用, 则需要保证这些副作用的顺序\u0026次数在unfold后的程序中不变; 要保证unfold策略能够停机, 不会无限的unfold; 尽量避免unfold过程中的program duplication和computation duplication. Related Notes/Resource ND.Jones’s book: Partial Evaluation的教材\nPartial Evaluation: Partial Evaluation的基本概念\nPartial Evaluation For Flow Chart Langauge: Flow chart语言的Partial Evaluation\nAbstract Interpretation: 抽象解释\n",
-  "wordCount" : "321",
+  "articleBody": "partial evaluation 的第五章 Partial Evaluation for a First-Order Functional Language 的笔记.\n前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:\n确定源程序每个程序点可以静态确定的状态(Binding Time Analysis); 依据这些静态状态, 把源程序的每个基本块\"展开\"到目标程序, 这些静态状态在目标程序中不再需要被计算, 而是直接\"嵌入\"到了目标程序中. 该目标程序被称之为\"残差程序\"(residual program). 那么对于更加复杂的语言应该如何做partial evaluation呢?\n这一章的介绍了一门比flow chart稍微强大(同时也复杂)一点的语言, 叫做Scheme0, 并展示了如何对这个语言进行partial evaluation. Scheme0仍然是采用lisp的语法, 支持全局的函数定义, 不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.\n从flow chart到Scheme0 在对Scheme0进行partial evaluation的过程中, 有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?\n所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念. 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.\nFlow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西 Global Variable Parameter Global Variable对应函数的Parameter, 也只有这里的静态值会\"嵌入\"至residual program Transition Compression Function’s Unfolding - Binding Time Analysis 通过抽象解释进行BTA 采用抽象解释的方式分析binding time, 此时抽象域为 参数 -\u003e binding time 的partial mapping, 称之为 Binding Time Environment(BTEnv). 而binding time的序也十分简单, 就是 \\(D \\ge S\\).\n对于BTA的抽象解释, 分为了两种transfer function, 两种transfer function具有不同的含义:\n如何使用BTEnv: 在一个BTEnv中, 如何根据子表达式的binding time得到该表达式的binding bime 如何更新BTEnv: 对于在binding time environment t中求值的表达式e, 对于某个函数g的调用, 这个g的实参的binding time至少为多少. 从Bottom出发(也就是把所有的参数都初始化为Static)不断的应用上面第二个transfer function更新每个函数参数的BTEnv, 直到无法更新任何函数的BTEnv, 此时称抽象解释达到了不动点(fixpoint).\n通过Binding Time Annotation提高Specialization算法的效率 先前的Binding Time都是通过一种叫binding time envionment来表示的, 这种表示在概念上很简洁, 但是因为在使用在实际运用binding time做specialization的时候是很低效的, 因为要不断的查表来看某个变量是否是static的.\n一种提高效率的技巧是先通过binding time做一次程序变换, 变换过程中为程序的每个节点加上binding time annotation来描述BTA的分析结果, 这样在specialization 的过程中就只要看这个annotation就可以了.\n如下图所示, 每个表达式都有一个 s 或 d 来表示这个表达式是static还是dynamic的, 函数的参数列表也被拆分成了static和dynamic参数两部分. lift 表示dynamic表达式中的static部分.\n通过类型系统对BTA进行soundness check 可以把Binding Time Annotation看作是一种类型签名, 然后通过类型系统检查程序Binding Time Annotation的soundness, 类型检查规则如下:\n注意, 这里只能 检查(check) 一个BTA是否sound, 而不能 推导(infer) 出一个程序的BTA, 因为上述规则没有 为没有Binding Time Annotation的程序生成Binding Time Annotation 的能力,\nSpecialization算法 这里和之前的flow chart是十分相似的, 由于有函数的存在, 我觉得算法的表达反而更简洁了, 直接看算法还是可以理解的, 由三个函数组成:\n一个主调函数specialize, 包含输入程序 program 和表示了入口函数的static参数的值 vs_0 . 一个 很像 尾递归的函数 complete : complete将返回对 pending 中的specialized function entry进行specialization的结果; marked 包含已经specialized program point program 表示源程序, 这个参数不会改变 一个基于静态值对表达式进行程序变换的函数 reduce , reduce 的内容很多但并其实不是特别复杂, 有一点需要注意的是, 目前 calls 只会unfold dynamic parameter list为空的函数. 而 unfold strategy 其实可以很多样. 注意: BTA只区分参数是static还是dynamic, 而具体的static value的值只有在reduce函数中才会被求出. Static Bound Variation(The Trick) 在对Scheme0进行partial evaluation的过程中也会遇到Static Bound Variation的问题:\n当一个值是依赖于动态值, 但是其取值范围是静态的, 应该如何利用这样的静态信息.\n解法也是相似的(The Trick), 对包含Static Bound Variation的程序进行一次程序变换, 对取值范围中的每一个值进行一次分支判定, 从而该Static Bound Variation就可以看作Static的, 增加了可specialize的内容.\nStatic Bound Variation是高质量的self-application的关键, 因为如果不这么做的话会丢失掉很多specialize的机会, 从而让self-application生成的程序生成十分trivial的residual program(即使从语义上来说是正确的).\n在对scheme0进行PE的过程中, 因为我们选取的specialation单元是一个函数, 因此如果不想大改现有的算法的话, 需要对程序进行一些变换才能使用the trick.\n这是不是就是这个 知乎回答 中提到的 partial evaluation friendly 的意思? Function Unfolding Strategy unfold 可以消除一些函数定义让residual program变得更简洁, 比如说下面的两种函数显然可以被unfold:\n一个函数什么也没做, 只是调用另一个函数; 一个函数只被调用过一次. 之前提到的unfolding strategy只有在 calls 的目标没有动态参数的时候会进行unfold, 然而unfold strategy的其实可以是比较复杂的. unfold strategy的最终目的还是为了提升residual程序的质量(比如说消除trivial function). 而在这个过程中, 有可能因为unfold反而降低了程序质量(产生了program duplication或computation duplication), 又有各种各样的trick. 这里就不详细介绍每个strategy了, 只介绍一些通用的unfolding strategy的基本要求:\n实参的计算存在副作用, 则需要保证这些副作用的顺序\u0026次数在unfold后的程序中不变; 要保证unfold策略能够停机, 不会无限的unfold; 尽量避免unfold过程中的program duplication和computation duplication. Related Notes/Resource ND.Jones’s book: Partial Evaluation的教材\nPartial Evaluation: Partial Evaluation的基本概念\nPartial Evaluation For Flow Chart Langauge: Flow chart语言的Partial Evaluation\nAbstract Interpretation: 抽象解释\n",
+  "wordCount" : "323",
   "inLanguage": "cn",
   "datePublished": "2023-08-30T00:00:00Z",
   "dateModified": "2023-08-30T00:00:00Z",
@@ -225,9 +225,9 @@ Flow Chart Scheme0 解释 Program point Function&rsquo;s entry Flow Chart的prog
                 <li>
                     <a href="#%e9%80%9a%e8%bf%87%e6%8a%bd%e8%b1%a1%e8%a7%a3%e9%87%8a%e8%bf%9b%e8%a1%8cbta" aria-label="通过抽象解释进行BTA">通过抽象解释进行BTA</a></li>
                 <li>
-                    <a href="#%e9%80%9a%e8%bf%87%e7%b1%bb%e5%9e%8b%e7%b3%bb%e7%bb%9f%e5%af%b9bta%e8%bf%9b%e8%a1%8csoundness-check" aria-label="通过类型系统对BTA进行soundness check">通过类型系统对BTA进行soundness check</a></li>
+                    <a href="#%e9%80%9a%e8%bf%87binding-time-annotation%e6%8f%90%e9%ab%98specialization%e7%ae%97%e6%b3%95%e7%9a%84%e6%95%88%e7%8e%87" aria-label="通过Binding Time Annotation提高Specialization算法的效率">通过Binding Time Annotation提高Specialization算法的效率</a></li>
                 <li>
-                    <a href="#%e9%80%9a%e8%bf%87binding-time-annotation%e6%8f%90%e9%ab%98specialization%e7%ae%97%e6%b3%95%e7%9a%84%e6%95%88%e7%8e%87" aria-label="通过Binding Time Annotation提高Specialization算法的效率">通过Binding Time Annotation提高Specialization算法的效率</a></li></ul>
+                    <a href="#%e9%80%9a%e8%bf%87%e7%b1%bb%e5%9e%8b%e7%b3%bb%e7%bb%9f%e5%af%b9bta%e8%bf%9b%e8%a1%8csoundness-check" aria-label="通过类型系统对BTA进行soundness check">通过类型系统对BTA进行soundness check</a></li></ul>
                 </li>
                 <li>
                     <a href="#specialization%e7%ae%97%e6%b3%95" aria-label="Specialization算法">Specialization算法</a></li>
@@ -314,6 +314,23 @@ Scheme0仍然是采用lisp的语法, 支持全局的函数定义,
 <p>从Bottom出发(也就是把所有的参数都初始化为Static)不断的应用上面第二个transfer
 function更新每个函数参数的BTEnv, 直到无法更新任何函数的BTEnv,
 此时称抽象解释达到了不动点(fixpoint).</p>
+<h3 id="通过binding-time-annotation提高specialization算法的效率">通过Binding Time Annotation提高Specialization算法的效率<a hidden class="anchor" aria-hidden="true" href="#通过binding-time-annotation提高specialization算法的效率">#</a></h3>
+<p>先前的Binding Time都是通过一种叫binding time envionment来表示的,
+这种表示在概念上很简洁, 但是因为在使用在实际运用binding time做specialization的时候是很低效的,
+因为要不断的查表来看某个变量是否是static的.</p>
+<p>一种提高效率的技巧是先通过binding time做一次程序变换,
+变换过程中为程序的每个节点加上binding time annotation来描述BTA的分析结果,
+这样在specialization 的过程中就只要看这个annotation就可以了.</p>
+<p>如下图所示, 每个表达式都有一个 <code>s</code> 或 <code>d</code> 来表示这个表达式是static还是dynamic的,
+函数的参数列表也被拆分成了static和dynamic参数两部分. <code>lift</code> 表示dynamic表达式中的static部分.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-13_screenshot.png"/> 
+</figure>
+
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-46_screenshot.png"/> 
+</figure>
+
 <h3 id="通过类型系统对bta进行soundness-check">通过类型系统对BTA进行soundness check<a hidden class="anchor" aria-hidden="true" href="#通过类型系统对bta进行soundness-check">#</a></h3>
 <p>可以把Binding Time Annotation看作是一种类型签名,
 然后通过类型系统检查程序Binding Time Annotation的soundness, 类型检查规则如下:</p>
@@ -324,23 +341,6 @@ function更新每个函数参数的BTEnv, 直到无法更新任何函数的BTEnv
 <p>注意, 这里只能 <strong>检查(check)</strong> 一个BTA是否sound,
 而不能 <strong>推导(infer)</strong> 出一个程序的BTA,
 因为上述规则没有 <strong>为没有Binding Time Annotation的程序生成Binding Time Annotation</strong> 的能力,</p>
-<h3 id="通过binding-time-annotation提高specialization算法的效率">通过Binding Time Annotation提高Specialization算法的效率<a hidden class="anchor" aria-hidden="true" href="#通过binding-time-annotation提高specialization算法的效率">#</a></h3>
-<p>先前的Binding Time都是通过一种叫binding time envionment来表示的,
-这种表示在概念上很简洁, 但是因为在使用在实际运用binding time做specialization的时候是很低效的,
-因为要不断的查表来看某个变量是否是static的.</p>
-<p>一种提高效率的技巧是先通过binding time做一次程序变换,
-变换过程中为程序的每个节点加上binding time annotation来描述BTA的分析结果,
-这样在specialization 的过程中就只要看这个annotation就可以了.</p>
-<p>如下图所示, 每个表达式都有一个 <code>s</code> 或 <code>d</code> 来表示这个表达式是static还是dynamic的,
-函数的参数列表也被拆分成了static和dynamic参数两部分.</p>
-<figure>
-    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-13_screenshot.png"/> 
-</figure>
-
-<figure>
-    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-46_screenshot.png"/> 
-</figure>
-
 <h2 id="specialization算法">Specialization算法<a hidden class="anchor" aria-hidden="true" href="#specialization算法">#</a></h2>
 <figure>
     <img loading="lazy" src="/ox-hugo/2023-09-17_17-54-03_screenshot.png"/> 

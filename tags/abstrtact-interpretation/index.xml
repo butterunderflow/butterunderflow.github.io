@@ -93,6 +93,23 @@ Scheme0仍然是采用lisp的语法, 支持全局的函数定义,
 <p>从Bottom出发(也就是把所有的参数都初始化为Static)不断的应用上面第二个transfer
 function更新每个函数参数的BTEnv, 直到无法更新任何函数的BTEnv,
 此时称抽象解释达到了不动点(fixpoint).</p>
+<h3 id="通过binding-time-annotation提高specialization算法的效率">通过Binding Time Annotation提高Specialization算法的效率</h3>
+<p>先前的Binding Time都是通过一种叫binding time envionment来表示的,
+这种表示在概念上很简洁, 但是因为在使用在实际运用binding time做specialization的时候是很低效的,
+因为要不断的查表来看某个变量是否是static的.</p>
+<p>一种提高效率的技巧是先通过binding time做一次程序变换,
+变换过程中为程序的每个节点加上binding time annotation来描述BTA的分析结果,
+这样在specialization 的过程中就只要看这个annotation就可以了.</p>
+<p>如下图所示, 每个表达式都有一个 <code>s</code> 或 <code>d</code> 来表示这个表达式是static还是dynamic的,
+函数的参数列表也被拆分成了static和dynamic参数两部分. <code>lift</code> 表示dynamic表达式中的static部分.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-13_screenshot.png"/> 
+</figure>
+
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-46_screenshot.png"/> 
+</figure>
+
 <h3 id="通过类型系统对bta进行soundness-check">通过类型系统对BTA进行soundness check</h3>
 <p>可以把Binding Time Annotation看作是一种类型签名,
 然后通过类型系统检查程序Binding Time Annotation的soundness, 类型检查规则如下:</p>
@@ -103,23 +120,6 @@ function更新每个函数参数的BTEnv, 直到无法更新任何函数的BTEnv
 <p>注意, 这里只能 <strong>检查(check)</strong> 一个BTA是否sound,
 而不能 <strong>推导(infer)</strong> 出一个程序的BTA,
 因为上述规则没有 <strong>为没有Binding Time Annotation的程序生成Binding Time Annotation</strong> 的能力,</p>
-<h3 id="通过binding-time-annotation提高specialization算法的效率">通过Binding Time Annotation提高Specialization算法的效率</h3>
-<p>先前的Binding Time都是通过一种叫binding time envionment来表示的,
-这种表示在概念上很简洁, 但是因为在使用在实际运用binding time做specialization的时候是很低效的,
-因为要不断的查表来看某个变量是否是static的.</p>
-<p>一种提高效率的技巧是先通过binding time做一次程序变换,
-变换过程中为程序的每个节点加上binding time annotation来描述BTA的分析结果,
-这样在specialization 的过程中就只要看这个annotation就可以了.</p>
-<p>如下图所示, 每个表达式都有一个 <code>s</code> 或 <code>d</code> 来表示这个表达式是static还是dynamic的,
-函数的参数列表也被拆分成了static和dynamic参数两部分.</p>
-<figure>
-    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-13_screenshot.png"/> 
-</figure>
-
-<figure>
-    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-46_screenshot.png"/> 
-</figure>
-
 <h2 id="specialization算法">Specialization算法</h2>
 <figure>
     <img loading="lazy" src="/ox-hugo/2023-09-17_17-54-03_screenshot.png"/> 

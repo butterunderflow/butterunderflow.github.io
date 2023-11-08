@@ -8,7 +8,134 @@
     <language>zh-CN</language>
     <managingEditor>azhong.934@gmail.com (butterunderflow)</managingEditor>
     <webMaster>azhong.934@gmail.com (butterunderflow)</webMaster>
-    <lastBuildDate>Wed, 30 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://butter-xz.com/tags/partial-evaluation/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 05 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://butter-xz.com/tags/partial-evaluation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Offline and Online Partial Evaluation</title>
+      <link>http://butter-xz.com/articles/20231014172106-offline_and_online_partial_evaluation/</link>
+      <pubDate>Sun, 05 Nov 2023 00:00:00 +0000</pubDate>
+      <author>azhong.934@gmail.com (butterunderflow)</author>
+      <guid>http://butter-xz.com/articles/20231014172106-offline_and_online_partial_evaluation/</guid>
+      <description>Offline 和 Online 指的是什么? Offline 和 Online 的区别在于 Binding Time Analysis 的时机: Offline 会提前把 Binding Time Analysis (BTA)做完, 并保证 binding time 的相合性, 再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize; Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.
+Figure 1: Online 方法和 Offline 方法的结构
+Figure 2: Online 方法和 Offline 方法的定义
+Online 方法的分析 OnPE 方法的类型签名: \[ Expression \rightarrow On-Env \rightarrow On-Value \]
+其中 \(On-Value\) 是 specialize 的结果, 是一个 Variant(tagged union): 如果表达式在\(On-Env\)中是 static 的, 则 specialize 到一个值(inVal); 如果表达式在\(On-Env\)中是 dynamic 的, 则 specialize 到一个表达式(inExp).</description>
+      <content:encoded><![CDATA[<h2 id="offline-和-online-指的是什么">Offline 和 Online 指的是什么?</h2>
+<p>Offline 和 Online 的区别在于 Binding Time Analysis 的时机:
+Offline 会提前把 <a href="/articles/partial-evaluation-for-flow-chart/#division">Binding Time Analysis</a> (BTA)做完, 并保证 binding time 的相合性,
+再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize;
+Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-11-05_20-22-15_screenshot.png"
+         alt="Figure 1: Online 方法和 Offline 方法的结构"/> <figcaption>
+            <p><span class="figure-number">Figure 1: </span>Online 方法和 Offline 方法的结构</p>
+        </figcaption>
+</figure>
+
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-10-20_14-07-55_screenshot.png"
+         alt="Figure 2: Online 方法和 Offline 方法的定义"/> <figcaption>
+            <p><span class="figure-number">Figure 2: </span>Online 方法和 Offline 方法的定义</p>
+        </figcaption>
+</figure>
+
+<h3 id="online-方法的分析">Online 方法的分析</h3>
+<p>OnPE 方法的类型签名:
+\[ Expression \rightarrow On-Env \rightarrow On-Value \]</p>
+<p>其中 \(On-Value\) 是 specialize 的结果, 是一个 Variant(tagged union):
+如果表达式在\(On-Env\)中是 static 的, 则 specialize 到一个值(inVal); 如果表达式在\(On-Env\)中是 dynamic 的, 则 specialize 到一个表达式(inExp).</p>
+<p>\(On-Env = Var \rightarrow On-Value\)包含了\(Expression\)中变量的绑定信息:
+如果变量是 static 的, 则 specialize 到一个值(inVal); 如果是 dynamic 的, 则 specialize 到一个表达式(inExp).</p>
+<p>为什么 OffPE 没有这样的区分呢? 因为 OffPE 在 BTA 中就分析了哪些表达式会 specialize 到 Value,
+哪些会 specialize 到 Expression, 然后通过 division 或者 binding time annotation 表示这一信息.</p>
+<p>OnPE 的含义是: 输入一个源程序的表达式(<code>Expression</code>),
+和这个表达式中的自由变量在 residual program 中对应的 specialized expression(<code>On-Env = Var -&gt; On-Value</code>),
+如果是 static 则绑定到值, 如果是 dynamic 则直接绑定到一个变量表达式.
+返回一个 specialized expression(<code>On-Value</code>).</p>
+<p>Online 方法的输入是不区分 static 和 dynamic exppression 的,
+也就是说 Online 方法直接在输入源程序上进行变换.
+因此可以在 specialize 的过程中&quot;实时的&quot;根据当前的 specialize 上下文判断输入的表达式是不是 static 的,
+因此相比与 Offline 方法, Online 方法可以把更多的表达式视作为 static(发现更多的 specialize 机会).</p>
+<h3 id="offline-方法的分析">Offline 方法的分析</h3>
+<p>而 OffPE 的类型签名:
+\[ 2Expression \rightarrow Off-Env \rightarrow Off-Value \]</p>
+<p>其中 <code>2Expression</code> 代表了经过 <a href="/articles/partial-evaluation-for-flow-chart/#division">Binding Time Analysis</a> 后得到的 annotated program.
+OffPE 的含义是: 输入一个经过标注了 Binding Time 的 <code>2Expression</code> 表达式,
+和一个 <code>Off-Env</code> 包含这个表达式中的自由变量的 Binding Time(<code>Off-Value</code> 是一个 untaged union:
+可以是 static 的 <code>Value</code>, 也可以是一个代表需要动态求值的 <code>1Expression</code>).
+返回一个 specialized expression(<code>Off-Value</code>).</p>
+<p>BTA 保证了当一个变量出现在程序中需要 static value 的位置的时候,
+<code>Off-Env</code> 中的 lookup result 一定是一个 value,
+所以在 OffPE 中无需再对 OffPE 的返回值的类型进行判断, 直接把返回值放在需要它的位置就好了.</p>
+<h2 id="为什么-online-partial-evaluation-对-self-application-不友好">为什么 online partial evaluation 对 self application 不友好?</h2>
+<p>OnPE 的类型签名:
+\[ Expression \rightarrow On-Env \rightarrow On-Value \]</p>
+<p>光从类型上来看, OnPE 的类型和二村映射的类型是完全匹配的,
+但是在通过 OnPE 实现第二二村映射生成 compiler 的表现却并不好, 书中给出了一个例子说明这一点:</p>
+<p><code>(cons(car names)(car values))</code> 是解释器中的表达式, <code>names</code> 和 <code>value</code> 都是解释器中的变量.
+在应用把 <code>OnPE[OnPE, int]</code> 的后, 会得到如下程序片段,</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-11-05_16-27-17_screenshot.png"/> 
+</figure>
+
+<p>在 \(OnPE(int, prog)\) 的时候, \(lookup [names] rho\) 的返回值总是一个包含 prog 中的表达式的 <code>Value</code>,
+但是在上面 \(OnPE(OnPE, int)\) 生成的程序中, 其对 \(lookup_{names} rho\) 的返回值也进行了判断.</p>
+<p>从直觉上, 这样的&quot;反常&quot;现象可以由两方面来解释:</p>
+<ol>
+<li>生成的 compiler 会从 OnPE 继承一些行为:
+OnPE 需要处理所有可能的 subject program 中的表达式,
+并判断表达式在 On-Env 下是 static 还是 dynamic,
+因此使用 OnPE 的返回值时需要根据返回值是 Value 还是 Expr 分别处理;
+但是 \(OnPE(int, prog)\) 的时候, 有一些表达式一定是 Value,
+比如说\(lookup [names] rho\), 但在 self application 的时候没有利用这一信息;</li>
+<li><code>OnPE</code> 具有通用性(generality), 其能力对于实现二村映射来说&quot;过剩&quot;了:
+OnPE 对输入的类型没有任何限制, 对 <strong><strong>任意</strong></strong> 程序都可以specialize到其 <strong><strong>任意</strong></strong> 输入.
+OnPE 的输入 On-Env 中包含了 subject program 中的变量到 <code>OnVal</code> 的映射,
+而 <code>OnVal = Value | Expr</code> 中的 Value 可以是任意类型的 program text 也可以是一般的数据,
+但是在几个二村映射中 Env 中所绑定的都是 program text,
+(比如说 mix(int, prog), mix(mix, int) 的时候, On-Env 中的 Value 绑定到的就分别是源程序和解释器程序的 program text).
+而 OnPE 中没有对这种&quot;程序的输入本身是程序&quot;情况做特殊的考虑:&ldquo;不管 subject program 的获得哪种输入, 我都把它们嵌入到 subject program 中&rdquo;.
+也就是说, 我们甚至可以把 OnPE 应用到程序的输入, 生成一个没有什么实际意义的 <code>crazy</code> 程序,
+这个 <code>crazy</code> 的语义是: 接受源程序然后得到源程序的运行结果.
+而这样的一般性也被带到了由 <code>OnPE [OnPE, int]</code> 生成的 compiler 中: 在 <code>OnPE [OnPE, int]</code> 的输入 On-Env 中,
+既可以绑定源程序片段, 从而得到编译器; 也可以绑定源程序的输入, 从而得到 <code>crazy</code>.</li>
+</ol>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-11-05_16-16-17_screenshot.png"
+         alt="Figure 3: crazy 程序的语义"/> <figcaption>
+            <p><span class="figure-number">Figure 3: </span>crazy 程序的语义</p>
+        </figcaption>
+</figure>
+
+<h3 id="通过消除一般性以更好的-self-applicatoin">通过消除一般性以更好的 self-Applicatoin</h3>
+<p>刚刚提到, OnPE 是具有通用性(generality)的: 想在 On-Env 中绑定什么都行, 只要它能作为 subject program 的输入.
+但是在二村映射中, 这样的一般性是不必要的, 因为静态输入的参数已经确定了&ndash;待编译的源程序.</p>
+<p>在 \(OnPE_1[OnPE_2, int]\) 的时候, \(OnPE_1\) 的&quot;眼中&quot; \(OnPE_2\) 是一个一般的程序,
+\(int\) 是这个一般程序的输入, 而 \(OnPE_2\) 的另一个输入 \(source\) 对于 \(OnPE_1\) 是不可用的,
+因此 \(OnPE_1\) 没办法发现在计算 \(OnPE_2[int, source]\) 的时候一些表达式是 static 的.</p>
+<p>Offline Partial Evaluator 在 self-application 上的优势正是通过消除 Online Partial Evaluator 的一般性获得的:
+Offline PE 会首先通过 <a href="/articles/partial-evaluation-for-flow-chart/#division">Binding Time Analysis</a> 得到一个 annotated interpreter: \(int^{ann}\).</p>
+<p>首先分析一下 \(OffPE_2[int^{ann}, source]\) 的时候的计算过程:
+\(OffPE_2\) 在判断 \(int^{ann}\) 中的表达式应该是 static 还是 dynamic 不需要管另一个输入 \(source\),
+因为一切都在 \(int^{ann}\) 中标定好了.</p>
+<p>然后就可以对 \(OffPE_2\) 进行标定了:
+当 \(OffPE_2\) 在已知 \(int^{ann}\) 输入的时候可以的确定的表达式就可以标定为 static 了,
+标定后的 \(OffPE_2\) 可以称之为 \(OffPE^{ann}\).</p>
+<p>再来分析 \(OffPE_1 [OffPE^{ann}, int^{ann}]\) 的计算过程:
+在这个 \(OffPE^{ann}\) 中保留了在计算 \(OffPE_2[int^{ann}, source]\) 的时候,
+\(OffPE_2\) 中&quot;哪些表达式是 static (比如说源程序 source)&ldquo;这一信息,
+从而 \(OffPE_1\) 可以利用这些信息决定 \(OffPE^{ann}\) 要 specialize 成什么样.
+所以如果在计算 \(OffPE_2[int^{ann}, source]\) 的时候某个 \(OffPE_2\) 中的表达式被标定为 static 的,
+就能保证 \(OffPE_1 [OffPE^{ann}, int^{ann}]\) 后生成的程序会利用这个static信息, 不会产生多余的计算.</p>
+<p>另一方面, 相比于 OnPE, OffPE 还限制了 self-application 所生成的 compiler 的输入:
+哪些东西是 static, 哪些东西是 dynamic 需要与 \(int^{ann}\) 中的 annotation 保持一致.</p>
+<p>具体来说, 在 <code>OffPE(int, prog)</code> 的 Off-Env 中:
+待编译的源程序片段是 static 的输入, 只能作为 Value 绑定到静态变量; 而源程序输入是 dynamic 的, 只能作为 Expression 绑定到动态变量.</p>
+<h2 id="related">Related</h2>
+<p><a href="/articles/partial-evaluation/">Partial Evaluation</a></p>
+]]></content:encoded>
+    </item>
+    
     <item>
       <title>Partial Evaluation for Functional Language</title>
       <link>http://butter-xz.com/articles/partial-evaluation-for-functional/</link>
@@ -93,6 +220,23 @@ Scheme0仍然是采用lisp的语法, 支持全局的函数定义,
 <p>从Bottom出发(也就是把所有的参数都初始化为Static)不断的应用上面第二个transfer
 function更新每个函数参数的BTEnv, 直到无法更新任何函数的BTEnv,
 此时称抽象解释达到了不动点(fixpoint).</p>
+<h3 id="通过binding-time-annotation提高specialization算法的效率">通过Binding Time Annotation提高Specialization算法的效率</h3>
+<p>先前的Binding Time都是通过一种叫binding time envionment来表示的,
+这种表示在概念上很简洁, 但是因为在使用在实际运用binding time做specialization的时候是很低效的,
+因为要不断的查表来看某个变量是否是static的.</p>
+<p>一种提高效率的技巧是先通过binding time做一次程序变换,
+变换过程中为程序的每个节点加上binding time annotation来描述BTA的分析结果,
+这样在specialization 的过程中就只要看这个annotation就可以了.</p>
+<p>如下图所示, 每个表达式都有一个 <code>s</code> 或 <code>d</code> 来表示这个表达式是static还是dynamic的,
+函数的参数列表也被拆分成了static和dynamic参数两部分. <code>lift</code> 表示dynamic表达式中的static部分.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-13_screenshot.png"/> 
+</figure>
+
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-46_screenshot.png"/> 
+</figure>
+
 <h3 id="通过类型系统对bta进行soundness-check">通过类型系统对BTA进行soundness check</h3>
 <p>可以把Binding Time Annotation看作是一种类型签名,
 然后通过类型系统检查程序Binding Time Annotation的soundness, 类型检查规则如下:</p>
@@ -103,23 +247,6 @@ function更新每个函数参数的BTEnv, 直到无法更新任何函数的BTEnv
 <p>注意, 这里只能 <strong>检查(check)</strong> 一个BTA是否sound,
 而不能 <strong>推导(infer)</strong> 出一个程序的BTA,
 因为上述规则没有 <strong>为没有Binding Time Annotation的程序生成Binding Time Annotation</strong> 的能力,</p>
-<h3 id="通过binding-time-annotation提高specialization算法的效率">通过Binding Time Annotation提高Specialization算法的效率</h3>
-<p>先前的Binding Time都是通过一种叫binding time envionment来表示的,
-这种表示在概念上很简洁, 但是因为在使用在实际运用binding time做specialization的时候是很低效的,
-因为要不断的查表来看某个变量是否是static的.</p>
-<p>一种提高效率的技巧是先通过binding time做一次程序变换,
-变换过程中为程序的每个节点加上binding time annotation来描述BTA的分析结果,
-这样在specialization 的过程中就只要看这个annotation就可以了.</p>
-<p>如下图所示, 每个表达式都有一个 <code>s</code> 或 <code>d</code> 来表示这个表达式是static还是dynamic的,
-函数的参数列表也被拆分成了static和dynamic参数两部分.</p>
-<figure>
-    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-13_screenshot.png"/> 
-</figure>
-
-<figure>
-    <img loading="lazy" src="/ox-hugo/2023-09-17_17-47-46_screenshot.png"/> 
-</figure>
-
 <h2 id="specialization算法">Specialization算法</h2>
 <figure>
     <img loading="lazy" src="/ox-hugo/2023-09-17_17-54-03_screenshot.png"/> 
@@ -233,7 +360,7 @@ program point 对应的 basic block 根据不同的 static state
 而不再通过subject program的属性来表达.</p>
 <h2 id="division">division</h2>
 <p><em>division</em> 指的是在做partial evaluation之前, 先把程序变量做一个Static和Dynamic的区分,
-区分要满足 &ldquo;相合性(congruence)&rdquo;</p>
+区分要满足 &ldquo;相合性(congruence)&rdquo;, 因此这个过程也叫/Binding Time Analysis/, 分析一个value的&quot;绑定时机&rdquo;.</p>
 <p><em>division</em> 的结果并不一定是唯一的, 只要满足以下 congruent 条件就行:</p>
 <blockquote>
 <p>Any variable that depends on a dynamic variable must itself be dynamic.</p>
@@ -316,7 +443,7 @@ Live and Dead Division是每个program point包含的static value也可以不同
 </figure>
 
 <p>虽然上面的所有事情这个mix程序都做了, 只是有一些操作是隐式的.
-比如说transition compression, 没有一个过程叫做&quot;transition compression&rdquo;,
+比如说transition compression, 没有一个过程叫做&quot;transition compression&quot;,
 当遇到 <code>goto l</code> 的时候, 直接把要插入的basic block更新成 <code>l</code> 对应的基本块就可以了.</p>
 <h3 id="第一二村映射">第一二村映射</h3>
 <p>如 <a href="/articles/partial-evaluation/">Partial Evaluation</a> 中的描述, 第一二村映射指的是将一个 interpreter 在 interpreter 的输入程序上进行specialize, 将会得到一个可执行程序.</p>
@@ -422,7 +549,7 @@ y = case t of
 如果是解释器的话, 那么一个解释器可以通过下图描述:
 +--------+ P --&amp;gt; | interp | --&amp;gt; out input --&amp;gt; | | +--------+ 如果有了一个interpreter, 有了一个针对解释器的源程序输入的specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的specializer.
 图1:
-+----+ interp --&amp;gt; | PE | --&amp;gt; interpP P --&amp;gt; | | +----+ 那么也可以看到, 这个specialzer本身也是多参数的函数, 那么如果我们已经有了一个specialzer, 如果再把这个specializer对interp参数进行specialization, 我们就可以得到一个编译器(图中的PEinterp).
++----+ interp --&amp;gt; | PE | --&amp;gt; interpP P --&amp;gt; | | +----+ 那么也可以看到, 这个specialzer本身也是多参数的函数, 如果我们已经有了一个specialzer, 如果再把这个specializer对interp参数进行specialization, 我们就可以得到一个编译器(图中的PEinterp).
 图2:
 +----+ PE --&amp;gt; | PE | --&amp;gt; PEinterp interp --&amp;gt; | | +----+ 这里的PE又是一个多参数的函数, 我们又可以对其进行Specialization.</description>
       <content:encoded><![CDATA[<p><em>Partial Evaluation</em> 的第一章 <em>Introduction</em> 的笔记. 从抽象上来看,
@@ -446,7 +573,7 @@ Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先�
 </span></span><span style="display:flex;"><span>     P --&gt; |    |
 </span></span><span style="display:flex;"><span>           +----+
 </span></span></code></pre></div><p>那么也可以看到, 这个specialzer本身也是多参数的函数,
-那么如果我们已经有了一个specialzer,
+如果我们已经有了一个specialzer,
 如果再把这个specializer对interp参数进行specialization,
 我们就可以得到一个编译器(图中的PEinterp).</p>
 <p>图2:</p>
@@ -465,6 +592,7 @@ Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先�
 其中一个程序 <code>in1</code> 是另外一个程序 <code>in2</code> 的输入;
 PE的功能都是为 <code>in2</code> 生成一个特化在 <code>in1</code> 的版本,
 这个特化的版本往往会比 <code>in1 |&gt; in2</code> 更加高效.</p>
+<p>上面的specialize的过程有时候也叫stage: 通过specialize把原来的程序分成了好几步.</p>
 <p>有个关键的概念需要区分: program text和running program</p>
 <p>Partial Evaluation和Partial Application还是很不一样的 在Partial
 Application中, 得到的是一个同一个语言的函数; 而partial evaluation中,
@@ -476,10 +604,7 @@ text只是程序的表示, 而运行起来的程序才能抽象成一个函数.
 <p>比如说, 我们说PE的输入是程序,
 但是图中的PE的类型可以看作 <code>L</code> (因为PE是程序的表示),
 通过语义函数变成类型为 <code>L -&gt; L -&gt; L</code> 的函数, 其中 <code>L</code> 是程序表示的类型.</p>
-<p>然后粗略的读了一下第二章, 主要是一些概念的介绍.
-从集合论的角度介绍了一下类型还有一些类型上的运算(sum, product
-type),以及一些类型推导的简要介绍.
-我觉得有一个关键是强调了 <code>program</code> 和 <code>function</code> 之间的区别:
+<p>有一个关键是强调了 <code>program</code> 和 <code>function</code> 之间的区别:
 program是一个syntactic world里的东西, 比如说符号, 表达式,
 function是数学意义上的东西.</p>
 ]]></content:encoded>
