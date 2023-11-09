@@ -3,24 +3,18 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://butter-xz.com/</loc>
-    <lastmod>2023-11-05T00:00:00+00:00</lastmod>
+    <lastmod>2023-09-05T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://butter-xz.com/articles/</loc>
-    <lastmod>2023-11-05T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://butter-xz.com/articles/20231014172106-offline_and_online_partial_evaluation/</loc>
-    <lastmod>2023-11-05T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://butter-xz.com/tags/partial-evaluation/</loc>
-    <lastmod>2023-11-05T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://butter-xz.com/tags/</loc>
-    <lastmod>2023-11-05T00:00:00+00:00</lastmod>
+    <lastmod>2023-09-05T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://butter-xz.com/articles/20230901095515-local_type_inference/</loc>
     <lastmod>2023-09-05T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://butter-xz.com/tags/programming-language/</loc>
+    <lastmod>2023-09-05T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://butter-xz.com/tags/</loc>
     <lastmod>2023-09-05T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://butter-xz.com/tags/type-inference/</loc>
@@ -39,6 +33,9 @@
     <lastmod>2023-08-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://butter-xz.com/articles/partial-evaluation-for-functional/</loc>
+    <lastmod>2023-08-30T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://butter-xz.com/tags/partial-evaluation/</loc>
     <lastmod>2023-08-30T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://butter-xz.com/articles/partial-evaluation-for-flow-chart/</loc>

@@ -133,22 +133,6 @@
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
-    <h2>Offline and Online Partial Evaluation
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>Offline 和 Online 指的是什么? Offline 和 Online 的区别在于 Binding Time Analysis 的时机: Offline 会提前把 Binding Time Analysis (BTA)做完, 并保证 binding time 的相合性, 再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize; Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.
-Figure 1: Online 方法和 Offline 方法的结构
-Figure 2: Online 方法和 Offline 方法的定义
-Online 方法的分析 OnPE 方法的类型签名: \[ Expression \rightarrow On-Env \rightarrow On-Value \]
-其中 \(On-Value\) 是 specialize 的结果, 是一个 Variant(tagged union): 如果表达式在\(On-Env\)中是 static 的, 则 specialize 到一个值(inVal); 如果表达式在\(On-Env\)中是 dynamic 的, 则 specialize 到一个表达式(inExp)....</p>
-  </div>
-  <footer class="entry-footer"><span title='2023-11-05 00:00:00 +0000 UTC'>November 5, 2023</span>&nbsp;·&nbsp;butterunderflow</footer>
-  <a class="entry-link" aria-label="post link to Offline and Online Partial Evaluation" href="http://butter-xz.com/articles/20231014172106-offline_and_online_partial_evaluation/"></a>
-</article>
-
-<article class="post-entry tag-entry"> 
-  <header class="entry-header">
     <h2>Partial Evaluation for Functional Language
     </h2>
   </header>
