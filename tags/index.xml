@@ -8,7 +8,17 @@
     <language>zh-CN</language>
     <managingEditor>azhong.934@gmail.com (butterunderflow)</managingEditor>
     <webMaster>azhong.934@gmail.com (butterunderflow)</webMaster>
-    <lastBuildDate>Tue, 05 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://butter-xz.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 05 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://butter-xz.com/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Partial-Evaluation</title>
+      <link>http://butter-xz.com/tags/partial-evaluation/</link>
+      <pubDate>Sun, 05 Nov 2023 00:00:00 +0000</pubDate>
+      <author>azhong.934@gmail.com (butterunderflow)</author>
+      <guid>http://butter-xz.com/tags/partial-evaluation/</guid>
+      <description></description>
+      <content:encoded><![CDATA[]]></content:encoded>
+    </item>
+    
     <item>
       <title>Programming-Language</title>
       <link>http://butter-xz.com/tags/programming-language/</link>
@@ -55,16 +65,6 @@
       <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/tags/abstrtact-interpretation/</guid>
-      <description></description>
-      <content:encoded><![CDATA[]]></content:encoded>
-    </item>
-    
-    <item>
-      <title>Partial-Evaluation</title>
-      <link>http://butter-xz.com/tags/partial-evaluation/</link>
-      <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate>
-      <author>azhong.934@gmail.com (butterunderflow)</author>
-      <guid>http://butter-xz.com/tags/partial-evaluation/</guid>
       <description></description>
       <content:encoded><![CDATA[]]></content:encoded>
     </item>

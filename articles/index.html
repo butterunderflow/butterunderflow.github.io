@@ -148,6 +148,22 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
+    <h2>Offline and Online Partial Evaluation
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Offline 和 Online 指的是什么? Offline 和 Online 的区别在于 Binding Time Analysis 的时机: Offline 会提前把 Binding Time Analysis (BTA)做完, 并保证 binding time 的相合性, 再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize; Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.
+Figure 1: Online 方法和 Offline 方法的结构
+Figure 2: Online 方法和 Offline 方法的定义
+Online 方法的分析 OnPE 方法的类型签名: \[ Expression \rightarrow On-Env \rightarrow On-Value \]
+其中 \(On-Value\) 是 specialize 的结果, 是一个 Variant(tagged union): 如果表达式在\(On-Env\)中是 static 的, 则 specialize 到一个值(inVal); 如果表达式在\(On-Env\)中是 dynamic 的, 则 specialize 到一个表达式(inExp)....</p>
+  </div>
+  <footer class="entry-footer">&lt;span title=&#39;2023-11-05 00:00:00 &#43;0000 UTC&#39;&gt;November 5, 2023&lt;/span&gt;&amp;nbsp;·&amp;nbsp;butterunderflow</footer>
+  <a class="entry-link" aria-label="post link to Offline and Online Partial Evaluation" href="http://butter-xz.com/articles/20231014172106-offline_and_online_partial_evaluation/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
     <h2>Local Type Inference
     </h2>
   </header>
@@ -164,7 +180,7 @@
 通过Local Type Argument Synthesis可以解决第一个问题, 通过双向类型检查(Bidirectional Type Checking)可以解决问题2, 3.
 语言定义 先介绍了一个用于展示的简单的语言, 是沿用的一个叫 (Kernel F≤_) 的语言, 这个语言支持subtype, 参数化多态, 匿名函数, 局部绑定....</p>
   </div>
-  <footer class="entry-footer"><span title='2023-09-05 00:00:00 +0000 UTC'>September 5, 2023</span>&nbsp;·&nbsp;butterunderflow</footer>
+  <footer class="entry-footer">&lt;span title=&#39;2023-09-05 00:00:00 &#43;0000 UTC&#39;&gt;September 5, 2023&lt;/span&gt;&amp;nbsp;·&amp;nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Local Type Inference" href="http://butter-xz.com/articles/20230901095515-local_type_inference/"></a>
 </article>
 
@@ -180,7 +196,7 @@ P到底是否存在? P的影响有多大? 给问题X的解决造成了多大程�
 能否修改方案A以弥补问题P? 是否需要重新设计方案B以同时解决问题X和问题P? 如果沟通不是按照这个步骤结构化的进行, 那么必然产生心智负担. 实际沟通中常常会有如下几种情况:
 如果y提出问题P后, x通过与问题本身无关的方式否认这个问题, 比如说解决问题P不会成为我们的优势, 解决问题P也不会让别人更想用我们的产品. 这种情况相当于直接回避问题. 如果y是个负责的人, 必然会想方设法的说服x问题P的存在性. 另一方面这也会让y感觉到疲惫, 因为&#34;问题P是否存在&#34;和&#34;解决问题P是否会成为优势&#34;是两个十分不相同的事情, 所用到的知识也很有可能属于完全不同的领域, 而y在讨论前可能并没有准备好另一部分的知识. 如果x确认问题P的存在后, 但是并不直面这个问题P, 而是说谁谁的a,b,c方案是用类似于A方案这么解决的, 根本没事. 这就给y带来了心智负担: 如果y没有了解过a,b,c方案, 他还需要再去确认这些方案是否真的是如x所说, 如果不如x所说又要和x对这些a,b,c方案的做法进行对齐. 如果想用别人的方案来说明, 正常的做法应当是x首先尽量详细介绍一下a,b,c方案, 说服y这些方案确实是为了x而存在, 且真的与解法A存在同构. 最后一种情况, 也是最折磨人的情况: 那你搞一个方案解决问题X吧, 我只能想到这种解法. 工作中的分工是明确的, 此时如果y是个对产品负责的人, 必然会在自己的工作量基础上增加额外的工作量. </p>
   </div>
-  <footer class="entry-footer"><span title='2023-09-02 00:00:00 +0000 UTC'>September 2, 2023</span>&nbsp;·&nbsp;butterunderflow</footer>
+  <footer class="entry-footer">&lt;span title=&#39;2023-09-02 00:00:00 &#43;0000 UTC&#39;&gt;September 2, 2023&lt;/span&gt;&amp;nbsp;·&amp;nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to 讨论主题的重要性" href="http://butter-xz.com/articles/20230825121425-disscuss-on-mainline/"></a>
 </article>
 
@@ -198,7 +214,7 @@ P到底是否存在? P的影响有多大? 给问题X的解决造成了多大程�
 所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念. 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.
 Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西 Global Variable Parameter Global Variable对应函数的Parameter, 也只有这里的静态值会&#34;嵌入&#34;至residual program Transition Compression Function’s Unfolding - Binding Time Analysis 通过抽象解释进行BTA 采用抽象解释的方式分析binding time, 此时抽象域为 参数 -&gt; binding time 的partial mapping, 称之为 Binding Time Environment(BTEnv)....</p>
   </div>
-  <footer class="entry-footer"><span title='2023-08-30 00:00:00 +0000 UTC'>August 30, 2023</span>&nbsp;·&nbsp;butterunderflow</footer>
+  <footer class="entry-footer">&lt;span title=&#39;2023-08-30 00:00:00 &#43;0000 UTC&#39;&gt;August 30, 2023&lt;/span&gt;&amp;nbsp;·&amp;nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Partial Evaluation for Functional Language" href="http://butter-xz.com/articles/partial-evaluation-for-functional/"></a>
 </article>
 
@@ -214,7 +230,7 @@ Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program 
 程序的状态可能有很多, 但大部分的语言都可以通过 变量 - 值 的映射来表示. 其中对于每个 program point, 变量的值可以分为 static 和 dynamic 分为两类. static 表示变量的值可以在静态确定, 而 dynamic 的值只能在运行时确定. 将每个 program point 的变量区分为 static 和 dynamic 的过程叫做 division.
 基于static程序状态做partial evaluation 这就引出了一个概念叫做 poly, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大程度地确认多少程序点的 static 变量? 这个问题的求解结果可以通过一个由 程序点-static value 序对组成的集合来表示 poly. 这些 poly 就对应着residual program (specialized program) 的 program point....</p>
   </div>
-  <footer class="entry-footer"><span title='2022-11-19 00:00:00 +0000 UTC'>November 19, 2022</span>&nbsp;·&nbsp;butterunderflow</footer>
+  <footer class="entry-footer">&lt;span title=&#39;2022-11-19 00:00:00 &#43;0000 UTC&#39;&gt;November 19, 2022&lt;/span&gt;&amp;nbsp;·&amp;nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Partial Evaluation For Flow Chart Langauge" href="http://butter-xz.com/articles/partial-evaluation-for-flow-chart/"></a>
 </article>
 
@@ -236,7 +252,7 @@ Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program 
 读取环境中对应变量名的值 可以通过case by case的分析各种语义的对应步数得到一个大致的倍数, 从而估算解释的开销(overhead).
 刚刚提到了开销, 这个开销实际上是不可以忽略的, 首先在真实世界的编程语言中, 这个开销的倍数可能非常大(比如说可能是几十倍); 另一方面, 当语言的实现涉及到多层中间表示的时候, 解释也会有多层, 那么这个开销的倍数也会相乘, 最终开销也会呈指数增长. 将源程序直接编译为可执行的程序(比如说机器指令)就是减少在开销上做乘法的一种思路(减少解释的开销). 这个过程也叫 lowering, 把更高层的表示 lowering 到底层的表示....</p>
   </div>
-  <footer class="entry-footer"><span title='2022-11-08 00:00:00 +0000 UTC'>November 8, 2022</span>&nbsp;·&nbsp;butterunderflow</footer>
+  <footer class="entry-footer">&lt;span title=&#39;2022-11-08 00:00:00 &#43;0000 UTC&#39;&gt;November 8, 2022&lt;/span&gt;&amp;nbsp;·&amp;nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Language and Interpreters" href="http://butter-xz.com/articles/language-and-interpreters/"></a>
 </article>
 
@@ -254,7 +270,7 @@ Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program 
 图2:
 &#43;----&#43; PE --&gt; | PE | --&gt; PEinterp interp --&gt; | | &#43;----&#43; 这里的PE又是一个多参数的函数, 我们又可以对其进行Specialization....</p>
   </div>
-  <footer class="entry-footer"><span title='2022-10-22 00:00:00 +0000 UTC'>October 22, 2022</span>&nbsp;·&nbsp;butterunderflow</footer>
+  <footer class="entry-footer">&lt;span title=&#39;2022-10-22 00:00:00 &#43;0000 UTC&#39;&gt;October 22, 2022&lt;/span&gt;&amp;nbsp;·&amp;nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Partial Evaluation" href="http://butter-xz.com/articles/partial-evaluation/"></a>
 </article>
     </main>
