@@ -15,12 +15,13 @@
       <pubDate>Sun, 05 Nov 2023 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/20231014172106-offline_and_online_partial_evaluation/</guid>
-      <description>Offline 和 Online 指的是什么? Offline 和 Online 的区别在于 Binding Time Analysis 的时机: Offline 会提前把 Binding Time Analysis (BTA)做完, 并保证 binding time 的相合性, 再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize; Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.
+      <description>关于 [1] 的第7章 Offline and Online Partial Evaluation 的笔记
+Offline 和 Online 指的是什么? Offline 和 Online 的区别在于 Binding Time Analysis 的时机: Offline 会提前把 Binding Time Analysis (BTA)做完, 并保证 binding time 的相合性, 再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize; Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.
 Figure 1: Online 方法和 Offline 方法的结构
 Figure 2: Online 方法和 Offline 方法的定义
-Online 方法的分析 OnPE 方法的类型签名: \[ Expression \rightarrow On-Env \rightarrow On-Value \]
-其中 \(On-Value\) 是 specialize 的结果, 是一个 Variant(tagged union): 如果表达式在\(On-Env\)中是 static 的, 则 specialize 到一个值(inVal); 如果表达式在\(On-Env\)中是 dynamic 的, 则 specialize 到一个表达式(inExp).</description>
-      <content:encoded><![CDATA[<h2 id="offline-和-online-指的是什么">Offline 和 Online 指的是什么?</h2>
+Online 方法的分析 OnPE 方法的类型签名: \[ Expression \rightarrow On-Env \rightarrow On-Value \]</description>
+      <content:encoded><![CDATA[<p>关于 <a href="#citeproc_bib_item_1">[1]</a> 的第7章 <em>Offline and Online Partial Evaluation</em> 的笔记</p>
+<h2 id="offline-和-online-指的是什么">Offline 和 Online 指的是什么?</h2>
 <p>Offline 和 Online 的区别在于 Binding Time Analysis 的时机:
 Offline 会提前把 <a href="/articles/partial-evaluation-for-flow-chart/#division">Binding Time Analysis</a> (BTA)做完, 并保证 binding time 的相合性,
 再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize;
@@ -152,6 +153,13 @@ Offline PE 会首先通过 <a href="/articles/partial-evaluation-for-flow-chart/
 待编译的源程序片段是 static 的输入, 只能作为 Value 绑定到静态变量; 而源程序输入是 dynamic 的, 只能作为 Expression 绑定到动态变量.</p>
 <h2 id="related">Related</h2>
 <p><a href="/articles/partial-evaluation/">Partial Evaluation</a></p>
+<h2 id="references">References</h2>
+<style>.csl-left-margin{float: left; padding-right: 0em;}
+ .csl-right-inline{margin: 0 0 0 1em;}</style><div class="csl-bib-body">
+  <div class="csl-entry"><a id="citeproc_bib_item_1"></a>
+    <div class="csl-left-margin">[1]</div><div class="csl-right-inline">N. D. Jones, C. K. Gomard, and P. Sestoft, <i>Partial Evaluation and Automatic Program Generation</i>. USA: Prentice-Hall, Inc., 1993.</div>
+  </div>
+</div>
 ]]></content:encoded>
     </item>
     
