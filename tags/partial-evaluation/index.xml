@@ -8,7 +8,303 @@
     <language>zh-CN</language>
     <managingEditor>azhong.934@gmail.com (butterunderflow)</managingEditor>
     <webMaster>azhong.934@gmail.com (butterunderflow)</webMaster>
-    <lastBuildDate>Sun, 05 Nov 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://butter-xz.com/tags/partial-evaluation/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 02 Mar 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://butter-xz.com/tags/partial-evaluation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Partial Evaluation for Lambda Calculus</title>
+      <link>http://butter-xz.com/articles/20231111153704-partial_evaluation_for_lambda_calculus/</link>
+      <pubDate>Sat, 02 Mar 2024 00:00:00 +0000</pubDate>
+      <author>azhong.934@gmail.com (butterunderflow)</author>
+      <guid>http://butter-xz.com/articles/20231111153704-partial_evaluation_for_lambda_calculus/</guid>
+      <description>这是 [1] 第 8 章 Partial Evaluation for Lambda Calculus 的笔记.
+在 Partial Evaluation for Functional Language 和 Partial Evaluation For Flow Chart Langauge 中, partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.
+但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数, 那么考虑一个简单的场景, 返回一个常量的函数, 应该标记为是 Static 还是 Dynamic ? 比如: (lambda (x) 1)
+如果标记为 S, 那这个函数在 residual program 中对应什么? 似乎也只能是 (lambda (x) 1) 如果标记为 D, 为什么一个这么简单的函数会返回一个常量的函数需要标记为 D? 是不是对于 lambda 表达式 partial evaluation 都无能为力? 我会有这样的疑惑主要有两个原因:</description>
+      <content:encoded><![CDATA[<p>这是 <a href="#citeproc_bib_item_1">[1]</a> 第 8 章 <em>Partial Evaluation for Lambda Calculus</em> 的笔记.</p>
+<p>在 <a href="/articles/partial-evaluation-for-functional/">Partial Evaluation for Functional Language</a> 和 <a href="/articles/partial-evaluation-for-flow-chart/">Partial Evaluation For Flow Chart Langauge</a> 中,
+partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.</p>
+<p>但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数,
+那么考虑一个简单的场景, 返回一个常量的函数, 应该标记为是 Static 还是 Dynamic ?
+比如: <code>(lambda (x) 1)</code></p>
+<ol>
+<li>如果标记为 S, 那这个函数在 residual program 中对应什么? 似乎也只能是 <code>(lambda (x) 1)</code></li>
+<li>如果标记为 D, 为什么一个这么简单的函数会返回一个常量的函数需要标记为 D?
+是不是对于 lambda 表达式 partial evaluation 都无能为力?</li>
+</ol>
+<p>我会有这样的疑惑主要有两个原因:</p>
+<ol>
+<li>之前提到的 S 和 D 这样简单的 annotation 的标记对于简单的语言是足够的, 但是对于存在高阶函数的语言,
+需要更丰富的 binding time annotation 才能描述&quot;编译期函数&quot;和&quot;运行时函数&quot;;</li>
+<li>标记为 D 和 S 的表达式都不一定会出现在最终的 residual program 中, 在有高阶函数的语言,
+residual program 长什么样主要看 partial evaluation 的结果,
+之前的 &ldquo;Dynamic 表达式作为程序骨架, Static 表达式求值后嵌入程序骨架&rdquo; 的基本直觉失效了.</li>
+</ol>
+<p>本文将介绍 lambda calculus 的 partial evaluation.
+首先将定义一个简单的 lambda calculus, 然后介绍它的 binding time annotation 和 annotated version,
+最后再分别展示它的 Binding Time Analysis(由 lambda calculus 得到 Annotated Program)和
+具体的 staging(由 annotated program 得到 residual program)算法.</p>
+<ul>
+<li>本文所有代码都将用 OCaml 演示</li>
+<li>有时候 Lambda Calulus 会被简写成 LC, Partial Evaluation 会被简写为 PE,
+Binding Time Analysis 会被简写为 BTA</li>
+</ul>
+<h2 id="lambda-calculus-的语法">Lambda-calculus 的语法</h2>
+<p>labmda 表达式的语法定义如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#75715e">(* expr1.ml, level 1 expression*)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> expr <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">EInt</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">int</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">EVar</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">ELam</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">*</span> expr
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">ELet</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">*</span> expr <span style="color:#f92672">*</span> expr
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">EApp</span> <span style="color:#66d9ef">of</span> expr <span style="color:#f92672">*</span> expr
+</span></span></code></pre></div><h2 id="binding-time-annotation--for-lambda-calculus">Binding Time Annotation(for Lambda Calculus)</h2>
+<p>有 partial evaluation 的语言有个 two-level type system, two-level 的意思是,
+一个 level 对应编程语言原来的类型系统, 另一个就对应这个 annotation.</p>
+<p>在之前章节里关于 Binding Time Annotation 的一个比较直观的理解是:
+标记为 S 会被 eval 成值, D 会在 residual program 中被保留成代码.</p>
+<ul>
+<li>这还是比较好理解的, 但是 <code>D -&gt; S</code> 呢? <code>D -&gt; S -&gt; S</code> &hellip; 呢? 它们代表什么?</li>
+</ul>
+<p>Binding time annotation 和一般的 type annotation 很类似,
+只不过他不是描述 <strong><strong>运行时(run time)</strong></strong> 类型信息的, 而是描述 <strong><strong>partial evaluation time</strong></strong> 的类型信息的,
+这个类型信息只做了 code 和 value 的区分, 具体的 code 和 value 又有它们自己在 first-level 的类型.</p>
+<p>这个标记的所描述的是 pe-time 过程中的类型信息,
+标记为 D(ynamic) 的表达式在 pe 过程中会被求值为 code, 标记为 S(tatic) 的会被求值为 value,
+标记为 <code>D -&gt; S</code> 的表达式在 specialize 过程中会转换为由 code 到 value 函数,
+但是它们并不代表 residual program 中的最终形态.
+也就是说, 标记为 S 和 D 的表达式都不一定会出现在 residual program 中.</p>
+<h2 id="annotated-program--for-lambda-calculus">Annotated Program(for Lambda Calculus)</h2>
+<p>Annotated Program 对应一个语言的 Two-level syntax</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-11-19_18-16-54_screenshot.png"
+         alt="Figure 1: two-level syntax for Scheme0"/> <figcaption>
+            <p><span class="figure-number">Figure 1: </span>two-level syntax for Scheme0</p>
+        </figcaption>
+</figure>
+
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-11-15_09-33-00_screenshot.png"
+         alt="Figure 2: Lambda calculus 的 two-level syntax"/> <figcaption>
+            <p><span class="figure-number">Figure 2: </span>Lambda calculus 的 two-level syntax</p>
+        </figcaption>
+</figure>
+
+<p>带有 S 标记的表示这个表达式在 pe 过程中会 eval 到 value(可能是一般的值或函数值),
+带有 D 标记的则会 eval 到 code.</p>
+<ul>
+<li>note: variable 没有标记, variable 的 pe 结果是从当前的 environment 中 lookup 的结果.</li>
+</ul>
+<!--listend-->
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#75715e">(* expr2.ml, level 2 expression *)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> expr <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">(* use variable lookup as specialize result *)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">Var</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">(* specialize to a value(a pe time int or function value) *)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">SConst</span> <span style="color:#66d9ef">of</span> constant
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">SLam</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">*</span> expr
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">SLet</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">*</span> expr <span style="color:#f92672">*</span> expr
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">SApp</span> <span style="color:#66d9ef">of</span> expr <span style="color:#f92672">*</span> expr
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">(* specialize to a pe-time code expression *)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">DLam</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">*</span> expr
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">DLet</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">*</span> expr <span style="color:#f92672">*</span> expr
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">DApp</span> <span style="color:#66d9ef">of</span> expr <span style="color:#f92672">*</span> expr
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">DLift</span> <span style="color:#66d9ef">of</span> expr
+</span></span><span style="display:flex;"><span><span style="color:#f92672">[@@</span>deriving sexp<span style="color:#f92672">]</span>
+</span></span></code></pre></div><h2 id="binding-time-analysis">Binding Time Analysis</h2>
+<p>LC 的 Binding Time Analysis 就是把 LC 编译到 2LC 的过程, 我们可以这样定义 BTA 的接口:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">BTA_Sig</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">sig</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">val</span> analysis <span style="color:#f92672">:</span> Expr1.expr <span style="color:#f92672">-&gt;</span> Expr2.expr
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><h3 id="naive-bta">Naive BTA</h3>
+<p>BTA 是一个比较泛的概念, 并没有唯一正确的做法, 比如说什么都不干,
+把所有东西都当作 Dynamic 也是一种可行的 BTA:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> <span style="color:#a6e22e">NaiveBTA</span> <span style="color:#f92672">:</span> <span style="color:#a6e22e">BTA_Sig</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">struct</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e">(* blindly push every thing to runtime *)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> analysis <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> E1.expr<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> E2.expr <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">rec</span> go e <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">match</span> e <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EConst</span> c <span style="color:#f92672">-&gt;</span> E2.<span style="color:#a6e22e">SConst</span> c
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EVar</span> x <span style="color:#f92672">-&gt;</span> E2.<span style="color:#a6e22e">Var</span> x
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">ELam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e0<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> E2.<span style="color:#a6e22e">DLam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> go e0<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">ELet</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e0<span style="color:#f92672">,</span> e1<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> E2.<span style="color:#a6e22e">DLet</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> go e0<span style="color:#f92672">,</span> go e1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EApp</span> <span style="color:#f92672">(</span>e0<span style="color:#f92672">,</span> e1<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> E2.<span style="color:#a6e22e">DApp</span> <span style="color:#f92672">(</span>go e0<span style="color:#f92672">,</span> go e1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    go e
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
+</span></span></code></pre></div><h3 id="naive-bta">Naive BTA'</h3>
+<p>另一个极端是把所有东西都当作 static, 这么做当然也是可行的(只是没什么意义):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#75715e">(* blindly stage every thing to compile time *)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> analysis <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> E1.expr<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> E2.expr <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">rec</span> go e <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> e <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EConst</span> c <span style="color:#f92672">-&gt;</span> E2.<span style="color:#a6e22e">SConst</span> c
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EVar</span> x <span style="color:#f92672">-&gt;</span> E2.<span style="color:#a6e22e">Var</span> x
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">ELam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e0<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> E2.<span style="color:#a6e22e">SLam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> go e0<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">ELet</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e0<span style="color:#f92672">,</span> e1<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> E2.<span style="color:#a6e22e">SLet</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> go e0<span style="color:#f92672">,</span> go e1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EApp</span> <span style="color:#f92672">(</span>e0<span style="color:#f92672">,</span> e1<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> E2.<span style="color:#a6e22e">SApp</span> <span style="color:#f92672">(</span>go e0<span style="color:#f92672">,</span> go e1<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EAnn</span> <span style="color:#f92672">(</span>e0<span style="color:#f92672">,</span> <span style="color:#f92672">_)</span> <span style="color:#f92672">-&gt;</span> go e0
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EOp</span> <span style="color:#f92672">(</span>op<span style="color:#f92672">,</span> es<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> E2.<span style="color:#a6e22e">SOp</span> <span style="color:#f92672">(</span>op<span style="color:#f92672">,</span> List.map go es<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>  go e
+</span></span></code></pre></div><h3 id="bta-by-type-check">BTA by type check</h3>
+<p>前面两个 NaiveBTA 是&quot;对&quot; 的吗? 当然是对的, 但是这其实没有意义, 因为我们没办法对 annotated program 做 staging
+(staging nothing 和 staging everything).</p>
+<p>前面提到了, BTA 的结果是不唯一的, 既然不唯一, 那要如何选择一个表达式的 annotation 呢?</p>
+<p>比如说下面的代码, f 既 apply 到了 1(a static)上, 又 apply 到了 y(a dynamic)上, 如何确定 f 的 annotation?
+很多种可行解.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f <span style="color:#f92672">=</span> <span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x <span style="color:#66d9ef">in</span>  <span style="color:#75715e">(* f: D; D-&gt;D; S-&gt;S; (S-&gt;S) -&gt; (S-&gt;S) ... *)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">...</span> f 1 <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">...</span> f y <span style="color:#f92672">...</span> <span style="color:#75715e">(* y is dynamic *)</span>
+</span></span></code></pre></div><p>如果我们只看 <code>f 1</code> , 那么 <code>f</code> 只能是 <code>S -&gt; 'a</code>, <code>D</code> , <code>D -&gt; 'a</code> (1可以被lift为Dynamic);
+如果只看 <code>f y</code>, 那么 <code>f</code> 只能是 <code>D -&gt; 'a</code>, <code>D</code> .</p>
+<p>书上介绍了一种约束收集+求解的方法, 定义了一个 annotation 上的偏序关系,
+然后通过求解收集到的约束得到最小的解.</p>
+<p>这个方法太复杂了, 一堆偏序关系头都要晕了, 如果有感兴趣的话可以看 <a href="#citeproc_bib_item_1">[1]</a> 的 <code>8.7 BTA by solving constraints</code> .</p>
+<p>这里选择另一种简单点的方法作为实现.
+首先, 为了让 bta 变得简单, 我们给 LC1 加上一个 binding time annotation 注解的语法,
+让我们可以手动的为表达式添加 annotation.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#f92672">and</span> expr <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">EConst</span> <span style="color:#66d9ef">of</span> constant
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">EVar</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">ELam</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">*</span> expr
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">ELet</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">*</span> expr <span style="color:#f92672">*</span> expr
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">EApp</span> <span style="color:#66d9ef">of</span> expr <span style="color:#f92672">*</span> expr
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">EAnn</span> <span style="color:#66d9ef">of</span> expr <span style="color:#f92672">*</span> Ann.t <span style="color:#75715e">(* Binding time annotation hint *)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">EOp</span> <span style="color:#66d9ef">of</span> op <span style="color:#f92672">*</span> expr <span style="color:#66d9ef">list</span>
+</span></span></code></pre></div><p>然后用 ML 类型推导的方式(不需要偏序关系, 仅仅需要等价关系)推导一个表达式的 Binding Time Annotation,
+根据这个 Annotation 来得到 level 2 expression.</p>
+<p>这里我们借用 <a href="/articles/20230901095515-local_type_inference/">Local Type Inference</a> 中 bidirectional type checking 的思路,
+把 bta 分为两种 mode:</p>
+<ol>
+<li>check mode: 已知一个表达式的 annotation <code>a</code>, 验证这个表达式的 annotation 是否等于 <code>a</code>;</li>
+<li>infer mode: 对表达式的 annotation 一无所知, 需要推导这个表达式的 annotation.</li>
+</ol>
+<p>bidirectional type checking 可以把已经推导出的类型信息传递到相邻的语法树节点,
+使得我们可以仅仅只写少量的 binding time annotation 注解就可以推导所有节点的 annotation.</p>
+<p>具体的代码实现如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#66d9ef">rec</span> infer <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> E1.expr<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>env <span style="color:#f92672">:</span> ann_env<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> E2.expr <span style="color:#f92672">*</span> ann <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">match</span> e <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EConst</span> c <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">(</span>E2.<span style="color:#a6e22e">SConst</span> c<span style="color:#f92672">,</span> <span style="color:#a6e22e">S</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EVar</span> x <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">(</span>E2.<span style="color:#a6e22e">Var</span> x<span style="color:#f92672">,</span> get x env<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">ELam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e0<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> failwith <span style="color:#e6db74">&#34;can&#39;t infer a lambda&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">ELet</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e0<span style="color:#f92672">,</span> e1<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">let</span> e0&#39;<span style="color:#f92672">,</span> a0&#39; <span style="color:#f92672">=</span> infer e0 env <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">match</span> a0&#39; <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#a6e22e">D</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">(</span>E2.<span style="color:#a6e22e">DLet</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e0&#39;<span style="color:#f92672">,</span> check e1 Ann.<span style="color:#a6e22e">D</span> <span style="color:#f92672">((</span>x<span style="color:#f92672">,</span> a0&#39;<span style="color:#f92672">)</span> <span style="color:#f92672">::</span> env<span style="color:#f92672">)),</span> <span style="color:#a6e22e">D</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">let</span> e1&#39;<span style="color:#f92672">,</span> a1&#39; <span style="color:#f92672">=</span> infer e1 <span style="color:#f92672">((</span>x<span style="color:#f92672">,</span> a0&#39;<span style="color:#f92672">)</span> <span style="color:#f92672">::</span> env<span style="color:#f92672">)</span> <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">(</span>E2.<span style="color:#a6e22e">SLet</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e0&#39;<span style="color:#f92672">,</span> e1&#39;<span style="color:#f92672">),</span> a1&#39;<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EApp</span> <span style="color:#f92672">(</span>e0<span style="color:#f92672">,</span> e1<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">let</span> e0&#39;<span style="color:#f92672">,</span> a0&#39; <span style="color:#f92672">=</span> infer e0 env <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">match</span> a0&#39; <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#a6e22e">S</span> <span style="color:#f92672">-&gt;</span> failwith <span style="color:#e6db74">&#34;error&#34;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#a6e22e">D</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">let</span> e1&#39; <span style="color:#f92672">=</span> check e1 Ann.<span style="color:#a6e22e">D</span> env <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">(</span>E2.<span style="color:#a6e22e">DApp</span> <span style="color:#f92672">(</span>e0&#39;<span style="color:#f92672">,</span> e1&#39;<span style="color:#f92672">),</span> Ann.<span style="color:#a6e22e">D</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#a6e22e">Func</span> <span style="color:#f92672">(</span>arg_ann<span style="color:#f92672">,</span> ret_ann<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">let</span> e1&#39; <span style="color:#f92672">=</span> check e1 arg_ann env <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">(</span>E2.<span style="color:#a6e22e">SApp</span> <span style="color:#f92672">(</span>e0&#39;<span style="color:#f92672">,</span> e1&#39;<span style="color:#f92672">),</span> ret_ann<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EAnn</span> <span style="color:#f92672">(</span>e0<span style="color:#f92672">,</span> a0<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">(</span>check e0 a0 env<span style="color:#f92672">,</span> a0<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EOp</span> <span style="color:#f92672">(</span>op<span style="color:#f92672">,</span> es<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">(</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">match</span> <span style="color:#f92672">(</span>op<span style="color:#f92672">,</span> es<span style="color:#f92672">)</span> <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#a6e22e">OAdd</span><span style="color:#f92672">,</span> <span style="color:#f92672">[</span> e0<span style="color:#f92672">;</span> e1 <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#a6e22e">OMinus</span><span style="color:#f92672">,</span> <span style="color:#f92672">[</span> e0<span style="color:#f92672">;</span> e1 <span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#a6e22e">OAnd</span><span style="color:#f92672">,</span> <span style="color:#f92672">[</span> e0<span style="color:#f92672">;</span> e1 <span style="color:#f92672">]</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">let</span> e0&#39;<span style="color:#f92672">,</span> a0&#39; <span style="color:#f92672">=</span> infer e0 env <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">let</span> e1&#39; <span style="color:#f92672">=</span> check e1 a0&#39; env <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">(</span>E2.<span style="color:#a6e22e">SOp</span> <span style="color:#f92672">(</span>op<span style="color:#f92672">,</span> <span style="color:#f92672">[</span> e0&#39;<span style="color:#f92672">;</span> e1&#39; <span style="color:#f92672">]),</span> a0&#39;<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#a6e22e">ONot</span><span style="color:#f92672">,</span> <span style="color:#f92672">[</span> e0 <span style="color:#f92672">]</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#66d9ef">let</span> e0&#39;<span style="color:#f92672">,</span> a0&#39; <span style="color:#f92672">=</span> infer e0 env <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">(</span>E2.<span style="color:#a6e22e">SOp</span> <span style="color:#f92672">(</span>op<span style="color:#f92672">,</span> <span style="color:#f92672">[</span> e0&#39; <span style="color:#f92672">]),</span> <span style="color:#a6e22e">D</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> failwith <span style="color:#e6db74">&#34;neverreach&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">and</span> check <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> E1.expr<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>a <span style="color:#f92672">:</span> ann<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>env <span style="color:#f92672">:</span> ann_env<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> E2.expr <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">match</span> e <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">ELam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e0<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> check_lambda x e0 a env
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">let</span> e&#39;<span style="color:#f92672">,</span> a&#39; <span style="color:#f92672">=</span> infer e env <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">if</span> a&#39; <span style="color:#f92672">=</span> a <span style="color:#66d9ef">then</span> e&#39;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> a&#39; <span style="color:#f92672">=</span> <span style="color:#a6e22e">S</span> <span style="color:#f92672">&amp;&amp;</span> a <span style="color:#f92672">=</span> <span style="color:#a6e22e">D</span> <span style="color:#66d9ef">then</span> E2.<span style="color:#a6e22e">DLift</span> e&#39;
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">else</span> failwith <span style="color:#e6db74">&#34;error&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">and</span> check_lambda x e a env <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">match</span> a <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">S</span> <span style="color:#f92672">-&gt;</span> failwith <span style="color:#e6db74">&#34;error lambda annotation&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">D</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">let</span> e&#39; <span style="color:#f92672">=</span> check e <span style="color:#a6e22e">D</span> <span style="color:#f92672">((</span>x<span style="color:#f92672">,</span> <span style="color:#a6e22e">D</span><span style="color:#f92672">)</span> <span style="color:#f92672">::</span> env<span style="color:#f92672">)</span> <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>      E2.<span style="color:#a6e22e">DLam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e&#39;<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">Func</span> <span style="color:#f92672">(</span>arg_ann<span style="color:#f92672">,</span> ret_ann<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#66d9ef">let</span> e&#39; <span style="color:#f92672">=</span> check e ret_ann <span style="color:#f92672">((</span>x<span style="color:#f92672">,</span> arg_ann<span style="color:#f92672">)</span> <span style="color:#f92672">::</span> env<span style="color:#f92672">)</span> <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>      E2.<span style="color:#a6e22e">SLam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e&#39;<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> analysis <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> E1.expr<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> E2.expr <span style="color:#f92672">=</span> infer e empty_env <span style="color:#f92672">|&gt;</span> fst
+</span></span></code></pre></div><h2 id="staging">Staging!</h2>
+<blockquote>
+<p>万事俱备, 只欠 staging.</p>
+</blockquote>
+<p>LC 的 two-level syntax 类似于之前在 partial evaluation for Scheme0 提到的 <a href="/articles/partial-evaluation-for-functional/#通过binding-time-annotation提高specialization算法的效率">Binding Time Annotation</a> ,
+但是在值域上有所差异:</p>
+<ol>
+<li>Scheme0 的值域只能是 Constant 所在的值域(称之为 Const);</li>
+<li>lambda calculus 的值域可以是高阶函数:
+高阶函数的值域(2FuncVal)是很丰富的:
+不仅可以是 \(Const \rightarrow Cosnt\) 的函数;
+可以是 \(2FuncVal \rightarrow 2FuncVal\);
+还可以是 \(Code\) &hellip; .</li>
+</ol>
+<p>在做完 BTA 后, staging 的实现就很简单了, LC2 的 staging 其实也可以看作 two-level lambda calculus(2LC)的 interpreter!
+只是在值域上有所差异, 这个 2LC 的值域在 LC 的基础上加上了 Code,
+对于 2LC 表达式的求值结果可能是:</p>
+<ol>
+<li>求值到 Const 或 FuncVal, 代表这个表达式已经求值完了;</li>
+<li>还可能求值到一个 Code, 这个 Code 等之后再去算.</li>
+</ol>
+<p>dlambda 的 body 也必须求值到 code, 然后再通过 build-lambda 创建一个动态求知 lambda 表达式.
+但是这里为什么要用 <code>newname</code>? 书上说是为了避免 confusion,
+我理解这个完全是为了 residual program 可读性和 specialize 算法的可维护性考虑的, 就算不重命名也不会导致 bug.</p>
+<p>staging的代码实现如下:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#66d9ef">rec</span> eval <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> expr<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>env <span style="color:#f92672">:</span> env<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">value</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">match</span> e <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">Var</span> x <span style="color:#f92672">-&gt;</span> List.assoc x env
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">DLam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> new_var <span style="color:#f92672">=</span> gen_var <span style="color:#f92672">~</span>hint<span style="color:#f92672">:</span>x <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">VCode</span> <span style="color:#f92672">(</span>E1.<span style="color:#a6e22e">ELam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> eval e <span style="color:#f92672">((</span>x<span style="color:#f92672">,</span> <span style="color:#a6e22e">VCode</span> new_var<span style="color:#f92672">)</span> <span style="color:#f92672">::</span> env<span style="color:#f92672">)</span> <span style="color:#f92672">|&gt;</span> get_code<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">DLet</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e0<span style="color:#f92672">,</span> e1<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> updated_env <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> <span style="color:#a6e22e">VCode</span> <span style="color:#f92672">(</span>E1.<span style="color:#a6e22e">EVar</span> x<span style="color:#f92672">))</span> <span style="color:#f92672">::</span> env <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">VCode</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">(</span><span style="color:#66d9ef">match</span> eval e0 env <span style="color:#66d9ef">with</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#a6e22e">VCode</span> code <span style="color:#f92672">-&gt;</span> E1.<span style="color:#a6e22e">ELet</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> code<span style="color:#f92672">,</span> eval e1 updated_env <span style="color:#f92672">|&gt;</span> get_code<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#a6e22e">VConst</span> c <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>          E1.<span style="color:#a6e22e">ELet</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> E1.<span style="color:#a6e22e">EConst</span> c<span style="color:#f92672">,</span> eval e1 updated_env <span style="color:#f92672">|&gt;</span> get_code<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">|</span> <span style="color:#a6e22e">VFun</span> f <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>          E1.<span style="color:#a6e22e">ELet</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">(</span> x<span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>              f <span style="color:#f92672">(</span><span style="color:#a6e22e">VCode</span> <span style="color:#f92672">(</span>E1.<span style="color:#a6e22e">EVar</span> <span style="color:#e6db74">&#34;_x&#34;</span><span style="color:#f92672">))</span> <span style="color:#f92672">|&gt;</span> get_code<span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>              eval e1 updated_env <span style="color:#f92672">|&gt;</span> get_code <span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">DApp</span> <span style="color:#f92672">(</span>e0<span style="color:#f92672">,</span> e1<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">VCode</span> <span style="color:#f92672">(</span>E1.<span style="color:#a6e22e">EApp</span> <span style="color:#f92672">(</span>eval e0 env <span style="color:#f92672">|&gt;</span> get_code<span style="color:#f92672">,</span> eval e1 env <span style="color:#f92672">|&gt;</span> get_code<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">DLift</span> e <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> v <span style="color:#f92672">=</span> get_int <span style="color:#f92672">(</span>eval e env<span style="color:#f92672">)</span> <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">VCode</span> <span style="color:#f92672">(</span>E1.<span style="color:#a6e22e">EConst</span> v<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">SConst</span> c <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">VConst</span> c
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">SLam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">VFun</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> v <span style="color:#f92672">-&gt;</span> eval e <span style="color:#f92672">((</span>x<span style="color:#f92672">,</span> v<span style="color:#f92672">)</span> <span style="color:#f92672">::</span> env<span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">SLet</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e0<span style="color:#f92672">,</span> e1<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> bind_value <span style="color:#f92672">=</span> eval e0 env <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    eval e1 <span style="color:#f92672">((</span>x<span style="color:#f92672">,</span> bind_value<span style="color:#f92672">)</span> <span style="color:#f92672">::</span> env<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">SApp</span> <span style="color:#f92672">(</span>e0<span style="color:#f92672">,</span> e1<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> func <span style="color:#f92672">=</span> get_func <span style="color:#f92672">(</span>eval e0 env<span style="color:#f92672">)</span> <span style="color:#66d9ef">in</span>
+</span></span><span style="display:flex;"><span>    eval e1 env <span style="color:#f92672">|&gt;</span> func
+</span></span></code></pre></div><h2 id="thinking">thinking</h2>
+<p>Offline PE 中 annotated language(比如 2LC) 和 typeset language 的是否会存在某种同构?</p>
+<h2 id="references">References</h2>
+<style>.csl-left-margin{float: left; padding-right: 0em;}
+ .csl-right-inline{margin: 0 0 0 1em;}</style><div class="csl-bib-body">
+  <div class="csl-entry"><a id="citeproc_bib_item_1"></a>
+    <div class="csl-left-margin">[1]</div><div class="csl-right-inline">N. D. Jones, C. K. Gomard, and P. Sestoft, <i>Partial Evaluation and Automatic Program Generation</i>. USA: Prentice-Hall, Inc., 1993.</div>
+  </div>
+</div>
+]]></content:encoded>
+    </item>
+    
     <item>
       <title>Offline and Online Partial Evaluation</title>
       <link>http://butter-xz.com/articles/20231014172106-offline_and_online_partial_evaluation/</link>
@@ -572,8 +868,8 @@ y = case t of
       <pubDate>Sat, 22 Oct 2022 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/partial-evaluation/</guid>
-      <description>Partial Evaluation 的第一章 Introduction 的笔记. 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in 优化的程序, 这个过程叫做specialization. 针对in1优化的&amp;quot;优化器&amp;quot;可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2. 为提前知道的输入进行特化版本的程序
-如果是解释器的话, 那么一个解释器可以通过下图描述:
+      <description>Partial Evaluation 的第一章 Introduction 的笔记. 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in1 优化的程序, 这个过程就叫做specialization(特化). 针对 in1 优化的&amp;quot;优化器&amp;quot;可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情:
+提前计算可以预先知道的输入 为提前知道的输入进行特化版本的程序 如果是解释器的话, 那么一个解释器可以通过下图描述:
 +--------+ P --&amp;gt; | interp | --&amp;gt; out input --&amp;gt; | | +--------+ 如果有了一个interpreter, 有了一个针对解释器的源程序输入的specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的specializer.
 图1:
 +----+ interp --&amp;gt; | PE | --&amp;gt; interpP P --&amp;gt; | | +----+ 那么也可以看到, 这个specialzer本身也是多参数的函数, 如果我们已经有了一个specialzer, 如果再把这个specializer对interp参数进行specialization, 我们就可以得到一个编译器(图中的PEinterp).
@@ -582,10 +878,13 @@ y = case t of
       <content:encoded><![CDATA[<p><em>Partial Evaluation</em> 的第一章 <em>Introduction</em> 的笔记. 从抽象上来看,
 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话,
 那么如果程序的某个输入 <code>in1</code> 是可以提前确定的,
-那么可以生成一个针对 <code>in</code> 优化的程序, 这个过程叫做specialization.
-针对in1优化的&quot;优化器&quot;可以叫做spacializer. 所以Partial
-Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2.
-为提前知道的输入进行特化版本的程序</p>
+那么可以生成一个针对 <code>in1</code> 优化的程序, 这个过程就叫做specialization(特化).
+针对 <code>in1</code> 优化的&quot;优化器&quot;可以叫做spacializer. 所以Partial
+Evaluation实际上可以看作做了两件事情:</p>
+<ol>
+<li>提前计算可以预先知道的输入</li>
+<li>为提前知道的输入进行特化版本的程序</li>
+</ol>
 <p>如果是解释器的话, 那么一个解释器可以通过下图描述:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>           +--------+
 </span></span><span style="display:flex;"><span>P      --&gt; | interp | --&gt; out
@@ -621,11 +920,11 @@ PE的功能都是为 <code>in2</code> 生成一个特化在 <code>in1</code> 的
 这个特化的版本往往会比 <code>in1 |&gt; in2</code> 更加高效.</p>
 <p>上面的specialize的过程有时候也叫stage: 通过specialize把原来的程序分成了好几步.</p>
 <p>有个关键的概念需要区分: program text和running program</p>
-<p>Partial Evaluation和Partial Application还是很不一样的 在Partial
+<p>Partial Evaluation和编程语言中的Partial Application(柯里化)还是很不一样的 在Partial
 Application中, 得到的是一个同一个语言的函数; 而partial evaluation中,
 得到的是一个*新的程序* <img loading="lazy" src="/images/image-20221023232021.png" alt=""  />
 
-这里就要理解一个program text和一个正在运行的程序的区别, program
+这里就体现了一个program text和running program的区别, program
 text只是程序的表示, 而运行起来的程序才能抽象成一个函数.
 可以通过语义函数(图中的双中括号)把程序从program text转变成函数.</p>
 <p>比如说, 我们说PE的输入是程序,

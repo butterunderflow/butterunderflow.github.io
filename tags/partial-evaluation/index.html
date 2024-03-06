@@ -19,6 +19,7 @@
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
 <link rel="alternate" type="application/rss+xml" href="http://butter-xz.com/tags/partial-evaluation/index.xml">
+<link rel="alternate" hreflang="cn" href="http://butter-xz.com/tags/partial-evaluation/">
 <noscript>
     <style>
         #theme-toggle,
@@ -103,6 +104,8 @@
                         <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                     </svg>
                 </button>
+                <ul class="lang-switch"><li>|</li>
+                </ul>
             </div>
         </div>
         <ul id="menu">
@@ -130,6 +133,21 @@
     Partial-Evaluation
   </h1>
 </header>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2>Partial Evaluation for Lambda Calculus
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>这是 [1] 第 8 章 Partial Evaluation for Lambda Calculus 的笔记.
+在 Partial Evaluation for Functional Language 和 Partial Evaluation For Flow Chart Langauge 中, partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.
+但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数, 那么考虑一个简单的场景, 返回一个常量的函数, 应该标记为是 Static 还是 Dynamic ? 比如: (lambda (x) 1)
+如果标记为 S, 那这个函数在 residual program 中对应什么? 似乎也只能是 (lambda (x) 1) 如果标记为 D, 为什么一个这么简单的函数会返回一个常量的函数需要标记为 D? 是不是对于 lambda 表达式 partial evaluation 都无能为力? 我会有这样的疑惑主要有两个原因:...</p>
+  </div>
+  <footer class="entry-footer"><span title='2024-03-02 00:00:00 +0000 UTC'>March 2, 2024</span>&nbsp;·&nbsp;butterunderflow</footer>
+  <a class="entry-link" aria-label="post link to Partial Evaluation for Lambda Calculus" href="http://butter-xz.com/articles/20231111153704-partial_evaluation_for_lambda_calculus/"></a>
+</article>
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
@@ -187,8 +205,8 @@ Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program 
     </h2>
   </header>
   <div class="entry-content">
-    <p>Partial Evaluation 的第一章 Introduction 的笔记. 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in 优化的程序, 这个过程叫做specialization. 针对in1优化的&#34;优化器&#34;可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情: 1. 提前计算可以预先知道的输入 2. 为提前知道的输入进行特化版本的程序
-如果是解释器的话, 那么一个解释器可以通过下图描述:
+    <p>Partial Evaluation 的第一章 Introduction 的笔记. 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in1 优化的程序, 这个过程就叫做specialization(特化). 针对 in1 优化的&#34;优化器&#34;可以叫做spacializer. 所以Partial Evaluation实际上可以看作做了两件事情:
+提前计算可以预先知道的输入 为提前知道的输入进行特化版本的程序 如果是解释器的话, 那么一个解释器可以通过下图描述:
 &#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 如果有了一个interpreter, 有了一个针对解释器的源程序输入的specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的specializer.
 图1:
 &#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 那么也可以看到, 这个specialzer本身也是多参数的函数, 如果我们已经有了一个specialzer, 如果再把这个specializer对interp参数进行specialization, 我们就可以得到一个编译器(图中的PEinterp).
@@ -201,7 +219,7 @@ Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program 
     </main>
     
 <footer class="footer">
-    <span>&copy; 2023 <a href="http://butter-xz.com/">Butter&#39;s space</a></span>
+    <span>&copy; 2024 <a href="http://butter-xz.com/">Butter&#39;s space</a></span>
     <span>
         Powered by
         <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
