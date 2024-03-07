@@ -43,9 +43,10 @@ residual program 长什么样主要看 partial evaluation 的结果,
 最后再分别展示它的 Binding Time Analysis(由 lambda calculus 得到 Annotated Program)和
 具体的 staging(由 annotated program 得到 residual program)算法.</p>
 <ul>
-<li>本文所有代码都将用 OCaml 演示, 代码仓库在 <a href="https://github.com/butterunderflow/lambda_pe">https://github.com/butterunderflow/lambda_pe</a></li>
+<li>本文所有代码都将用 OCaml 演示, 代码仓库在 <a href="https://github.com/butterunderflow/lambda_pe">https://github.com/butterunderflow/lambda_pe</a> ,
+可以在这里 <a href="https://butter-xz.com/lambda_pe/">https://butter-xz.com/lambda_pe/</a> 在线体验 Lambda Calculus 的 Partial Evaluation;</li>
 <li>有时候 Lambda Calulus 会被简写成 LC, Partial Evaluation 会被简写为 PE,
-Binding Time Analysis 会被简写为 BTA</li>
+Binding Time Analysis 会被简写为 BTA.</li>
 </ul>
 <h2 id="lambda-calculus-的语法">Lambda-calculus 的语法</h2>
 <p>labmda 表达式的语法定义如下:</p>
