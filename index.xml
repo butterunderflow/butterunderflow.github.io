@@ -1301,6 +1301,25 @@ function是数学意义上的东西.</p>
     </item>
     
     <item>
+      <title></title>
+      <link>http://butter-xz.com/demos/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <author>azhong.934@gmail.com (butterunderflow)</author>
+      <guid>http://butter-xz.com/demos/</guid>
+      <description>一些有趣的demo</description>
+      <content:encoded><![CDATA[<h1 id="lambda-表达式的-partial-evaluation">Lambda 表达式的 Partial Evaluation</h1>
+<ul>
+<li>Demo 链接: <a href="https://butter-xz.com/lambda_pe/">https://butter-xz.com/lambda_pe/</a></li>
+</ul>
+<p>包含 Lambda 表达式的 Evaluation 和 Partial Evaluation(包括 Binding Time Analysis 和 Staging 算法)的实现, 并提供了一个简单的前端可以在线体验这些算法.</p>
+<ul>
+<li>源代码: <a href="https://github.com/butterunderflow/lambda_pe">https://github.com/butterunderflow/lambda_pe</a></li>
+<li>相关文章: <a href="/articles/20231111153704-partial_evaluation_for_lambda_calculus/">Partial Evaluation for Lambda Calculus</a></li>
+</ul>
+]]></content:encoded>
+    </item>
+    
+    <item>
       <title>About</title>
       <link>http://butter-xz.com/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
