@@ -61,7 +61,10 @@ Online 方法的分析 OnPE 方法的类型签名: \[ Expression \rightarrow On-
         }
 
     </style>
-</noscript><meta property="og:title" content="Offline and Online Partial Evaluation" />
+</noscript>
+  
+
+<meta property="og:title" content="Offline and Online Partial Evaluation" />
 <meta property="og:description" content="关于 [1] 的第7章 Offline and Online Partial Evaluation 的笔记
 Offline 和 Online 指的是什么? Offline 和 Online 的区别在于 Binding Time Analysis 的时机: Offline 会提前把 Binding Time Analysis (BTA)做完, 并保证 binding time 的相合性, 再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize; Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.
 Figure 1: Online 方法和 Offline 方法的结构

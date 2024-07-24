@@ -67,7 +67,10 @@
         }
 
     </style>
-</noscript><meta property="og:title" content="Local Type Inference" />
+</noscript>
+  
+
+<meta property="og:title" content="Local Type Inference" />
 <meta property="og:description" content="ML语言的背后 众所周知, ML系语言十分强大, 这不仅仅得益于它们丰富的语义(高阶函数, local binding, lambda), 还得益于这套语义背后强大的类型系统. ML语言的类型系统通常支持十分强大类型推导功能, 强大到什么程度呢? 理论上开发者可以忽略所有类型签名, type checker仍然可以推导出所有的类型签名.
 类型推导的两个&quot;端点&quot; 但是, 如此强大的类型推导技术居然也不小心带来了一些负面影响:
 重要的类型签名被忽略. 很多情况下, 类型签名并不是开发者的负担而是起到了 &ldquo;verified document&rdquo; 的作用, 对可读性有着关键的影响. 类型系统的复杂度增加(主要是类型推导部分). 直观来看这点是在语言实现上的负面影响, 但是过于复杂的类型推导除了会提升类型检查的复杂度也会带来编程的&quot;负担&quot;. 比如说开发者如果不能明确知道哪些类型能推导哪些类型不能推导, 那么考虑&quot;要不要加上类型签名&quot;的这个问题就会给程序员带来心智负担. 对于这些负面的影响, 最极端的做法就是我们要求把所有的类型都加上, 直接抛弃类型推导功能.
