@@ -9,15 +9,12 @@
 <meta name="keywords" content="">
 <meta name="description" content="partial evaluation 的第三章 Programming Languages and Interpreters 的笔记.
 这一章主要是形式化的介绍了一下 Partial Evaluation 中的基本概念: 程序, 解释和编译.
-程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是 Operational Semantic, 具体指的是一套指导程序应该如何规约(reduction)的规则. 所有编程语言的语义隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的&quot;解释器&quot;(有的资料也称之为&quot;元解释器&quot;, 但我还没想明白&quot;元&quot;在哪里), 这也是为什么说所有语言本质上都是解释执行的原因.
-与直接用这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 解释器本身也是在某种抽象机上执行的. 对于某个目标程序 P, 解释器 int 在对应抽象机上的解释 P 的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要成倍数的增长.
-比如说对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步; 而在解释器中, 会*对应*到5步:
-解释函数 (如 eval) 的调用
-模式匹配判断当前表达式是一个变量
-读取环境
-读取变量名
-读取环境中对应变量名的值 可以通过case by case的分析各种语义的对应步数得到一个大致的倍数, 从而估算解释的开销(overhead).
-刚刚提到了开销, 这个开销实际上是不可以忽略的, 首先在真实世界的编程语言中, 这个开销的倍数可能非常大(比如说可能是几十倍); 另一方面, 当语言的实现涉及到多层中间表示的时候, 解释也会有多层, 那么这个开销的倍数也会相乘, 最终开销也会呈指数增长. 将源程序直接编译为可执行的程序(比如说机器指令)就是减少在开销上做乘法的一种思路(减少解释的开销). 这个过程也叫 lowering, 把更高层的表示 lowering 到底层的表示.">
+程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是程序执行语义的描述, 比如说 Operational Semantic, 就提供了一套指导程序应该如何进行规约(reduction)的规则.
+定义语言 = 定义抽象机 所有编程语言的语义都隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的&quot;解释器&quot;(有的资料也称之为&quot;元解释器&quot;, 但我还没想明白&quot;元&quot;在哪里), 这也是大家经常说 所有语言本质上都是解释执行 的原因.
+解释器和解释器开销 与直接在这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 也就是我们常说的解释器 (注意: 解释器本身也是在解释器对应语言的抽象机上执行的).
+对于某个目标程序 P, 解释器 int 在对应抽象机上的解释程序 P 所需要的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要多, 而且往往是成倍数的多.
+比如说, 对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步 \(x \rightarrow Env[ [ x ] ]\) ; 而在解释器中, 这个求值会 对应 到 5 步:
+解释函数 (如 eval) 的调用 模式匹配判断当前表达式是一个变量 读取环境 读取变量名 读取环境中对应变量名的值 所以我们可以通过 case by case 的分析各种语义的对应解释器步数得到一个大致的倍数, 从而估算解释的开销(overhead), 这个开销被称为 解释器开销(Interpretation Overhand).">
 <meta name="author" content="butterunderflow">
 <link rel="canonical" href="http://butter-xz.com/articles/language-and-interpreters/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.5cfc680b1eeaeef9efbced92d46c2a9e876b72ee14fba85846afc4cff9e6e6f8.css" integrity="sha256-XPxoCx7q7vnvvO2S1Gwqnodrcu4U&#43;6hYRq/Ez/nm5vg=" rel="preload stylesheet" as="style">
@@ -73,15 +70,12 @@
 <meta property="og:title" content="Language and Interpreters" />
 <meta property="og:description" content="partial evaluation 的第三章 Programming Languages and Interpreters 的笔记.
 这一章主要是形式化的介绍了一下 Partial Evaluation 中的基本概念: 程序, 解释和编译.
-程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是 Operational Semantic, 具体指的是一套指导程序应该如何规约(reduction)的规则. 所有编程语言的语义隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的&quot;解释器&quot;(有的资料也称之为&quot;元解释器&quot;, 但我还没想明白&quot;元&quot;在哪里), 这也是为什么说所有语言本质上都是解释执行的原因.
-与直接用这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 解释器本身也是在某种抽象机上执行的. 对于某个目标程序 P, 解释器 int 在对应抽象机上的解释 P 的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要成倍数的增长.
-比如说对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步; 而在解释器中, 会*对应*到5步:
-解释函数 (如 eval) 的调用
-模式匹配判断当前表达式是一个变量
-读取环境
-读取变量名
-读取环境中对应变量名的值 可以通过case by case的分析各种语义的对应步数得到一个大致的倍数, 从而估算解释的开销(overhead).
-刚刚提到了开销, 这个开销实际上是不可以忽略的, 首先在真实世界的编程语言中, 这个开销的倍数可能非常大(比如说可能是几十倍); 另一方面, 当语言的实现涉及到多层中间表示的时候, 解释也会有多层, 那么这个开销的倍数也会相乘, 最终开销也会呈指数增长. 将源程序直接编译为可执行的程序(比如说机器指令)就是减少在开销上做乘法的一种思路(减少解释的开销). 这个过程也叫 lowering, 把更高层的表示 lowering 到底层的表示." />
+程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是程序执行语义的描述, 比如说 Operational Semantic, 就提供了一套指导程序应该如何进行规约(reduction)的规则.
+定义语言 = 定义抽象机 所有编程语言的语义都隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的&quot;解释器&quot;(有的资料也称之为&quot;元解释器&quot;, 但我还没想明白&quot;元&quot;在哪里), 这也是大家经常说 所有语言本质上都是解释执行 的原因.
+解释器和解释器开销 与直接在这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 也就是我们常说的解释器 (注意: 解释器本身也是在解释器对应语言的抽象机上执行的).
+对于某个目标程序 P, 解释器 int 在对应抽象机上的解释程序 P 所需要的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要多, 而且往往是成倍数的多.
+比如说, 对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步 \(x \rightarrow Env[ [ x ] ]\) ; 而在解释器中, 这个求值会 对应 到 5 步:
+解释函数 (如 eval) 的调用 模式匹配判断当前表达式是一个变量 读取环境 读取变量名 读取环境中对应变量名的值 所以我们可以通过 case by case 的分析各种语义的对应解释器步数得到一个大致的倍数, 从而估算解释的开销(overhead), 这个开销被称为 解释器开销(Interpretation Overhand)." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://butter-xz.com/articles/language-and-interpreters/" /><meta property="article:section" content="articles" />
 <meta property="article:published_time" content="2022-11-08T00:00:00+00:00" />
@@ -91,15 +85,12 @@
 <meta name="twitter:title" content="Language and Interpreters"/>
 <meta name="twitter:description" content="partial evaluation 的第三章 Programming Languages and Interpreters 的笔记.
 这一章主要是形式化的介绍了一下 Partial Evaluation 中的基本概念: 程序, 解释和编译.
-程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是 Operational Semantic, 具体指的是一套指导程序应该如何规约(reduction)的规则. 所有编程语言的语义隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的&quot;解释器&quot;(有的资料也称之为&quot;元解释器&quot;, 但我还没想明白&quot;元&quot;在哪里), 这也是为什么说所有语言本质上都是解释执行的原因.
-与直接用这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 解释器本身也是在某种抽象机上执行的. 对于某个目标程序 P, 解释器 int 在对应抽象机上的解释 P 的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要成倍数的增长.
-比如说对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步; 而在解释器中, 会*对应*到5步:
-解释函数 (如 eval) 的调用
-模式匹配判断当前表达式是一个变量
-读取环境
-读取变量名
-读取环境中对应变量名的值 可以通过case by case的分析各种语义的对应步数得到一个大致的倍数, 从而估算解释的开销(overhead).
-刚刚提到了开销, 这个开销实际上是不可以忽略的, 首先在真实世界的编程语言中, 这个开销的倍数可能非常大(比如说可能是几十倍); 另一方面, 当语言的实现涉及到多层中间表示的时候, 解释也会有多层, 那么这个开销的倍数也会相乘, 最终开销也会呈指数增长. 将源程序直接编译为可执行的程序(比如说机器指令)就是减少在开销上做乘法的一种思路(减少解释的开销). 这个过程也叫 lowering, 把更高层的表示 lowering 到底层的表示."/>
+程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是程序执行语义的描述, 比如说 Operational Semantic, 就提供了一套指导程序应该如何进行规约(reduction)的规则.
+定义语言 = 定义抽象机 所有编程语言的语义都隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的&quot;解释器&quot;(有的资料也称之为&quot;元解释器&quot;, 但我还没想明白&quot;元&quot;在哪里), 这也是大家经常说 所有语言本质上都是解释执行 的原因.
+解释器和解释器开销 与直接在这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 也就是我们常说的解释器 (注意: 解释器本身也是在解释器对应语言的抽象机上执行的).
+对于某个目标程序 P, 解释器 int 在对应抽象机上的解释程序 P 所需要的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要多, 而且往往是成倍数的多.
+比如说, 对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步 \(x \rightarrow Env[ [ x ] ]\) ; 而在解释器中, 这个求值会 对应 到 5 步:
+解释函数 (如 eval) 的调用 模式匹配判断当前表达式是一个变量 读取环境 读取变量名 读取环境中对应变量名的值 所以我们可以通过 case by case 的分析各种语义的对应解释器步数得到一个大致的倍数, 从而估算解释的开销(overhead), 这个开销被称为 解释器开销(Interpretation Overhand)."/>
 
 
 <script type="application/ld+json">
@@ -128,12 +119,12 @@
   "@type": "BlogPosting",
   "headline": "Language and Interpreters",
   "name": "Language and Interpreters",
-  "description": "partial evaluation 的第三章 Programming Languages and Interpreters 的笔记.\n这一章主要是形式化的介绍了一下 Partial Evaluation 中的基本概念: 程序, 解释和编译.\n程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是 Operational Semantic, 具体指的是一套指导程序应该如何规约(reduction)的规则. 所有编程语言的语义隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的\u0026quot;解释器\u0026quot;(有的资料也称之为\u0026quot;元解释器\u0026quot;, 但我还没想明白\u0026quot;元\u0026quot;在哪里), 这也是为什么说所有语言本质上都是解释执行的原因.\n与直接用这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 解释器本身也是在某种抽象机上执行的. 对于某个目标程序 P, 解释器 int 在对应抽象机上的解释 P 的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要成倍数的增长.\n比如说对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步; 而在解释器中, 会*对应*到5步:\n解释函数 (如 eval) 的调用\n模式匹配判断当前表达式是一个变量\n读取环境\n读取变量名\n读取环境中对应变量名的值 可以通过case by case的分析各种语义的对应步数得到一个大致的倍数, 从而估算解释的开销(overhead).\n刚刚提到了开销, 这个开销实际上是不可以忽略的, 首先在真实世界的编程语言中, 这个开销的倍数可能非常大(比如说可能是几十倍); 另一方面, 当语言的实现涉及到多层中间表示的时候, 解释也会有多层, 那么这个开销的倍数也会相乘, 最终开销也会呈指数增长. 将源程序直接编译为可执行的程序(比如说机器指令)就是减少在开销上做乘法的一种思路(减少解释的开销). 这个过程也叫 lowering, 把更高层的表示 lowering 到底层的表示.",
+  "description": "partial evaluation 的第三章 Programming Languages and Interpreters 的笔记.\n这一章主要是形式化的介绍了一下 Partial Evaluation 中的基本概念: 程序, 解释和编译.\n程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是程序执行语义的描述, 比如说 Operational Semantic, 就提供了一套指导程序应该如何进行规约(reduction)的规则.\n定义语言 = 定义抽象机 所有编程语言的语义都隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的\u0026quot;解释器\u0026quot;(有的资料也称之为\u0026quot;元解释器\u0026quot;, 但我还没想明白\u0026quot;元\u0026quot;在哪里), 这也是大家经常说 所有语言本质上都是解释执行 的原因.\n解释器和解释器开销 与直接在这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 也就是我们常说的解释器 (注意: 解释器本身也是在解释器对应语言的抽象机上执行的).\n对于某个目标程序 P, 解释器 int 在对应抽象机上的解释程序 P 所需要的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要多, 而且往往是成倍数的多.\n比如说, 对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步 \\(x \\rightarrow Env[ [ x ] ]\\) ; 而在解释器中, 这个求值会 对应 到 5 步:\n解释函数 (如 eval) 的调用 模式匹配判断当前表达式是一个变量 读取环境 读取变量名 读取环境中对应变量名的值 所以我们可以通过 case by case 的分析各种语义的对应解释器步数得到一个大致的倍数, 从而估算解释的开销(overhead), 这个开销被称为 解释器开销(Interpretation Overhand).",
   "keywords": [
     
   ],
-  "articleBody": "partial evaluation 的第三章 Programming Languages and Interpreters 的笔记.\n这一章主要是形式化的介绍了一下 Partial Evaluation 中的基本概念: 程序, 解释和编译.\n程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是 Operational Semantic, 具体指的是一套指导程序应该如何规约(reduction)的规则. 所有编程语言的语义隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的\"解释器\"(有的资料也称之为\"元解释器\", 但我还没想明白\"元\"在哪里), 这也是为什么说所有语言本质上都是解释执行的原因.\n与直接用这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 解释器本身也是在某种抽象机上执行的. 对于某个目标程序 P, 解释器 int 在对应抽象机上的解释 P 的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要成倍数的增长.\n比如说对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步; 而在解释器中, 会*对应*到5步:\n解释函数 (如 eval) 的调用\n模式匹配判断当前表达式是一个变量\n读取环境\n读取变量名\n读取环境中对应变量名的值 可以通过case by case的分析各种语义的对应步数得到一个大致的倍数, 从而估算解释的开销(overhead).\n刚刚提到了开销, 这个开销实际上是不可以忽略的, 首先在真实世界的编程语言中, 这个开销的倍数可能非常大(比如说可能是几十倍); 另一方面, 当语言的实现涉及到多层中间表示的时候, 解释也会有多层, 那么这个开销的倍数也会相乘, 最终开销也会呈指数增长. 将源程序直接编译为可执行的程序(比如说机器指令)就是减少在开销上做乘法的一种思路(减少解释的开销). 这个过程也叫 lowering, 把更高层的表示 lowering 到底层的表示.\n最后书上介绍了一下编译器自举(bootstrapping)的概念, 自举指的是一个compiler h 可以通过被其 compiled version t 编译, 并且得到 compiled version t.\n现在发现其实很多介绍没有把这一点讲透, 很多人都说: “自举就是编译器可以编译自己.” 让人感觉不到这其中的微妙之处: “自己编译自己有什么神奇的吗?” 实际上更完整的描述应该是: 一个编译器(compiled version)可以通过编译自己(source)*得到自己*(compiled version)\n书上通过举了个例子说明如何通过扩展 S 语言实现的 S 语言的编译器并完成自举的过程:\n首先我们已有 S 语言编译器的源码 h 和编译后的代码 t 1. 然后我们在 h=上扩展, 得到了一个 =S'=的编译器 =h' 2. 然后用一开始的 t 把 h' 编译, 得到 t1' 3. 再用 t1' 编译一遍 h'. 这里第一次用了扩展后的编译器 h'=的语义. =t1' 也是h’的compiled program, 但因为 t1' 不是由h’的语义编译生成的(是由=h=的语义即 t 编译生成的). 所以这里还算不上自举 4. 最后用 t2'=编译 =h', 这里就有了自举了. 因为 t3' 是完全等于 t2'=的, 因为 =t1'=的语义和 =t2' 的*语义*相同. ",
-  "wordCount" : "146",
+  "articleBody": "partial evaluation 的第三章 Programming Languages and Interpreters 的笔记.\n这一章主要是形式化的介绍了一下 Partial Evaluation 中的基本概念: 程序, 解释和编译.\n程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是程序执行语义的描述, 比如说 Operational Semantic, 就提供了一套指导程序应该如何进行规约(reduction)的规则.\n定义语言 = 定义抽象机 所有编程语言的语义都隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的\"解释器\"(有的资料也称之为\"元解释器\", 但我还没想明白\"元\"在哪里), 这也是大家经常说 所有语言本质上都是解释执行 的原因.\n解释器和解释器开销 与直接在这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 也就是我们常说的解释器 (注意: 解释器本身也是在解释器对应语言的抽象机上执行的).\n对于某个目标程序 P, 解释器 int 在对应抽象机上的解释程序 P 所需要的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要多, 而且往往是成倍数的多.\n比如说, 对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步 \\(x \\rightarrow Env[ [ x ] ]\\) ; 而在解释器中, 这个求值会 对应 到 5 步:\n解释函数 (如 eval) 的调用 模式匹配判断当前表达式是一个变量 读取环境 读取变量名 读取环境中对应变量名的值 所以我们可以通过 case by case 的分析各种语义的对应解释器步数得到一个大致的倍数, 从而估算解释的开销(overhead), 这个开销被称为 解释器开销(Interpretation Overhand).\n刚刚提到了开销, 这个开销实际上是不可以忽略的, 首先, 在真实世界的编程语言中, 这个开销的倍数可能非常大; 另一方面, 当语言的实现涉及到多层中间表示的时候, 解释也会有多层, 那么这个开销的倍数也会相乘, 最终开销也会呈指数增长. 将源程序直接编译为可执行的程序(比如说机器指令)就是减少开销上的一种思路(减少解释的开销). 这个过程也叫 lowering, 把更高层的表示 lowering 到底层的表示.\n自举(bootstrapping) 自举指的是一个 compiler h 可以通过被其 compiled version t 编译, 并且得到 compiled version t.\n现在发现其实很多介绍没有把这一点讲透, 很多人都说: “自举就是编译器可以编译自己.” 让人感觉不到这其中的微妙之处: “自己编译自己有什么神奇的吗?” 实际上更完整的描述应该是: 一个编译器(compiled version)可以通过编译自己(source)*得到自己*(compiled version)\n书上通过举了个例子说明如何通过扩展 S 语言实现的 S 语言的编译器并完成自举的过程:\n首先我们已有 S 语言编译器的源码 h 和编译后的代码 t 然后我们在 h 上扩展, 得到了一个 S'=的编译器 =h' 然后用一开始的 t 把 h' 编译, 得到 t1' 3.再用 t1' 编译一遍 h' . 这里第一次用了扩展后的编译器 h' 的语义. t1' 也是 h’的 compiled program, 但因为 t1' 不是由 h’的语义编译生成的(是由=h=的语义即 t 编译生成的). 所以这里还算不上自举 4.最后用 t2' 编译 h' , 这里就有了自举了. 因为 t3' 是完全等于 t2' 的, 因为 t1' 的语义和 t2' 的 语义 相同. ",
+  "wordCount" : "184",
   "inLanguage": "cn",
   "datePublished": "2022-11-08T00:00:00Z",
   "dateModified": "2022-11-08T00:00:00Z",
@@ -233,43 +224,60 @@
     <div class="post-meta"><span title='2022-11-08 00:00:00 +0000 UTC'>November 8, 2022</span>&nbsp;·&nbsp;butterunderflow
 
 </div>
-  </header> 
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e5%ae%9a%e4%b9%89%e8%af%ad%e8%a8%80-%e5%ae%9a%e4%b9%89%e6%8a%bd%e8%b1%a1%e6%9c%ba" aria-label="定义语言 = 定义抽象机">定义语言 = 定义抽象机</a></li>
+                <li>
+                    <a href="#%e8%a7%a3%e9%87%8a%e5%99%a8%e5%92%8c%e8%a7%a3%e9%87%8a%e5%99%a8%e5%bc%80%e9%94%80" aria-label="解释器和解释器开销">解释器和解释器开销</a></li>
+                <li>
+                    <a href="#%e8%87%aa%e4%b8%be--bootstrapping" aria-label="自举(bootstrapping)">自举(bootstrapping)</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
 
   <div class="post-content"><p><em>partial evaluation</em> 的第三章 <em>Programming Languages and Interpreters</em>
 的笔记.</p>
 <p>这一章主要是形式化的介绍了一下 <a href="/articles/partial-evaluation/">Partial Evaluation</a> 中的基本概念: 程序, 解释和编译.</p>
-<p>程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是
-<em>Operational Semantic</em>,
-具体指的是一套指导程序应该如何规约(reduction)的规则.
-所有编程语言的语义隐式定义了一个用于执行程序的抽象机,
-可以把抽象机看作是程序的&quot;解释器&quot;(有的资料也称之为&quot;元解释器&quot;,
-但我还没想明白&quot;元&quot;在哪里),
-这也是为什么说所有语言本质上都是解释执行的原因.</p>
-<p>与直接用这个编程语言的抽象机来执行不同,
-用另外一个程序来实现程序的语义可以称之为 <em>解释执行</em>,
-解释器本身也是在某种抽象机上执行的. 对于某个目标程序 <code>P</code>, 解释器 <code>int</code>
-在对应抽象机上的解释 <code>P</code> 的执行步数, 一般要比 <code>P</code> 在 <code>P</code>
-对应的抽象机上的执行步数要成倍数的增长.<br />
-比如说对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步;
-而在解释器中, 会*对应*到5步:<br /></p>
+<p>程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是程序执行语义的描述,
+比如说 <em>Operational Semantic</em>, 就提供了一套指导程序应该如何进行规约(reduction)的规则.</p>
+<h2 id="定义语言-定义抽象机">定义语言 = 定义抽象机<a hidden class="anchor" aria-hidden="true" href="#定义语言-定义抽象机">#</a></h2>
+<p>所有编程语言的语义都隐式定义了一个用于执行程序的抽象机,
+可以把抽象机看作是程序的&quot;解释器&quot;(有的资料也称之为&quot;元解释器&quot;, 但我还没想明白&quot;元&quot;在哪里),
+这也是大家经常说 <strong><strong>所有语言本质上都是解释执行</strong></strong> 的原因.</p>
+<h2 id="解释器和解释器开销">解释器和解释器开销<a hidden class="anchor" aria-hidden="true" href="#解释器和解释器开销">#</a></h2>
+<p>与直接在这个编程语言的抽象机来执行不同,
+用另外一个程序来实现程序的语义可以称之为 <em>解释执行</em>, 也就是我们常说的解释器
+(注意: 解释器本身也是在解释器对应语言的抽象机上执行的).</p>
+<p>对于某个目标程序 <code>P</code>, 解释器 <code>int</code> 在对应抽象机上的解释程序 <code>P</code> 所需要的执行步数,
+一般要比 <code>P</code> 在 <code>P</code> 对应的抽象机上的执行步数要多, 而且往往是成倍数的多.</p>
+<p>比如说, 对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步 \(x \rightarrow Env[ [ x ] ]\) ;
+而在解释器中, 这个求值会 <strong>对应</strong> 到 5 步:</p>
 <ol>
-<li>解释函数 (如 <code>eval</code>) 的调用<br /></li>
-<li>模式匹配判断当前表达式是一个变量<br /></li>
-<li>读取环境<br /></li>
-<li>读取变量名<br /></li>
+<li>解释函数 (如 <code>eval</code>) 的调用</li>
+<li>模式匹配判断当前表达式是一个变量</li>
+<li>读取环境</li>
+<li>读取变量名</li>
 <li>读取环境中对应变量名的值</li>
 </ol>
-<p>可以通过case by case的分析各种语义的对应步数得到一个大致的倍数,
-从而估算解释的开销(overhead).</p>
+<p>所以我们可以通过 case by case 的分析各种语义的对应解释器步数得到一个大致的倍数,
+从而估算解释的开销(overhead), 这个开销被称为 <strong><strong>解释器开销(Interpretation Overhand)</strong></strong>.</p>
 <p>刚刚提到了开销, 这个开销实际上是不可以忽略的,
-首先在真实世界的编程语言中,
-这个开销的倍数可能非常大(比如说可能是几十倍); 另一方面,
+首先, 在真实世界的编程语言中,
+这个开销的倍数可能非常大; 另一方面,
 当语言的实现涉及到多层中间表示的时候, 解释也会有多层,
 那么这个开销的倍数也会相乘, 最终开销也会呈指数增长.
-将源程序直接编译为可执行的程序(比如说机器指令)就是减少在开销上做乘法的一种思路(减少解释的开销).
+将源程序直接编译为可执行的程序(比如说机器指令)就是减少开销上的一种思路(减少解释的开销).
 这个过程也叫 <em>lowering</em>, 把更高层的表示 <em>lowering</em> 到底层的表示.</p>
-<p>最后书上介绍了一下编译器自举(bootstrapping)的概念,
-自举指的是一个compiler <code>h</code> 可以通过被其 compiled version <code>t</code> 编译,
+<h2 id="自举--bootstrapping">自举(bootstrapping)<a hidden class="anchor" aria-hidden="true" href="#自举--bootstrapping">#</a></h2>
+<p>自举指的是一个 compiler <code>h</code> 可以通过被其 compiled version <code>t</code> 编译,
 并且得到 compiled version <code>t</code>.</p>
 <p>现在发现其实很多介绍没有把这一点讲透, 很多人都说:
 &ldquo;自举就是编译器可以编译自己.&rdquo; 让人感觉不到这其中的微妙之处:
@@ -280,17 +288,26 @@ version)</p>
 语言的编译器并完成自举的过程:</p>
 <p>首先我们已有 <code>S</code> 语言编译器的源码 <code>h</code> 和编译后的代码 <code>t</code>
 <img loading="lazy" src="/ox-hugo/Pasted-image-20221108053150.png" alt=""  />
- 1. 然后我们在 <code>h=上扩展, 得到了一个 =S'=的编译器 =h'</code>
-<img loading="lazy" src="/ox-hugo/Pasted-image-20221108053354.png" alt=""  />
- 2. 然后用一开始的 <code>t</code> 把
-<code>h'</code> 编译, 得到 <code>t1'</code> <img loading="lazy" src="/ox-hugo/Pasted-image-20221108053451.png" alt=""  />
- 3.
-再用 <code>t1'</code> 编译一遍 <code>h'</code>. 这里第一次用了扩展后的编译器 <code>h'=的语义. =t1'</code>
-也是h&rsquo;的compiled program, 但因为 <code>t1'</code>
-不是由h&rsquo;的语义编译生成的(是由=h=的语义即 <code>t</code> 编译生成的).
+</p>
+<ol>
+<li>然后我们在 <code>h</code> 上扩展, 得到了一个 <code>S'=的编译器 =h'</code></li>
+</ol>
+<figure>
+    <img loading="lazy" src="/ox-hugo/Pasted-image-20221108053354.png"/> 
+</figure>
+
+<ol>
+<li>然后用一开始的 <code>t</code> 把 <code>h'</code> 编译, 得到 <code>t1'</code>
+<img loading="lazy" src="/ox-hugo/Pasted-image-20221108053451.png" alt=""  />
+</li>
+</ol>
+<p>3.再用 <code>t1'</code> 编译一遍 <code>h'</code> . 这里第一次用了扩展后的编译器 <code>h'</code> 的语义.
+<code>t1'</code> 也是 h&rsquo;的 compiled program, 但因为 <code>t1'</code>
+不是由 h&rsquo;的语义编译生成的(是由=h=的语义即 <code>t</code> 编译生成的).
 所以这里还算不上自举 <img loading="lazy" src="/ox-hugo/Pasted-image-20221108053602.png" alt=""  />
- 4.
-最后用 <code>t2'=编译 =h'</code>, 这里就有了自举了. 因为 <code>t3'</code> 是完全等于 <code>t2'=的, 因为 =t1'=的语义和 =t2'</code> 的*语义*相同.
+</p>
+<p>4.最后用 <code>t2'</code> 编译 <code>h'</code> , 这里就有了自举了. 因为 <code>t3'</code> 是完全等于 <code>t2'</code> 的,
+因为 <code>t1'</code> 的语义和 <code>t2'</code> 的 <strong>语义</strong> 相同.
 <img loading="lazy" src="/ox-hugo/Pasted-image-20221108053955.png" alt=""  />
 </p>
 

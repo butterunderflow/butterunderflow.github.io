@@ -658,7 +658,7 @@ unfold strategy的最终目的还是为了提升residual程序的质量(比如�
 这一章介绍了一个叫做 Flow Chart 的语言, 是一个以基本块组成的语言. 然后通过这个语言实现了两个二村映射来介绍Partial Evaluation的技巧.
 程序和状态 然后就是程序点和程序状态的概念: 程序点就是程序执行的位置, 程序状态指的是程序执行的状态, 具体的状态的值域取决于语义的定义. 这一点和静态分析里的定义是类似的.
 程序的状态可能有很多, 但大部分的语言都可以通过 变量 - 值 的映射来表示. 其中对于每个 program point, 变量的值可以分为 static 和 dynamic 分为两类. static 表示变量的值可以在静态确定, 而 dynamic 的值只能在运行时确定. 将每个 program point 的变量区分为 static 和 dynamic 的过程叫做 division.
-基于static程序状态做partial evaluation 这就引出了一个概念叫做 poly, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大程度地确认多少程序点的 static 变量? 这个问题的求解结果可以通过一个由 程序点-static value 序对组成的集合来表示 poly. 这些 poly 就对应着residual program (specialized program) 的 program point.</description>
+基于 static 程序状态做 partial evaluation 这就引出了一个概念叫做 poly, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大程度地确认多少程序点的 static 变量? 这个问题的求解结果可以通过一个由 程序点-static value 序对组成的集合来表示 poly. 这些 poly 就对应着 residual program (specialized program) 的 program point.</description>
       <content:encoded><![CDATA[<p><em>partial evaluation</em> 的第四章 <em>Partial Evaluation for a Flow Chart
 Language</em> 的笔记.</p>
 <p>这一章介绍了一个叫做 <em>Flow Chart</em> 的语言, 是一个以基本块组成的语言.
@@ -672,49 +672,52 @@ Language</em> 的笔记.</p>
 static 表示变量的值可以在静态确定, 而 dynamic 的值只能在运行时确定.
 将每个 program point 的变量区分为 static 和 dynamic 的过程叫做
 <em>division</em>.</p>
-<h2 id="基于static程序状态做partial-evaluation">基于static程序状态做partial evaluation</h2>
+<h2 id="基于-static-程序状态做-partial-evaluation">基于 static 程序状态做 partial evaluation</h2>
 <p>这就引出了一个概念叫做 <em>poly</em>, 指的是基于输入和已知的程序点的 static
 变量的值, 可以最大程度地确认多少程序点的 static 变量?
 这个问题的求解结果可以通过一个由 <code>程序点-static value</code> 序对组成的集合来表示 <em>poly</em>.
-这些 <em>poly</em> 就对应着residual program (specialized program) 的 program point.</p>
+这些 <em>poly</em> 就对应着 residual program (specialized program) 的 program point.</p>
 <p>一个直觉的描述是: 对于 subject program 在每个 program point, 把这个
 program point 对应的 basic block 根据不同的 static state
 &ldquo;展开&quot;的结果就是 residual program; &ldquo;展开&quot;之后, static 的属性就&quot;嵌入&quot;到
-<em>residual program</em> 中, 成为residual program的一部分了,
-而不再通过subject program的属性来表达.</p>
+<em>residual program</em> 中, 成为 residual program 的一部分了,
+而不再通过 subject program 的属性来表达.</p>
 <h2 id="division">division</h2>
-<p><em>division</em> 指的是在做partial evaluation之前, 先把程序变量做一个Static和Dynamic的区分,
-区分要满足 &ldquo;相合性(congruence)&rdquo;, 因此这个过程也叫/Binding Time Analysis/, 分析一个value的&quot;绑定时机&rdquo;.</p>
-<p><em>division</em> 的结果并不一定是唯一的, 只要满足以下 congruent 条件就行:</p>
+<p><em>division</em> 指的是在做 partial evaluation 之前, 先把程序变量做一个 Static 和 Dynamic 的区分,
+因此这个过程也叫/Binding Time Analysis(BTA)/, 分析一个 value 的&quot;绑定时机&rdquo;.</p>
+<p>BTA 有一个要点是要满足 <em>相合性(congruence)</em>,</p>
+<p><em>division</em> 的结果并不一定是唯一的, 只要满足以下 congruence 条件就行:</p>
 <blockquote>
 <p>Any variable that depends on a dynamic variable must itself be dynamic.</p>
 </blockquote>
-<p>也就是标记为Static的变量不能依赖于Dynamic变量.</p>
+<p>也就是标记为 Static 的变量不能依赖于 Dynamic 变量.</p>
 <p>这个定义其实有一些抽象. 我们来设想一种场景, 对于一个循环中的变量,
 第一次循环的值是确定的, 然后在循环中会通过赋值更新这个变量(这个 <em>Flow
 Chart</em> 的语言是允许赋值的), 那么这个变量算是什么呢?</p>
-<p>首先, 我们先看一下相合性本身的强大, 然后我们再来介绍一些更加高级的division方法</p>
-<h3 id="强大的相合性-被赋过值的变量-也可以是-static">强大的相合性: &ldquo;被赋过值的变量&quot;也可以是&quot;Static&rdquo;</h3>
-<p>比如说这个循环的循环次数和对变量更新的值都是可以确定的 (假设是 <code>k</code> 次),
-那么把这个变量标记为Static是满足相合性的. <br />
-一个简单的验证办法是我们可以把这个循环展开 <code>k</code> 次, 展开后的程序的循环变量显然都是 static 的.</p>
+<p>首先, 我们先看一下相合性本身的强大, 然后我们再来介绍一些更加高级的 division 方法</p>
+<h3 id="static-变量可能比想象的多">Static 变量可能比想象的多</h3>
+<p>一个变量标记为 Static 并不等于这个变量没有被修改过,
+理论上满足相合性的 BTA 可以标记的 Static 变量可能比想象的多.</p>
+<p>比如说一个循环的循环次数(假设为 <code>k</code> 次)和对变量更新的值都是可以 static 的,
+那么把这个变量标记为 Static 是满足相合性的.</p>
+<p>一个简单的验证办法是我们可以把这个循环展开 <code>k</code> 次, 展开后的程序的循环变量显然都是 static 的.</p>
 <p>但是如果每次循环对变量更新的值仍然是 static 的,
 但是循环的次数可能有无限多次, 这个变量我们应该标记为 static 吗?</p>
-<p>对于这种情况, 我们将变量标记为static是满足相合性的: <br />
-给定任意的 k, 我们都能确定这个变量第 k 次循环的值. 但是,
-把他们当作 static 的, subject program 的 <em>poly</em> 将会是无限的,
-从而无法有效的计算出一个 residual program (程序都是有限的). 所以,
-从计算residual program的角度来说, 有无限多种可能的 static variable
-是没有意义的.</p>
-<p>所以对于这种标记为 Static 满足相合性, 但是会导致在 partial
-evaluation 的过程中会得到无限多状态的变量,  我们只选择性的把他们标记为 dynamic.</p>
+<p>对于这种情况, 我们将变量标记为 static 是满足相合性的:
+因为给定任意的 k, 我们都能确定这个变量第 k 次循环的值.</p>
+<p>但是, 如果把它们当作 Static 的, subject program 的 <em>poly</em> 将会是无限的,
+从而导致根本无法有效的计算出一个 residual program (程序都是有限的). 所以,
+从计算 residual program 的角度来说,
+无限多种的 static variable 是没有意义的.</p>
+<p>所以对于这种虽然标记为 Static 满足相合性, 但是会导致在 partial
+evaluation 的过程中会得到无限多状态的变量, 我们只选择在 BTA 的过程中将他们标记为 Dynamic.</p>
 <p>这样我们就得到了一种十分简单且对任何情况都适用的处理方式: <br />
-所有麻烦的东西都当成 dynamic 就好了!
-即使某些地方这个变量的值是已知的,
-为了满足相合性, 我们直接直接将这个变量标记为Dynamic的,
-这样虽然有一些静态信息我们没有利用, 但基于这样的division做partial
-evalutaion仍然是安全的.</p>
-<p>但是从 partial evaluation最基本的直觉出发, 我们标注为 dynamic 的东西越多,
+所有麻烦的东西都当成 dynamic 就好了!</p>
+<p>即使某些地方这个变量的值是已知的,
+为了满足相合性, 我们直接直接将这个变量标记为 Dynamic 的,
+这样虽然有一些静态信息我们没有利用, 但基于这样的 division 做 partial
+evalutaion 仍然是安全且可用的.</p>
+<p>但是从 partial evaluation 最基本的直觉出发, 我们标注为 dynamic 的东西越多,
 我们能够 specialize 的东西就越少, partial evaluation 所能带来的优化也就更少.
 所以, 我们的 <em>division</em> 应该在保证相合性和可计算性的前提下尽可能的让 dynamic 少.</p>
 <p>那有没有什么通用的办法, 让我们给出 division 的同时, 还能保证这个
@@ -722,55 +725,55 @@ division 的 dynamic 是 <em>最少</em> 的?</p>
 <p>很可惜, 这个问题是个 <em>不可判定</em> 问题.</p>
 <p>不过书上说他们之后会给个办法给一个可接受的解(前面提到了, 合理的 division
 并不唯一).</p>
-<h3 id="更加高级的division">更加高级的division</h3>
-<p>除了全程序共用一个division, 也有很多更加高级的division方式, 这又根据其目的分了不同的情况, 有的是为了利用更多的静态信息, 有的是为了生成更高质量的residual program.
-不过基本思想都是把division进行&quot;参数化&rdquo;, 以表达更复杂的计算上下文中的static value. (这点和程序分析中的上下文敏感很相似)</p>
+<h3 id="更加高级的-division">更加高级的 division</h3>
+<p>除了全程序共用一个 division, 也有很多更加高级的 division 方式, 这又根据其目的分了不同的情况, 有的是为了利用更多的静态信息, 有的是为了生成更高质量的 residual program.
+不过基本思想都是把 division 进行&quot;参数化&rdquo;, 以表达更复杂的计算上下文中的 static value. (这点和程序分析中的上下文敏感很相似)</p>
 <h4 id="point-wise-division">Point-wise Division</h4>
-<p>除了全程序共用一个division的方法, 还可以点对点(Point-wise)的设置division.
-在这种division下, 每个程序点的division可以是不同的.</p>
-<p>可以通过一个程序来说明pointwise的含义(书中的例子):</p>
+<p>除了全程序共用一个 division 的方法, 还可以点对点(Point-wise)的设置 division.
+在这种 division 下, 每个程序点的 division 可以是不同的.</p>
+<p>可以通过一个程序来说明 pointwise 的含义(书中的例子):</p>
 <pre tabindex="0"><code class="language-nil" data-lang="nil">read(X, Y);
 init: X := X + 1
       Y := Y - 1
 cont: Y := 3
 next: ...
-</code></pre><p>如果程序的输入 <code>(X, Y)</code> 的init division是 <code>(S, D)</code>, 如果使用uniform division(全程序共用一个division)的话, 那么即使在next处 <code>Y</code> 的值明显是已知的, 也不能把他标记为Static的.</p>
+</code></pre><p>如果程序的输入 <code>(X, Y)</code> 的 init division 是 <code>(S, D)</code>, 如果使用 uniform division(全程序共用一个 division)的话, 那么即使在 next 处 <code>Y</code> 的值明显是已知的, 也不能把他标记为 Static 的.</p>
 <h4 id="polyvariant-division">Polyvariant Division</h4>
-<p>Polyvariant的Division指的是: 一个division不仅仅和程序点有关, 还和程序如何执行到这个程序点有关. 对于一个变量, 有的执行路径下把它标注为Static, 有的路径标注为Dynamic. 这种division就可以很灵活了, 此时, division可以由一个 <code>flow -&gt; division</code> 的映射表示.</p>
-<p>此时, 一个程序点可能对应多个division(之前的point-wise division是每个点对应 <strong>1</strong> 个), 所以叫 <strong>poly</strong> variant division(每个程序点对应1个的叫 <strong>mono</strong> variant division)</p>
-<p>疑问: 那可不可以再更加灵活一点呢? 比如说通过 <code>flow -&gt; state -&gt; division</code> 表示, state是上一个程序点的状态.</p>
+<p>Polyvariant 的 Division 指的是: 一个 division 不仅仅和程序点有关, 还和程序如何执行到这个程序点有关. 对于一个变量, 有的执行路径下把它标注为 Static, 有的路径标注为 Dynamic. 这种 division 就可以很灵活了, 此时, division 可以由一个 <code>flow -&gt; division</code> 的映射表示.</p>
+<p>此时, 一个程序点可能对应多个 division(之前的 point-wise division 是每个点对应 <strong>1</strong> 个), 所以叫 <strong>poly</strong> variant division(每个程序点对应 1 个的叫 <strong>mono</strong> variant division)</p>
+<p>疑问: 那可不可以再更加灵活一点呢? 比如说通过 <code>flow -&gt; state -&gt; division</code> 表示, state 是上一个程序点的状态.</p>
 <h4 id="live-and-dead-division">Live and Dead Division</h4>
-<p>目前的division只包含变量关于Static和Dynamic的划分.
-但是有的时候, 这个变量在某个program point的值是static的,
+<p>目前的 division 只包含变量关于 Static 和 Dynamic 的划分.
+但是有的时候, 这个变量在某个 program point 的值是 static 的,
 但是这个变量在这个点没有被用到过(dead),
-那我们可以在residual program的program point安全的抹去这些变量的值.</p>
-<p>因此Live and Dead Division也可以看作是一种pointwise division,
-前述的pointwise division是每个program point的static value可以不同,
-Live and Dead Division是每个program point包含的static value也可以不同.</p>
+那我们可以在 residual program 的 program point 安全的抹去这些变量的值.</p>
+<p>因此 Live and Dead Division 也可以看作是一种 pointwise division,
+前述的 pointwise division 是每个 program point 的 static value 可以不同,
+Live and Dead Division 是每个 program point 包含的 static value 也可以不同.</p>
 <h2 id="transition-compression">Transition Compression</h2>
-<p>路径压缩的目的是简化生成的residual program的质量, 消灭掉一些没有意义的跳转, 比如说生成的程序包含从一个基本块 <code>x := 1</code> 到基本块 <code>y := 1</code> 的跳转, 那么可以把这两个基本块直接合并成一个基本块. 其本身不会对生成程序的正确性和性能造成影响(这里的性能指的是抽象机中的性能, 真实的程序由于cache locality, 跳转的数量和距离都会对性能有影响).</p>
-<p>需要注意的是, Transition Compression是有可能带来代码重复的. 比如说, 有两个基本块都跳转到统一个基本块, 但是我们把两个跳转都压缩了, 这就会带来代码重复. 需要谨慎的选择需要压缩的transition以避免代码爆炸的问题.</p>
-<h2 id="mix算法">Mix算法</h2>
-<p>Partial Evaluation一般要做以下几件事情: <br /></p>
+<p>路径压缩的目的是简化生成的 residual program 的质量, 消灭掉一些没有意义的跳转, 比如说生成的程序包含从一个基本块 <code>x := 1</code> 到基本块 <code>y := 1</code> 的跳转, 那么可以把这两个基本块直接合并成一个基本块. 其本身不会对生成程序的正确性和性能造成影响(这里的性能指的是抽象机中的性能, 真实的程序由于 cache locality, 跳转的数量和距离都会对性能有影响).</p>
+<p>需要注意的是, Transition Compression 是有可能带来代码重复的. 比如说, 有两个基本块都跳转到统一个基本块, 但是我们把两个跳转都压缩了, 这就会带来代码重复. 需要谨慎的选择需要压缩的 transition 以避免代码爆炸的问题.</p>
+<h2 id="mix-算法">Mix 算法</h2>
+<p>Partial Evaluation 一般要做以下几件事情: <br /></p>
 <ol>
 <li>根据输入, 确定变量的 division; 也就是把变量区分为 static 和 dynamic 两类.
-这一步有的是和计算residual program的过程是合在一起的(online) <br /></li>
-<li>基于division计算 poly, 也就是 specialized program 的 program points.
-前面提到了, poly也有很多种不同的方式 <br /></li>
+这一步有的是和计算 residual program 的过程是合在一起的(online) <br /></li>
+<li>基于 division 计算 poly, 也就是 specialized program 的 program points.
+前面提到了, poly 也有很多种不同的方式 <br /></li>
 <li>根据 poly, 生成 specialized program<br /></li>
 <li>(optional) transition compression<br /></li>
 <li>(optional) relabel the program</li>
 </ol>
-<p>书中展示了一个完整的 mixer 程序, 做了上面的5件事情:</p>
+<p>书中展示了一个完整的 mixer 程序, 做了上面的 5 件事情:</p>
 <figure>
     <img loading="lazy" src="/ox-hugo/Pasted-image-20221121074932.png"/> 
 </figure>
 
-<p>虽然上面的所有事情这个mix程序都做了, 只是有一些操作是隐式的.
-比如说transition compression, 没有一个过程叫做&quot;transition compression&quot;,
-当遇到 <code>goto l</code> 的时候, 直接把要插入的basic block更新成 <code>l</code> 对应的基本块就可以了.</p>
+<p>虽然上面的所有事情这个 mix 程序都做了, 只是有一些操作是隐式的.
+比如说 transition compression, 没有一个过程叫做&quot;transition compression&quot;,
+当遇到 <code>goto l</code> 的时候, 直接把要插入的 basic block 更新成 <code>l</code> 对应的基本块就可以了.</p>
 <h3 id="第一二村映射">第一二村映射</h3>
-<p>如 <a href="/articles/partial-evaluation/">Partial Evaluation</a> 中的描述, 第一二村映射指的是将一个 interpreter 在 interpreter 的输入程序上进行specialize, 将会得到一个可执行程序.</p>
+<p>如 <a href="/articles/partial-evaluation/">Partial Evaluation</a> 中的描述, 第一二村映射指的是将一个 interpreter 在 interpreter 的输入程序上进行 specialize, 将会得到一个可执行程序.</p>
 <p>一个解释器的完整定义如下:</p>
 <figure>
     <img loading="lazy" src="/ox-hugo/Pasted-image-20221120195636.png"/> 
@@ -781,7 +784,7 @@ Live and Dead Division是每个program point包含的static value也可以不同
     <img loading="lazy" src="/ox-hugo/Pasted-image-20221120194634.png"/> 
 </figure>
 
-<p>传入mix后, 将得到一个 specialized的解释器</p>
+<p>传入 mix 后, 将得到一个 specialized 的解释器</p>
 <figure>
     <img loading="lazy" src="/ox-hugo/Pasted-image-20221120194652.png"/> 
 </figure>
@@ -792,65 +795,65 @@ Live and Dead Division是每个program point包含的static value也可以不同
 </figure>
 
 <h3 id="第二二村映射">第二二村映射</h3>
-<p>mix程序可以把 <code>program</code> specialize 到 <code>program</code> 的静态可确定的程序状态 <code>vs_0</code>.
-但是mix程序本身不也是程序吗? 它的输入是 <code>program</code>, <code>division</code> 和 <code>vs_0</code>.</p>
-<p>那么mix可不可以把 <code>program</code> 参数specialize到某个程序呢?</p>
-<p>答案是可以的, 也就是mix程序具有 <strong>应用到自己(self-application)</strong> 能力!</p>
-<p>把mix本身作为mix待specilize的程序,
-然后把mix在解释器程序上specialize后就可以得到一个编译器,
+<p>mix 程序可以把 <code>program</code> specialize 到 <code>program</code> 的静态可确定的程序状态 <code>vs_0</code>.
+但是 mix 程序本身不也是程序吗? 它的输入是 <code>program</code>, <code>division</code> 和 <code>vs_0</code>.</p>
+<p>那么 mix 可不可以把 <code>program</code> 参数 specialize 到某个程序呢?</p>
+<p>答案是可以的, 也就是 mix 程序具有 <strong>应用到自己(self-application)</strong> 能力!</p>
+<p>把 mix 本身作为 mix 待 specilize 的程序,
+然后把 mix 在解释器程序上 specialize 后就可以得到一个编译器,
 这就是 <strong>第二二村映射</strong>.</p>
-<h3 id="在mix中利用更加高级的division">在Mix中利用更加高级的division</h3>
-<p>为了简单起见, 刚刚提到mix算法采用的是 <em>offline partial evaluation</em>,
-也就是先 通过binding time analysis算出division(可以看到mix有一个division参数),
-然后通过这个divison计算residual program, 这个division在整个程序中是始终不变的.</p>
-<p>想要使用刚刚提到的更加高级的division, 我们需要对mix程序进行一些修改.</p>
-<h4 id="在mix中使用point-wise-division">在mix中使用point-wise division</h4>
-<p>在mix中使用point-wise division只需要把原来的division表示
-改成一个记录了每个point的division的表就可以了.
-每次需要知道某个program point <code>pp</code> 的division的时候 <code>lookup(pp, division)</code> 就可以了.</p>
-<p>有了point-wise division, live and dead就十分简单了,
-还是给每个让每个program point的division不同,
-刚刚提到的point-wise division指的是对于每个program point,
-&ldquo;哪些变量是Static, 哪些变量是Dynamic&quot;这一信息是不同的;
-live and dead division指的是对于每个program point,
-&ldquo;需要考虑哪些变量是Static或Dynamic&quot;这一信息不同.</p>
-<h4 id="在mix中使用polyvariant-division">在mix中使用polyvariant division</h4>
-<p>想要在mix算法中应用polyvariant有两种思路:</p>
+<h3 id="在-mix-中利用更加高级的-division">在 Mix 中利用更加高级的 division</h3>
+<p>为了简单起见, 刚刚提到 mix 算法采用的是 <em>offline partial evaluation</em>,
+也就是先 通过 binding time analysis 算出 division(可以看到 mix 有一个 division 参数),
+然后通过这个 divison 计算 residual program, 这个 division 在整个程序中是始终不变的.</p>
+<p>想要使用刚刚提到的更加高级的 division, 我们需要对 mix 程序进行一些修改.</p>
+<h4 id="在-mix-中使用-point-wise-division">在 mix 中使用 point-wise division</h4>
+<p>在 mix 中使用 point-wise division 只需要把原来的 division 表示
+改成一个记录了每个 point 的 division 的表就可以了.
+每次需要知道某个 program point <code>pp</code> 的 division 的时候 <code>lookup(pp, division)</code> 就可以了.</p>
+<p>有了 point-wise division, live and dead 就十分简单了,
+还是给每个让每个 program point 的 division 不同,
+刚刚提到的 point-wise division 指的是对于每个 program point,
+&ldquo;哪些变量是 Static, 哪些变量是 Dynamic&quot;这一信息是不同的;
+live and dead division 指的是对于每个 program point,
+&ldquo;需要考虑哪些变量是 Static 或 Dynamic&quot;这一信息不同.</p>
+<h4 id="在-mix-中使用-polyvariant-division">在 mix 中使用 polyvariant division</h4>
+<p>想要在 mix 算法中应用 polyvariant 有两种思路:</p>
 <ol>
-<li>在mix中加入 polyvariant division 的使用逻辑,
-书中的做法是给原有的由 <code>(pp, vs)</code> (subject program point和static value组成的列表)
-所表示的specialized program point再加上一个division component &ndash; <code>(pp, vs, div)</code>,
-以表示这个program point是根据具体 <strong>哪个</strong> 来division来specialize的.
-不仅如此, 如何选取specialized program point也有讲究, 不能直接像初版的mix一样直接把一个program point的后继加入到pending里了, 要根据当前点的divison来决定后继节点和后继节点相应的divisions.</li>
-<li>通过polyvariant division先对程序进行一次变换, 得到一个有monovariant division的程序.</li>
+<li>在 mix 中加入 polyvariant division 的使用逻辑,
+书中的做法是给原有的由 <code>(pp, vs)</code> (subject program point 和 static value 组成的列表)
+所表示的 specialized program point 再加上一个 division component &ndash; <code>(pp, vs, div)</code>,
+以表示这个 program point 是根据具体 <strong>哪个</strong> 来 division 来 specialize 的.
+不仅如此, 如何选取 specialized program point 也有讲究, 不能直接像初版的 mix 一样直接把一个 program point 的后继加入到 pending 里了, 要根据当前点的 divison 来决定后继节点和后继节点相应的 divisions.</li>
+<li>通过 polyvariant division 先对程序进行一次变换, 得到一个有 monovariant division 的程序.</li>
 </ol>
-<h2 id="self-application成功的关键">Self-Application成功的关键</h2>
-<p>刚刚提到了mix程序是具有通过self-application得到编译器的能力的,
-但是如果我们简单的把写好的mix传给mix我们是得不到刚刚图示的编译器的,
-虽然可以得到一个&quot;正确&quot;的编译器(只要mix程序的实现是正确的, 那么二村映射的含义也一定是正确的),
-但这个编译器会有很多的问题, 图示的mix函数在背后把这些问题&quot;偷偷&quot;解决了,
+<h2 id="self-application-成功的关键">Self-Application 成功的关键</h2>
+<p>刚刚提到了 mix 程序是具有通过 self-application 得到编译器的能力的,
+但是如果我们简单的把写好的 mix 传给 mix 我们是得不到刚刚图示的编译器的,
+虽然可以得到一个&quot;正确&quot;的编译器(只要 mix 程序的实现是正确的, 那么二村映射的含义也一定是正确的),
+但这个编译器会有很多的问题, 图示的 mix 函数在背后把这些问题&quot;偷偷&quot;解决了,
 只把最直观优雅的东西写了出来, 比如说以下内容, 图示算法没有显式的考虑:  <br /></p>
 <ol>
-<li>假设division已知, 而对于mix这样一个复杂的程序, division的分析并不容易.</li>
-<li>一些base function有些过于强大了, 它们到底是什么? 我们应该把哪些东西作为base function,
-把哪些东西自己把实现写到subject program中.</li>
-<li>简单的binding time analysis所得到的static variable太少;
-仅仅由相合性得到的division, 有很多静态信息没有利用到.</li>
-<li>(pp, static value)序对有很多, 这会在residual program中生成超多的跳转标签(远多余图示的生成的编译器).</li>
+<li>假设 division 已知, 而对于 mix 这样一个复杂的程序, division 的分析并不容易.</li>
+<li>一些 base function 有些过于强大了, 它们到底是什么? 我们应该把哪些东西作为 base function,
+把哪些东西自己把实现写到 subject program 中.</li>
+<li>简单的 binding time analysis 所得到的 static variable 太少;
+仅仅由相合性得到的 division, 有很多静态信息没有利用到.</li>
+<li>(pp, static value)序对有很多, 这会在 residual program 中生成超多的跳转标签(远多余图示的生成的编译器).</li>
 </ol>
-<p>这里仅仅介绍个人觉得比较有趣的第3点, 如何通过Bound Static Variation更多的静态信息(相比与仅满足相合性的程序而言).</p>
+<p>这里仅仅介绍个人觉得比较有趣的第 3 点, 如何通过 Bound Static Variation 更多的静态信息(相比与仅满足相合性的程序而言).</p>
 <p>对于其他技巧, 请参考 <a href="https://www.itu.dk/people/sestoft/pebook/">Partial Evaluation教材</a> 的 <em>4.8 The tricks under the carpet</em>.</p>
 <h3 id="bound-static-variation--the-trick">Bound Static Variation(&ldquo;The Trick&rdquo;)</h3>
-<p>我们在specialize一个程序的时候, 通常会遇到一个问题:
+<p>我们在 specialize 一个程序的时候, 通常会遇到一个问题:
 程序中一个变量的值依赖于动态的输入, 但是其范围是已知的.</p>
 <p>比如说如下程序:</p>
 <pre tabindex="0"><code class="language-nil" data-lang="nil">x = input()
 array = [1,2,3]
 t = mod(x, 3)
 y = array[t]
-</code></pre><p>我们希望对其进行specialization, x的值显然是Dynamic, array的值显然是Static,
-那t的值依赖于x, 所以按照相合性, t必须被标记为dynamic.</p>
-<p>但是与一般的Dynamic不同, 我们并不是完全不知道y的取值的, 这里y只能取 <code>1,2,3</code> 三种值.</p>
+</code></pre><p>我们希望对其进行 specialization, x 的值显然是 Dynamic, array 的值显然是 Static,
+那 t 的值依赖于 x, 所以按照相合性, t 必须被标记为 dynamic.</p>
+<p>但是与一般的 Dynamic 不同, 我们并不是完全不知道 y 的取值的, 这里 y 只能取 <code>1,2,3</code> 三种值.</p>
 <p>对于这种 <strong>值无法确定(Static), 但是取值范围可以确定(Static)</strong> 的值,
 我们可以通过一个程序变换, 在变换中直接将这个值消除掉, 从而利用 <strong>取值范围有限</strong> 这一静态信息.</p>
 <pre tabindex="0"><code class="language-nil" data-lang="nil">x = input()
@@ -859,7 +862,7 @@ y = case t of
   | 1 -&gt; array[1]
   | 2 -&gt; array[2]
   | 3 -&gt; array[3]
-</code></pre><p>(其实也就是为每个可能的取值生成一个case啦)</p>
+</code></pre><p>(其实也就是为每个可能的取值生成一个 case 啦)</p>
 ]]></content:encoded>
     </item>
     
@@ -870,46 +873,47 @@ y = case t of
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/partial-evaluation/</guid>
       <description>关于 Partial Evaluation 的第一章 Introduction 的笔记.
-从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&amp;quot;优化器&amp;quot;可以叫做 specializer. 所以 Partial Evaluation 实际上可以看作做了两件事情:
-提前计算可以预先知道的输入 为提前知道的输入进行特化版本的程序 如果是解释器的话, 那么一个解释器可以通过下图描述:
-+--------+ P --&amp;gt; | interp | --&amp;gt; out input --&amp;gt; | | +--------+ 如果有了一个 interpreter, 有了一个针对解释器的源程序输入的 specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的 specializer.
+从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 in1 和 in2, 如果该程序的输入 in1 是可以在运行之前确定的, 那么我们就可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&amp;quot;优化器&amp;quot;可以叫做 specializer. 所以 Partial Evaluation 可以看作做了两件事情:
+计算可以预先知道的输入 为提前知道的输入进行特化, 生成一个针对预先输入优化的程序 二村映射 我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:
++--------+ P --&amp;gt; | interp | --&amp;gt; out input --&amp;gt; | | +--------+ 对于这个 interpreter, 如果有一个可以针对解释器的源程序输入 P 的 specializer, 那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样, 下图中的 PE 就是我们的 specializer, interpP 就是一个可执行程序.
 图 1:
-+----+ interp --&amp;gt; | PE | --&amp;gt; interpP P --&amp;gt; | | +----+ 那么也可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(图中的 PEinterp).</description>
++----+ interp --&amp;gt; | PE | --&amp;gt; interpP P --&amp;gt; | | +----+ 这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(下图中的 PEinterp).</description>
       <content:encoded><![CDATA[<p>关于 <em>Partial Evaluation</em> 的第一章 <em>Introduction</em> 的笔记.</p>
-<p>从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话,
-那么如果程序的某个输入 <code>in1</code> 是可以提前确定的,
-那么可以生成一个针对 <code>in1</code> 优化的程序, 这个过程就叫做 specialization(特化).
-针对 <code>in1</code> 优化的&quot;优化器&quot;可以叫做 specializer. 所以 Partial
-Evaluation 实际上可以看作做了两件事情:</p>
+<p>从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 <code>in1</code> 和 <code>in2</code>,
+如果该程序的输入 <code>in1</code> 是可以在运行之前确定的,
+那么我们就可以生成一个针对 <code>in1</code> 优化的程序, 这个过程就叫做 specialization(特化).
+针对 <code>in1</code> 优化的&quot;优化器&quot;可以叫做 specializer.
+所以 Partial Evaluation 可以看作做了两件事情:</p>
 <ol>
-<li>提前计算可以预先知道的输入</li>
-<li>为提前知道的输入进行特化版本的程序</li>
+<li>计算可以预先知道的输入</li>
+<li>为提前知道的输入进行特化, 生成一个针对预先输入优化的程序</li>
 </ol>
-<p>如果是解释器的话, 那么一个解释器可以通过下图描述:</p>
+<h2 id="二村映射">二村映射</h2>
+<p>我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>           +--------+
 </span></span><span style="display:flex;"><span>P      --&gt; | interp | --&gt; out
 </span></span><span style="display:flex;"><span>input  --&gt; |        |
 </span></span><span style="display:flex;"><span>           +--------+
-</span></span></code></pre></div><p>如果有了一个 interpreter, 有了一个针对解释器的源程序输入的 specializer,
-那么就得到了一个可执行程序. 用图画出来就是这样,
-<code>PE</code> 就是我们的 specializer.</p>
+</span></span></code></pre></div><p>对于这个 <code>interpreter</code>, 如果有一个可以针对解释器的源程序输入 <code>P</code> 的 specializer,
+那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样,
+下图中的 <code>PE</code> 就是我们的 specializer, <code>interpP</code> 就是一个可执行程序.</p>
 <p>图 1:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>           +----+
 </span></span><span style="display:flex;"><span>interp --&gt; | PE | --&gt; interpP
 </span></span><span style="display:flex;"><span>     P --&gt; |    |
 </span></span><span style="display:flex;"><span>           +----+
-</span></span></code></pre></div><p>那么也可以看到, 这个 specialzer 本身也是多参数的函数,
+</span></span></code></pre></div><p>这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数,
 如果我们已经有了一个 specialzer,
-如果再把这个 specializer 对 interp 参数进行 specialization,
-我们就可以得到一个编译器(图中的 PEinterp).</p>
+如果再把这个 specializer 对 <code>interp</code> 参数进行 specialization,
+我们就可以得到一个编译器(下图中的 <code>PEinterp</code>).</p>
 <p>图 2:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>           +----+
 </span></span><span style="display:flex;"><span>PE     --&gt; | PE | --&gt; PEinterp
 </span></span><span style="display:flex;"><span>interp --&gt; |    |
 </span></span><span style="display:flex;"><span>           +----+
 </span></span></code></pre></div><p>这里的 PE 又是一个多参数的函数, 我们又可以对其进行 Specialization.
-如果有一个 Specialzer, 可以让 PE 对 PE 进行进行 Specialization,
-那么就可以得到一个编译器的生成器(图中的 PE_PE).</p>
+如果有一个 specialzer, 可以让 PE 对 PE 进行进行 Specialization,
+那么就可以得到一个编译器的生成器(图中的 <code>PE_PE</code>).</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>        +----+
 </span></span><span style="display:flex;"><span>PE  --&gt; | PE | --&gt; PE_PE
 </span></span><span style="display:flex;"><span>PE  --&gt; |    |
@@ -918,21 +922,16 @@ Evaluation 实际上可以看作做了两件事情:</p>
 其中一个程序 <code>in1</code> 是另外一个程序 <code>in2</code> 的输入;
 PE 的功能都是为 <code>in2</code> 生成一个特化在 <code>in1</code> 的版本,
 这个特化的版本往往会比 <code>in1 |&gt; in2</code> 更加高效.</p>
+<p>二村映射就是指的以上的几个程序特化的过程,</p>
 <p>上面的 specialize 的过程有时候也叫 stage: 通过 specialize 把原来的程序分成了好几步.</p>
-<p>有个关键的概念需要区分: program text 和 running program</p>
+<h2 id="partial-evaluation-和-partial-application--柯里化">Partial Evaluation 和 Partial Application(柯里化)</h2>
 <p>Partial Evaluation 和编程语言中的 Partial Application(柯里化)还是很不一样的 在 Partial
-Application 中, 得到的是一个同一个语言的函数; 而 partial evaluation 中,
-得到的是一个*新的程序* <img loading="lazy" src="/images/image-20221023232021.png" alt=""  />
-
-这里就体现了一个 program text 和 running program 的区别, program
-text 只是程序的表示, 而运行起来的程序才能抽象成一个函数.
-可以通过语义函数(图中的双中括号)把程序从 program text 转变成函数.</p>
-<p>比如说, 我们说 PE 的输入是程序,
-但是图中的 PE 的类型可以看作 <code>L</code> (因为 PE 是程序的表示),
-通过语义函数变成类型为 <code>L -&gt; L -&gt; L</code> 的函数, 其中 <code>L</code> 是程序表示的类型.</p>
-<p>有一个关键是强调了 <code>program</code> 和 <code>function</code> 之间的区别:
-program 是一个 syntactic world 里的东西, 比如说符号, 表达式,
-function 是数学意义上的东西. 所以 partial evaluation 和 <a href="https://en.wikipedia.org/wiki/Currying">柯里化</a> 时的 partial application 并是一回事.</p>
+Application 中, 得到的是一个同一个语言的函数; 而 partial evaluation 中, 得到的是一个*新的程序*.
+这里就体现了一个 program text 和 running program 的区别:
+program text 是一个 syntactic world 里的东西, 比如说符号, 表达式, 只是程序的 <strong><strong>表示</strong></strong>;
+function 是数学意义上的东西, 需要把 program text 传给语义函数后(通俗的说就是要把程序运行起来)才能通过把
+program text 和 function 关联起来.
+所以 partial evaluation 和 <a href="https://en.wikipedia.org/wiki/Currying">柯里化</a> 时的 partial application 并是一回事.</p>
 <p>感谢 kokic 为本文找到的 typo!</p>
 ]]></content:encoded>
     </item>

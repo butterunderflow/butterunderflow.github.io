@@ -8,11 +8,11 @@
 <title>Partial Evaluation | Butter&#39;s space</title>
 <meta name="keywords" content="Partial-Evaluation">
 <meta name="description" content="关于 Partial Evaluation 的第一章 Introduction 的笔记.
-从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&quot;优化器&quot;可以叫做 specializer. 所以 Partial Evaluation 实际上可以看作做了两件事情:
-提前计算可以预先知道的输入 为提前知道的输入进行特化版本的程序 如果是解释器的话, 那么一个解释器可以通过下图描述:
-&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 如果有了一个 interpreter, 有了一个针对解释器的源程序输入的 specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的 specializer.
+从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 in1 和 in2, 如果该程序的输入 in1 是可以在运行之前确定的, 那么我们就可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&quot;优化器&quot;可以叫做 specializer. 所以 Partial Evaluation 可以看作做了两件事情:
+计算可以预先知道的输入 为提前知道的输入进行特化, 生成一个针对预先输入优化的程序 二村映射 我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:
+&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 对于这个 interpreter, 如果有一个可以针对解释器的源程序输入 P 的 specializer, 那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样, 下图中的 PE 就是我们的 specializer, interpP 就是一个可执行程序.
 图 1:
-&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 那么也可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(图中的 PEinterp).">
+&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(下图中的 PEinterp).">
 <meta name="author" content="butterunderflow">
 <link rel="canonical" href="http://butter-xz.com/articles/partial-evaluation/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.5cfc680b1eeaeef9efbced92d46c2a9e876b72ee14fba85846afc4cff9e6e6f8.css" integrity="sha256-XPxoCx7q7vnvvO2S1Gwqnodrcu4U&#43;6hYRq/Ez/nm5vg=" rel="preload stylesheet" as="style">
@@ -67,11 +67,11 @@
 
 <meta property="og:title" content="Partial Evaluation" />
 <meta property="og:description" content="关于 Partial Evaluation 的第一章 Introduction 的笔记.
-从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&quot;优化器&quot;可以叫做 specializer. 所以 Partial Evaluation 实际上可以看作做了两件事情:
-提前计算可以预先知道的输入 为提前知道的输入进行特化版本的程序 如果是解释器的话, 那么一个解释器可以通过下图描述:
-&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 如果有了一个 interpreter, 有了一个针对解释器的源程序输入的 specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的 specializer.
+从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 in1 和 in2, 如果该程序的输入 in1 是可以在运行之前确定的, 那么我们就可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&quot;优化器&quot;可以叫做 specializer. 所以 Partial Evaluation 可以看作做了两件事情:
+计算可以预先知道的输入 为提前知道的输入进行特化, 生成一个针对预先输入优化的程序 二村映射 我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:
+&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 对于这个 interpreter, 如果有一个可以针对解释器的源程序输入 P 的 specializer, 那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样, 下图中的 PE 就是我们的 specializer, interpP 就是一个可执行程序.
 图 1:
-&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 那么也可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(图中的 PEinterp)." />
+&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(下图中的 PEinterp)." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://butter-xz.com/articles/partial-evaluation/" /><meta property="article:section" content="articles" />
 <meta property="article:published_time" content="2022-10-22T00:00:00+00:00" />
@@ -80,11 +80,11 @@
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Partial Evaluation"/>
 <meta name="twitter:description" content="关于 Partial Evaluation 的第一章 Introduction 的笔记.
-从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&quot;优化器&quot;可以叫做 specializer. 所以 Partial Evaluation 实际上可以看作做了两件事情:
-提前计算可以预先知道的输入 为提前知道的输入进行特化版本的程序 如果是解释器的话, 那么一个解释器可以通过下图描述:
-&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 如果有了一个 interpreter, 有了一个针对解释器的源程序输入的 specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的 specializer.
+从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 in1 和 in2, 如果该程序的输入 in1 是可以在运行之前确定的, 那么我们就可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&quot;优化器&quot;可以叫做 specializer. 所以 Partial Evaluation 可以看作做了两件事情:
+计算可以预先知道的输入 为提前知道的输入进行特化, 生成一个针对预先输入优化的程序 二村映射 我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:
+&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 对于这个 interpreter, 如果有一个可以针对解释器的源程序输入 P 的 specializer, 那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样, 下图中的 PE 就是我们的 specializer, interpP 就是一个可执行程序.
 图 1:
-&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 那么也可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(图中的 PEinterp)."/>
+&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(下图中的 PEinterp)."/>
 
 
 <script type="application/ld+json">
@@ -113,12 +113,12 @@
   "@type": "BlogPosting",
   "headline": "Partial Evaluation",
   "name": "Partial Evaluation",
-  "description": "关于 Partial Evaluation 的第一章 Introduction 的笔记.\n从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的\u0026quot;优化器\u0026quot;可以叫做 specializer. 所以 Partial Evaluation 实际上可以看作做了两件事情:\n提前计算可以预先知道的输入 为提前知道的输入进行特化版本的程序 如果是解释器的话, 那么一个解释器可以通过下图描述:\n+--------+ P --\u0026gt; | interp | --\u0026gt; out input --\u0026gt; | | +--------+ 如果有了一个 interpreter, 有了一个针对解释器的源程序输入的 specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的 specializer.\n图 1:\n+----+ interp --\u0026gt; | PE | --\u0026gt; interpP P --\u0026gt; | | +----+ 那么也可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(图中的 PEinterp).",
+  "description": "关于 Partial Evaluation 的第一章 Introduction 的笔记.\n从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 in1 和 in2, 如果该程序的输入 in1 是可以在运行之前确定的, 那么我们就可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的\u0026quot;优化器\u0026quot;可以叫做 specializer. 所以 Partial Evaluation 可以看作做了两件事情:\n计算可以预先知道的输入 为提前知道的输入进行特化, 生成一个针对预先输入优化的程序 二村映射 我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:\n+--------+ P --\u0026gt; | interp | --\u0026gt; out input --\u0026gt; | | +--------+ 对于这个 interpreter, 如果有一个可以针对解释器的源程序输入 P 的 specializer, 那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样, 下图中的 PE 就是我们的 specializer, interpP 就是一个可执行程序.\n图 1:\n+----+ interp --\u0026gt; | PE | --\u0026gt; interpP P --\u0026gt; | | +----+ 这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(下图中的 PEinterp).",
   "keywords": [
     "Partial-Evaluation"
   ],
-  "articleBody": "关于 Partial Evaluation 的第一章 Introduction 的笔记.\n从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的\"优化器\"可以叫做 specializer. 所以 Partial Evaluation 实际上可以看作做了两件事情:\n提前计算可以预先知道的输入 为提前知道的输入进行特化版本的程序 如果是解释器的话, 那么一个解释器可以通过下图描述:\n+--------+ P --\u003e | interp | --\u003e out input --\u003e | | +--------+ 如果有了一个 interpreter, 有了一个针对解释器的源程序输入的 specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的 specializer.\n图 1:\n+----+ interp --\u003e | PE | --\u003e interpP P --\u003e | | +----+ 那么也可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(图中的 PEinterp).\n图 2:\n+----+ PE --\u003e | PE | --\u003e PEinterp interp --\u003e | | +----+ 这里的 PE 又是一个多参数的函数, 我们又可以对其进行 Specialization. 如果有一个 Specialzer, 可以让 PE 对 PE 进行进行 Specialization, 那么就可以得到一个编译器的生成器(图中的 PE_PE).\n+----+ PE --\u003e | PE | --\u003e PE_PE PE --\u003e | | +----+ 这里的每个 PE 的输入都是两个程序, 其中一个程序 in1 是另外一个程序 in2 的输入; PE 的功能都是为 in2 生成一个特化在 in1 的版本, 这个特化的版本往往会比 in1 |\u003e in2 更加高效.\n上面的 specialize 的过程有时候也叫 stage: 通过 specialize 把原来的程序分成了好几步.\n有个关键的概念需要区分: program text 和 running program\nPartial Evaluation 和编程语言中的 Partial Application(柯里化)还是很不一样的 在 Partial Application 中, 得到的是一个同一个语言的函数; 而 partial evaluation 中, 得到的是一个*新的程序* 这里就体现了一个 program text 和 running program 的区别, program text 只是程序的表示, 而运行起来的程序才能抽象成一个函数. 可以通过语义函数(图中的双中括号)把程序从 program text 转变成函数.\n比如说, 我们说 PE 的输入是程序, 但是图中的 PE 的类型可以看作 L (因为 PE 是程序的表示), 通过语义函数变成类型为 L -\u003e L -\u003e L 的函数, 其中 L 是程序表示的类型.\n有一个关键是强调了 program 和 function 之间的区别: program 是一个 syntactic world 里的东西, 比如说符号, 表达式, function 是数学意义上的东西. 所以 partial evaluation 和 柯里化 时的 partial application 并是一回事.\n感谢 kokic 为本文找到的 typo!\n",
-  "wordCount" : "233",
+  "articleBody": "关于 Partial Evaluation 的第一章 Introduction 的笔记.\n从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 in1 和 in2, 如果该程序的输入 in1 是可以在运行之前确定的, 那么我们就可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的\"优化器\"可以叫做 specializer. 所以 Partial Evaluation 可以看作做了两件事情:\n计算可以预先知道的输入 为提前知道的输入进行特化, 生成一个针对预先输入优化的程序 二村映射 我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:\n+--------+ P --\u003e | interp | --\u003e out input --\u003e | | +--------+ 对于这个 interpreter, 如果有一个可以针对解释器的源程序输入 P 的 specializer, 那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样, 下图中的 PE 就是我们的 specializer, interpP 就是一个可执行程序.\n图 1:\n+----+ interp --\u003e | PE | --\u003e interpP P --\u003e | | +----+ 这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(下图中的 PEinterp).\n图 2:\n+----+ PE --\u003e | PE | --\u003e PEinterp interp --\u003e | | +----+ 这里的 PE 又是一个多参数的函数, 我们又可以对其进行 Specialization. 如果有一个 specialzer, 可以让 PE 对 PE 进行进行 Specialization, 那么就可以得到一个编译器的生成器(图中的 PE_PE).\n+----+ PE --\u003e | PE | --\u003e PE_PE PE --\u003e | | +----+ 这里的每个 PE 的输入都是两个程序, 其中一个程序 in1 是另外一个程序 in2 的输入; PE 的功能都是为 in2 生成一个特化在 in1 的版本, 这个特化的版本往往会比 in1 |\u003e in2 更加高效.\n二村映射就是指的以上的几个程序特化的过程,\n上面的 specialize 的过程有时候也叫 stage: 通过 specialize 把原来的程序分成了好几步.\nPartial Evaluation 和 Partial Application(柯里化) Partial Evaluation 和编程语言中的 Partial Application(柯里化)还是很不一样的 在 Partial Application 中, 得到的是一个同一个语言的函数; 而 partial evaluation 中, 得到的是一个*新的程序*. 这里就体现了一个 program text 和 running program 的区别: program text 是一个 syntactic world 里的东西, 比如说符号, 表达式, 只是程序的 表示; function 是数学意义上的东西, 需要把 program text 传给语义函数后(通俗的说就是要把程序运行起来)才能通过把 program text 和 function 关联起来. 所以 partial evaluation 和 柯里化 时的 partial application 并是一回事.\n感谢 kokic 为本文找到的 typo!\n",
+  "wordCount" : "223",
   "inLanguage": "cn",
   "datePublished": "2022-10-22T00:00:00Z",
   "dateModified": "2022-10-22T00:00:00Z",
@@ -218,43 +218,59 @@
     <div class="post-meta"><span title='2022-10-22 00:00:00 +0000 UTC'>October 22, 2022</span>&nbsp;·&nbsp;butterunderflow
 
 </div>
-  </header> 
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e4%ba%8c%e6%9d%91%e6%98%a0%e5%b0%84" aria-label="二村映射">二村映射</a></li>
+                <li>
+                    <a href="#partial-evaluation-%e5%92%8c-partial-application--%e6%9f%af%e9%87%8c%e5%8c%96" aria-label="Partial Evaluation 和 Partial Application(柯里化)">Partial Evaluation 和 Partial Application(柯里化)</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
 
   <div class="post-content"><p>关于 <em>Partial Evaluation</em> 的第一章 <em>Introduction</em> 的笔记.</p>
-<p>从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话,
-那么如果程序的某个输入 <code>in1</code> 是可以提前确定的,
-那么可以生成一个针对 <code>in1</code> 优化的程序, 这个过程就叫做 specialization(特化).
-针对 <code>in1</code> 优化的&quot;优化器&quot;可以叫做 specializer. 所以 Partial
-Evaluation 实际上可以看作做了两件事情:</p>
+<p>从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 <code>in1</code> 和 <code>in2</code>,
+如果该程序的输入 <code>in1</code> 是可以在运行之前确定的,
+那么我们就可以生成一个针对 <code>in1</code> 优化的程序, 这个过程就叫做 specialization(特化).
+针对 <code>in1</code> 优化的&quot;优化器&quot;可以叫做 specializer.
+所以 Partial Evaluation 可以看作做了两件事情:</p>
 <ol>
-<li>提前计算可以预先知道的输入</li>
-<li>为提前知道的输入进行特化版本的程序</li>
+<li>计算可以预先知道的输入</li>
+<li>为提前知道的输入进行特化, 生成一个针对预先输入优化的程序</li>
 </ol>
-<p>如果是解释器的话, 那么一个解释器可以通过下图描述:</p>
+<h2 id="二村映射">二村映射<a hidden class="anchor" aria-hidden="true" href="#二村映射">#</a></h2>
+<p>我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>           +--------+
 </span></span><span style="display:flex;"><span>P      --&gt; | interp | --&gt; out
 </span></span><span style="display:flex;"><span>input  --&gt; |        |
 </span></span><span style="display:flex;"><span>           +--------+
-</span></span></code></pre></div><p>如果有了一个 interpreter, 有了一个针对解释器的源程序输入的 specializer,
-那么就得到了一个可执行程序. 用图画出来就是这样,
-<code>PE</code> 就是我们的 specializer.</p>
+</span></span></code></pre></div><p>对于这个 <code>interpreter</code>, 如果有一个可以针对解释器的源程序输入 <code>P</code> 的 specializer,
+那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样,
+下图中的 <code>PE</code> 就是我们的 specializer, <code>interpP</code> 就是一个可执行程序.</p>
 <p>图 1:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>           +----+
 </span></span><span style="display:flex;"><span>interp --&gt; | PE | --&gt; interpP
 </span></span><span style="display:flex;"><span>     P --&gt; |    |
 </span></span><span style="display:flex;"><span>           +----+
-</span></span></code></pre></div><p>那么也可以看到, 这个 specialzer 本身也是多参数的函数,
+</span></span></code></pre></div><p>这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数,
 如果我们已经有了一个 specialzer,
-如果再把这个 specializer 对 interp 参数进行 specialization,
-我们就可以得到一个编译器(图中的 PEinterp).</p>
+如果再把这个 specializer 对 <code>interp</code> 参数进行 specialization,
+我们就可以得到一个编译器(下图中的 <code>PEinterp</code>).</p>
 <p>图 2:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>           +----+
 </span></span><span style="display:flex;"><span>PE     --&gt; | PE | --&gt; PEinterp
 </span></span><span style="display:flex;"><span>interp --&gt; |    |
 </span></span><span style="display:flex;"><span>           +----+
 </span></span></code></pre></div><p>这里的 PE 又是一个多参数的函数, 我们又可以对其进行 Specialization.
-如果有一个 Specialzer, 可以让 PE 对 PE 进行进行 Specialization,
-那么就可以得到一个编译器的生成器(图中的 PE_PE).</p>
+如果有一个 specialzer, 可以让 PE 对 PE 进行进行 Specialization,
+那么就可以得到一个编译器的生成器(图中的 <code>PE_PE</code>).</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>        +----+
 </span></span><span style="display:flex;"><span>PE  --&gt; | PE | --&gt; PE_PE
 </span></span><span style="display:flex;"><span>PE  --&gt; |    |
@@ -263,21 +279,16 @@ Evaluation 实际上可以看作做了两件事情:</p>
 其中一个程序 <code>in1</code> 是另外一个程序 <code>in2</code> 的输入;
 PE 的功能都是为 <code>in2</code> 生成一个特化在 <code>in1</code> 的版本,
 这个特化的版本往往会比 <code>in1 |&gt; in2</code> 更加高效.</p>
+<p>二村映射就是指的以上的几个程序特化的过程,</p>
 <p>上面的 specialize 的过程有时候也叫 stage: 通过 specialize 把原来的程序分成了好几步.</p>
-<p>有个关键的概念需要区分: program text 和 running program</p>
+<h2 id="partial-evaluation-和-partial-application--柯里化">Partial Evaluation 和 Partial Application(柯里化)<a hidden class="anchor" aria-hidden="true" href="#partial-evaluation-和-partial-application--柯里化">#</a></h2>
 <p>Partial Evaluation 和编程语言中的 Partial Application(柯里化)还是很不一样的 在 Partial
-Application 中, 得到的是一个同一个语言的函数; 而 partial evaluation 中,
-得到的是一个*新的程序* <img loading="lazy" src="/images/image-20221023232021.png" alt=""  />
-
-这里就体现了一个 program text 和 running program 的区别, program
-text 只是程序的表示, 而运行起来的程序才能抽象成一个函数.
-可以通过语义函数(图中的双中括号)把程序从 program text 转变成函数.</p>
-<p>比如说, 我们说 PE 的输入是程序,
-但是图中的 PE 的类型可以看作 <code>L</code> (因为 PE 是程序的表示),
-通过语义函数变成类型为 <code>L -&gt; L -&gt; L</code> 的函数, 其中 <code>L</code> 是程序表示的类型.</p>
-<p>有一个关键是强调了 <code>program</code> 和 <code>function</code> 之间的区别:
-program 是一个 syntactic world 里的东西, 比如说符号, 表达式,
-function 是数学意义上的东西. 所以 partial evaluation 和 <a href="https://en.wikipedia.org/wiki/Currying">柯里化</a> 时的 partial application 并是一回事.</p>
+Application 中, 得到的是一个同一个语言的函数; 而 partial evaluation 中, 得到的是一个*新的程序*.
+这里就体现了一个 program text 和 running program 的区别:
+program text 是一个 syntactic world 里的东西, 比如说符号, 表达式, 只是程序的 <strong><strong>表示</strong></strong>;
+function 是数学意义上的东西, 需要把 program text 传给语义函数后(通俗的说就是要把程序运行起来)才能通过把
+program text 和 function 关联起来.
+所以 partial evaluation 和 <a href="https://en.wikipedia.org/wiki/Currying">柯里化</a> 时的 partial application 并是一回事.</p>
 <p>感谢 kokic 为本文找到的 typo!</p>
 
 

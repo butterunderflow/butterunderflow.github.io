@@ -269,7 +269,7 @@ Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program 
 这一章介绍了一个叫做 Flow Chart 的语言, 是一个以基本块组成的语言. 然后通过这个语言实现了两个二村映射来介绍Partial Evaluation的技巧.
 程序和状态 然后就是程序点和程序状态的概念: 程序点就是程序执行的位置, 程序状态指的是程序执行的状态, 具体的状态的值域取决于语义的定义. 这一点和静态分析里的定义是类似的.
 程序的状态可能有很多, 但大部分的语言都可以通过 变量 - 值 的映射来表示. 其中对于每个 program point, 变量的值可以分为 static 和 dynamic 分为两类. static 表示变量的值可以在静态确定, 而 dynamic 的值只能在运行时确定. 将每个 program point 的变量区分为 static 和 dynamic 的过程叫做 division.
-基于static程序状态做partial evaluation 这就引出了一个概念叫做 poly, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大程度地确认多少程序点的 static 变量? 这个问题的求解结果可以通过一个由 程序点-static value 序对组成的集合来表示 poly. 这些 poly 就对应着residual program (specialized program) 的 program point....</p>
+基于 static 程序状态做 partial evaluation 这就引出了一个概念叫做 poly, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大程度地确认多少程序点的 static 变量? 这个问题的求解结果可以通过一个由 程序点-static value 序对组成的集合来表示 poly. 这些 poly 就对应着 residual program (specialized program) 的 program point....</p>
   </div>
   <footer class="entry-footer"><span title='2022-11-19 00:00:00 +0000 UTC'>November 19, 2022</span>&nbsp;·&nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Partial Evaluation For Flow Chart Langauge" href="http://butter-xz.com/articles/partial-evaluation-for-flow-chart/"></a>
@@ -283,15 +283,12 @@ Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program 
   <div class="entry-content">
     <p>partial evaluation 的第三章 Programming Languages and Interpreters 的笔记.
 这一章主要是形式化的介绍了一下 Partial Evaluation 中的基本概念: 程序, 解释和编译.
-程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是 Operational Semantic, 具体指的是一套指导程序应该如何规约(reduction)的规则. 所有编程语言的语义隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的&#34;解释器&#34;(有的资料也称之为&#34;元解释器&#34;, 但我还没想明白&#34;元&#34;在哪里), 这也是为什么说所有语言本质上都是解释执行的原因.
-与直接用这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 解释器本身也是在某种抽象机上执行的. 对于某个目标程序 P, 解释器 int 在对应抽象机上的解释 P 的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要成倍数的增长.
-比如说对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步; 而在解释器中, 会*对应*到5步:
-解释函数 (如 eval) 的调用
-模式匹配判断当前表达式是一个变量
-读取环境
-读取变量名
-读取环境中对应变量名的值 可以通过case by case的分析各种语义的对应步数得到一个大致的倍数, 从而估算解释的开销(overhead).
-刚刚提到了开销, 这个开销实际上是不可以忽略的, 首先在真实世界的编程语言中, 这个开销的倍数可能非常大(比如说可能是几十倍); 另一方面, 当语言的实现涉及到多层中间表示的时候, 解释也会有多层, 那么这个开销的倍数也会相乘, 最终开销也会呈指数增长. 将源程序直接编译为可执行的程序(比如说机器指令)就是减少在开销上做乘法的一种思路(减少解释的开销). 这个过程也叫 lowering, 把更高层的表示 lowering 到底层的表示....</p>
+程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是程序执行语义的描述, 比如说 Operational Semantic, 就提供了一套指导程序应该如何进行规约(reduction)的规则.
+定义语言 = 定义抽象机 所有编程语言的语义都隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的&#34;解释器&#34;(有的资料也称之为&#34;元解释器&#34;, 但我还没想明白&#34;元&#34;在哪里), 这也是大家经常说 所有语言本质上都是解释执行 的原因.
+解释器和解释器开销 与直接在这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 也就是我们常说的解释器 (注意: 解释器本身也是在解释器对应语言的抽象机上执行的).
+对于某个目标程序 P, 解释器 int 在对应抽象机上的解释程序 P 所需要的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要多, 而且往往是成倍数的多.
+比如说, 对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步 \(x \rightarrow Env[ [ x ] ]\) ; 而在解释器中, 这个求值会 对应 到 5 步:
+解释函数 (如 eval) 的调用 模式匹配判断当前表达式是一个变量 读取环境 读取变量名 读取环境中对应变量名的值 所以我们可以通过 case by case 的分析各种语义的对应解释器步数得到一个大致的倍数, 从而估算解释的开销(overhead), 这个开销被称为 解释器开销(Interpretation Overhand)....</p>
   </div>
   <footer class="entry-footer"><span title='2022-11-08 00:00:00 +0000 UTC'>November 8, 2022</span>&nbsp;·&nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Language and Interpreters" href="http://butter-xz.com/articles/language-and-interpreters/"></a>
@@ -304,11 +301,11 @@ Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program 
   </header>
   <div class="entry-content">
     <p>关于 Partial Evaluation 的第一章 Introduction 的笔记.
-从抽象上来看, 程序都可以看作是一个输入到输出的函数. 如果输入可以拆分为多个的话, 那么如果程序的某个输入 in1 是可以提前确定的, 那么可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&#34;优化器&#34;可以叫做 specializer. 所以 Partial Evaluation 实际上可以看作做了两件事情:
-提前计算可以预先知道的输入 为提前知道的输入进行特化版本的程序 如果是解释器的话, 那么一个解释器可以通过下图描述:
-&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 如果有了一个 interpreter, 有了一个针对解释器的源程序输入的 specializer, 那么就得到了一个可执行程序. 用图画出来就是这样, PE 就是我们的 specializer.
+从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 in1 和 in2, 如果该程序的输入 in1 是可以在运行之前确定的, 那么我们就可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&#34;优化器&#34;可以叫做 specializer. 所以 Partial Evaluation 可以看作做了两件事情:
+计算可以预先知道的输入 为提前知道的输入进行特化, 生成一个针对预先输入优化的程序 二村映射 我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:
+&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 对于这个 interpreter, 如果有一个可以针对解释器的源程序输入 P 的 specializer, 那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样, 下图中的 PE 就是我们的 specializer, interpP 就是一个可执行程序.
 图 1:
-&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 那么也可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(图中的 PEinterp)....</p>
+&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(下图中的 PEinterp)....</p>
   </div>
   <footer class="entry-footer"><span title='2022-10-22 00:00:00 +0000 UTC'>October 22, 2022</span>&nbsp;·&nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Partial Evaluation" href="http://butter-xz.com/articles/partial-evaluation/"></a>
