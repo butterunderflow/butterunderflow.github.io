@@ -15,10 +15,18 @@
       <pubDate>Sat, 02 Mar 2024 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/20231111153704-partial_evaluation_for_lambda_calculus/</guid>
-      <description>这是 [1] 第 8 章 Partial Evaluation for Lambda Calculus 的笔记.
-在 Partial Evaluation for Functional Language 和 Partial Evaluation For Flow Chart Langauge 中, partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.
-但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数, 那么考虑一个简单的场景, 返回一个常量的函数, 应该标记为是 Static 还是 Dynamic ? 比如: (lambda (x) 1)
-如果标记为 S, 那这个函数在 residual program 中对应什么? 似乎也只能是 (lambda (x) 1) 如果标记为 D, 为什么一个这么简单的函数会返回一个常量的函数需要标记为 D? 是不是对于 lambda 表达式 partial evaluation 都无能为力? 我会有这样的疑惑主要有两个原因:</description>
+      <description>&lt;p&gt;这是 &lt;a href=&#34;#citeproc_bib_item_1&#34;&gt;[1]&lt;/a&gt; 第 8 章 &lt;em&gt;Partial Evaluation for Lambda Calculus&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;在 &lt;a href=&#34;http://butter-xz.com/articles/partial-evaluation-for-functional/&#34;&gt;Partial Evaluation for Functional Language&lt;/a&gt; 和 &lt;a href=&#34;http://butter-xz.com/articles/partial-evaluation-for-flow-chart/&#34;&gt;Partial Evaluation For Flow Chart Langauge&lt;/a&gt; 中,
+partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.&lt;/p&gt;
+&lt;p&gt;但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数,
+那么考虑一个简单的场景, 返回一个常量的函数, 应该标记为是 Static 还是 Dynamic ?
+比如: &lt;code&gt;(lambda (x) 1)&lt;/code&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;如果标记为 S, 那这个函数在 residual program 中对应什么? 似乎也只能是 &lt;code&gt;(lambda (x) 1)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;如果标记为 D, 为什么一个这么简单的函数会返回一个常量的函数需要标记为 D?
+是不是对于 lambda 表达式 partial evaluation 都无能为力?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;我会有这样的疑惑主要有两个原因:&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>这是 <a href="#citeproc_bib_item_1">[1]</a> 第 8 章 <em>Partial Evaluation for Lambda Calculus</em> 的笔记.</p>
 <p>在 <a href="/articles/partial-evaluation-for-functional/">Partial Evaluation for Functional Language</a> 和 <a href="/articles/partial-evaluation-for-flow-chart/">Partial Evaluation For Flow Chart Langauge</a> 中,
 partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.</p>
@@ -312,13 +320,27 @@ Binding Time Analysis 会被简写为 BTA.</li>
       <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/partial-evaluation-for-functional/</guid>
-      <description>partial evaluation 的第五章 Partial Evaluation for a First-Order Functional Language 的笔记.
-前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:
-确定源程序每个程序点可以静态确定的状态(Binding Time Analysis); 依据这些静态状态, 把源程序的每个基本块&amp;quot;展开&amp;quot;到目标程序, 这些静态状态在目标程序中不再需要被计算, 而是直接&amp;quot;嵌入&amp;quot;到了目标程序中. 该目标程序被称之为&amp;quot;残差程序&amp;quot;(residual program). 那么对于更加复杂的语言应该如何做partial evaluation呢?
-这一章的介绍了一门比flow chart稍微强大(同时也复杂)一点的语言, 叫做Scheme0, 并展示了如何对这个语言进行partial evaluation. Scheme0仍然是采用lisp的语法, 支持全局的函数定义, 不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.
-从flow chart到Scheme0 在对Scheme0进行partial evaluation的过程中, 有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?
-所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念. 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.
-Flow Chart Scheme0 解释 Program point Function&amp;rsquo;s entry Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西 Global Variable Parameter Global Variable对应函数的Parameter, 也只有这里的静态值会&amp;quot;嵌入&amp;quot;至residual program Transition Compression Function&amp;rsquo;s Unfolding - Binding Time Analysis 通过抽象解释进行BTA 采用抽象解释的方式分析binding time, 此时抽象域为 参数 -&amp;gt; binding time 的partial mapping, 称之为 Binding Time Environment(BTEnv).</description>
+      <description>&lt;p&gt;&lt;em&gt;partial evaluation&lt;/em&gt; 的第五章 &lt;em&gt;Partial Evaluation for a First-Order Functional Language&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial
+evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:&lt;br /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;确定源程序每个程序点可以静态确定的状态(Binding Time Analysis);&lt;/li&gt;
+&lt;li&gt;依据这些静态状态, 把源程序的每个基本块&amp;quot;展开&amp;quot;到目标程序,
+这些静态状态在目标程序中不再需要被计算, 而是直接&amp;quot;嵌入&amp;quot;到了目标程序中.
+该目标程序被称之为&amp;quot;残差程序&amp;quot;(residual program).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;那么对于更加复杂的语言应该如何做partial evaluation呢?&lt;/p&gt;
+&lt;p&gt;这一章的介绍了一门比flow chart稍微强大(同时也复杂)一点的语言, 叫做Scheme0,
+并展示了如何对这个语言进行partial evaluation.
+Scheme0仍然是采用lisp的语法, 支持全局的函数定义,
+不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img loading=&#34;lazy&#34; src=&#34;http://butter-xz.com/ox-hugo/Pasted-image-20221127220632.png&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;从flow-chart到scheme0&#34;&gt;从flow chart到Scheme0&lt;/h2&gt;
+&lt;p&gt;在对Scheme0进行partial evaluation的过程中,
+有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p><em>partial evaluation</em> 的第五章 <em>Partial Evaluation for a First-Order Functional Language</em> 的笔记.</p>
 <p>前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial
 evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:<br /></p>
@@ -343,30 +365,30 @@ Scheme0仍然是采用lisp的语法, 支持全局的函数定义,
 <p>所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念.
 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.</p>
 <table>
-<thead>
-<tr>
-<th>Flow Chart</th>
-<th>Scheme0</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Program point</td>
-<td>Function&rsquo;s entry</td>
-<td>Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西</td>
-</tr>
-<tr>
-<td>Global Variable</td>
-<td>Parameter</td>
-<td>Global Variable对应函数的Parameter, 也只有这里的静态值会&quot;嵌入&quot;至residual program</td>
-</tr>
-<tr>
-<td>Transition Compression</td>
-<td>Function&rsquo;s Unfolding</td>
-<td>-</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Flow Chart</th>
+          <th style="text-align: left">Scheme0</th>
+          <th style="text-align: left">解释</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Program point</td>
+          <td style="text-align: left">Function&rsquo;s entry</td>
+          <td style="text-align: left">Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Global Variable</td>
+          <td style="text-align: left">Parameter</td>
+          <td style="text-align: left">Global Variable对应函数的Parameter, 也只有这里的静态值会&quot;嵌入&quot;至residual program</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Transition Compression</td>
+          <td style="text-align: left">Function&rsquo;s Unfolding</td>
+          <td style="text-align: left">-</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="binding-time-analysis">Binding Time Analysis</h2>
 <h3 id="通过抽象解释进行bta">通过抽象解释进行BTA</h3>

@@ -56,10 +56,7 @@
         }
 
     </style>
-</noscript>
-  
-
-<meta property="og:title" content="Partial-Evaluation" />
+</noscript><meta property="og:title" content="Partial-Evaluation" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="http://butter-xz.com/tags/partial-evaluation/" />
@@ -151,7 +148,8 @@
     <p>这是 [1] 第 8 章 Partial Evaluation for Lambda Calculus 的笔记.
 在 Partial Evaluation for Functional Language 和 Partial Evaluation For Flow Chart Langauge 中, partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.
 但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数, 那么考虑一个简单的场景, 返回一个常量的函数, 应该标记为是 Static 还是 Dynamic ? 比如: (lambda (x) 1)
-如果标记为 S, 那这个函数在 residual program 中对应什么? 似乎也只能是 (lambda (x) 1) 如果标记为 D, 为什么一个这么简单的函数会返回一个常量的函数需要标记为 D? 是不是对于 lambda 表达式 partial evaluation 都无能为力? 我会有这样的疑惑主要有两个原因:...</p>
+如果标记为 S, 那这个函数在 residual program 中对应什么? 似乎也只能是 (lambda (x) 1) 如果标记为 D, 为什么一个这么简单的函数会返回一个常量的函数需要标记为 D? 是不是对于 lambda 表达式 partial evaluation 都无能为力? 我会有这样的疑惑主要有两个原因:
+...</p>
   </div>
   <footer class="entry-footer"><span title='2024-03-02 00:00:00 +0000 UTC'>March 2, 2024</span>&nbsp;·&nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Partial Evaluation for Lambda Calculus" href="http://butter-xz.com/articles/20231111153704-partial_evaluation_for_lambda_calculus/"></a>
@@ -166,8 +164,7 @@
     <p>关于 [1] 的第7章 Offline and Online Partial Evaluation 的笔记
 Offline 和 Online 指的是什么? Offline 和 Online 的区别在于 Binding Time Analysis 的时机: Offline 会提前把 Binding Time Analysis (BTA)做完, 并保证 binding time 的相合性, 再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize; Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.
 Figure 1: Online 方法和 Offline 方法的结构
-Figure 2: Online 方法和 Offline 方法的定义
-Online 方法的分析 OnPE 方法的类型签名: \[ Expression \rightarrow On-Env \rightarrow On-Value \]...</p>
+...</p>
   </div>
   <footer class="entry-footer"><span title='2023-11-05 00:00:00 +0000 UTC'>November 5, 2023</span>&nbsp;·&nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Offline and Online Partial Evaluation" href="http://butter-xz.com/articles/20231014172106-offline_and_online_partial_evaluation/"></a>
@@ -184,8 +181,7 @@ Online 方法的分析 OnPE 方法的类型签名: \[ Expression \rightarrow On-
 确定源程序每个程序点可以静态确定的状态(Binding Time Analysis); 依据这些静态状态, 把源程序的每个基本块&#34;展开&#34;到目标程序, 这些静态状态在目标程序中不再需要被计算, 而是直接&#34;嵌入&#34;到了目标程序中. 该目标程序被称之为&#34;残差程序&#34;(residual program). 那么对于更加复杂的语言应该如何做partial evaluation呢?
 这一章的介绍了一门比flow chart稍微强大(同时也复杂)一点的语言, 叫做Scheme0, 并展示了如何对这个语言进行partial evaluation. Scheme0仍然是采用lisp的语法, 支持全局的函数定义, 不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.
 从flow chart到Scheme0 在对Scheme0进行partial evaluation的过程中, 有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?
-所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念. 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.
-Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西 Global Variable Parameter Global Variable对应函数的Parameter, 也只有这里的静态值会&#34;嵌入&#34;至residual program Transition Compression Function’s Unfolding - Binding Time Analysis 通过抽象解释进行BTA 采用抽象解释的方式分析binding time, 此时抽象域为 参数 -&gt; binding time 的partial mapping, 称之为 Binding Time Environment(BTEnv)....</p>
+...</p>
   </div>
   <footer class="entry-footer"><span title='2023-08-30 00:00:00 +0000 UTC'>August 30, 2023</span>&nbsp;·&nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Partial Evaluation for Functional Language" href="http://butter-xz.com/articles/partial-evaluation-for-functional/"></a>
@@ -201,7 +197,8 @@ Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program 
 这一章介绍了一个叫做 Flow Chart 的语言, 是一个以基本块组成的语言. 然后通过这个语言实现了两个二村映射来介绍Partial Evaluation的技巧.
 程序和状态 然后就是程序点和程序状态的概念: 程序点就是程序执行的位置, 程序状态指的是程序执行的状态, 具体的状态的值域取决于语义的定义. 这一点和静态分析里的定义是类似的.
 程序的状态可能有很多, 但大部分的语言都可以通过 变量 - 值 的映射来表示. 其中对于每个 program point, 变量的值可以分为 static 和 dynamic 分为两类. static 表示变量的值可以在静态确定, 而 dynamic 的值只能在运行时确定. 将每个 program point 的变量区分为 static 和 dynamic 的过程叫做 division.
-基于 static 程序状态做 partial evaluation 这就引出了一个概念叫做 poly, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大程度地确认多少程序点的 static 变量? 这个问题的求解结果可以通过一个由 程序点-static value 序对组成的集合来表示 poly. 这些 poly 就对应着 residual program (specialized program) 的 program point....</p>
+基于 static 程序状态做 partial evaluation 这就引出了一个概念叫做 poly, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大程度地确认多少程序点的 static 变量? 这个问题的求解结果可以通过一个由 程序点-static value 序对组成的集合来表示 poly. 这些 poly 就对应着 residual program (specialized program) 的 program point.
+...</p>
   </div>
   <footer class="entry-footer"><span title='2022-11-19 00:00:00 +0000 UTC'>November 19, 2022</span>&nbsp;·&nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Partial Evaluation For Flow Chart Langauge" href="http://butter-xz.com/articles/partial-evaluation-for-flow-chart/"></a>
@@ -216,9 +213,7 @@ Flow Chart Scheme0 解释 Program point Function’s entry Flow Chart的program 
     <p>关于 Partial Evaluation 的第一章 Introduction 的笔记.
 从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 in1 和 in2, 如果该程序的输入 in1 是可以在运行之前确定的, 那么我们就可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&#34;优化器&#34;可以叫做 specializer. 所以 Partial Evaluation 可以看作做了两件事情:
 计算可以预先知道的输入 为提前知道的输入进行特化, 生成一个针对预先输入优化的程序 二村映射 我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:
-&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; 对于这个 interpreter, 如果有一个可以针对解释器的源程序输入 P 的 specializer, 那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样, 下图中的 PE 就是我们的 specializer, interpP 就是一个可执行程序.
-图 1:
-&#43;----&#43; interp --&gt; | PE | --&gt; interpP P --&gt; | | &#43;----&#43; 这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(下图中的 PEinterp)....</p>
+&#43;--------&#43; P --&gt; | interp | --&gt; out input --&gt; | | &#43;--------&#43; ...</p>
   </div>
   <footer class="entry-footer"><span title='2022-10-22 00:00:00 +0000 UTC'>October 22, 2022</span>&nbsp;·&nbsp;butterunderflow</footer>
   <a class="entry-link" aria-label="post link to Partial Evaluation" href="http://butter-xz.com/articles/partial-evaluation/"></a>

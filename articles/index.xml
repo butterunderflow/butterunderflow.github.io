@@ -15,10 +15,32 @@
       <pubDate>Tue, 30 Jul 2024 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/20240721011820-fun_for_fun/</guid>
-      <description>我发起了一个从 0 开始制作编程语言的项目 fun for fun. 该项目使用 OCaml 实现了一个编译器(称为 ff 编译器), 可以把一个 OCaml 的子集编译到可以 C++ 源程序 (生成程序只用到了 C 的语法), 该 C++ 程序可以被进一步编译为可执行文件.
-为什么又一个编译器教程 为什么又又又一个关于编程语言实现的教程?
-并不是已有的教学项目不够好/不足够, 现在高质量的编译器教程非常多(可以直接看最后一节看我的推荐目录). 之所以发起一个新的编译器教学项目, 主要有以下几方面的原因:
-实现一个编译器真的很有趣: 我最开始是只是对 OCaml 的类型系统(主要是模块系统)的检查很感兴趣, 只是想着实现一个类型系统以加深一下自己的理解. 在完成类型系统的实现后, 每次只是想再往后再走一小步, &amp;ldquo;不知不觉&amp;quot;就完成了一个到 C++ 的后端, 正如这个项目名称 Fun for Fun, 这件事情太有趣了使我一有时间就忍不住不做; 向前辈学习: 现在的高质量编译器教学项目确实很多, 这些优秀的教程已经帮助我少走了很多弯路. 作为一个已经从前辈们的教学项目受益良多的人, 我认为不仅有必要学习他们传播的知识, 还有必要学习他们无私共享的精神, 我希望能通过文字说明和代码演示展示我对知识的理解和学习的过程, 让未来的学习者也能少走一些弯路; 与人沟通对理解深刻的知识是很有帮助: 知识的理解, 从最 看懂书本/论文上的介绍 到 能在实践中根据需要运用自如, 是需要一个过程的, 对于一些比较深刻的知识, 这甚至可能是一个长期的过程. 通过给别人讲解, 可以帮助我站在多个角度重新思考问题, 从而加深我对知识的理解, 让我离事物的&amp;quot;本质&amp;quot;更进一步. 学习资料推荐 计算机程序构造与解释(SICP) 首先要推荐的是已经被很多人推荐过的 SICP (Abelson and Sussman 1996).</description>
+      <description>&lt;p&gt;我发起了一个从 0 开始制作编程语言的项目 &lt;a href=&#34;https://github.com/butterunderflow/fun-for-fun&#34;&gt;fun for fun&lt;/a&gt;.
+该项目使用 OCaml 实现了一个编译器(称为 ff 编译器), 可以把一个 OCaml 的子集编译到可以 C++ 源程序
+(生成程序只用到了 C 的语法),
+该 C++ 程序可以被进一步编译为可执行文件.&lt;/p&gt;
+&lt;h2 id=&#34;为什么又一个编译器教程&#34;&gt;为什么又一个编译器教程&lt;/h2&gt;
+&lt;p&gt;为什么又又又一个关于编程语言实现的教程?&lt;/p&gt;
+&lt;p&gt;并不是已有的教学项目不够好/不足够, 现在高质量的编译器教程非常多(可以直接看最后一节看我的推荐目录).
+之所以发起一个新的编译器教学项目, 主要有以下几方面的原因:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;&lt;strong&gt;实现一个编译器真的很有趣&lt;/strong&gt;&lt;/strong&gt;: 我最开始是只是对 OCaml 的类型系统(主要是模块系统)的检查很感兴趣,
+只是想着实现一个类型系统以加深一下自己的理解. 在完成类型系统的实现后, 每次只是想再往后再走一小步,
+&amp;ldquo;不知不觉&amp;quot;就完成了一个到 C++ 的后端, 正如这个项目名称 Fun for Fun, 这件事情太有趣了使我一有时间就忍不住不做;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;strong&gt;向前辈学习&lt;/strong&gt;&lt;/strong&gt;: 现在的高质量编译器教学项目确实很多, 这些优秀的教程已经帮助我少走了很多弯路.
+作为一个已经从前辈们的教学项目受益良多的人, 我认为不仅有必要学习他们传播的知识,
+还有必要学习他们无私共享的精神, 我希望能通过文字说明和代码演示展示我对知识的理解和学习的过程,
+让未来的学习者也能少走一些弯路;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;strong&gt;与人沟通对理解深刻的知识是很有帮助&lt;/strong&gt;&lt;/strong&gt;:
+知识的理解, 从最 &lt;strong&gt;&lt;strong&gt;看懂书本/论文上的介绍&lt;/strong&gt;&lt;/strong&gt; 到 &lt;strong&gt;&lt;strong&gt;能在实践中根据需要运用自如&lt;/strong&gt;&lt;/strong&gt;, 是需要一个过程的,
+对于一些比较深刻的知识, 这甚至可能是一个长期的过程.
+通过给别人讲解, 可以帮助我站在多个角度重新思考问题, 从而加深我对知识的理解, 让我离事物的&amp;quot;本质&amp;quot;更进一步.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;学习资料推荐&#34;&gt;学习资料推荐&lt;/h2&gt;
+&lt;h3 id=&#34;计算机程序构造与解释--sicp&#34;&gt;计算机程序构造与解释(SICP)&lt;/h3&gt;
+&lt;p&gt;首先要推荐的是已经被很多人推荐过的 SICP (&lt;a href=&#34;#citeproc_bib_item_1&#34;&gt;Abelson and Sussman 1996&lt;/a&gt;).
+这本书的前半部分尝试教会读者: 如何在程序中建立抽象, 如何基于已有的抽象建立新的抽象.
+后半部分介绍了在编程语言实现中常见的抽象.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>我发起了一个从 0 开始制作编程语言的项目 <a href="https://github.com/butterunderflow/fun-for-fun">fun for fun</a>.
 该项目使用 OCaml 实现了一个编译器(称为 ff 编译器), 可以把一个 OCaml 的子集编译到可以 C++ 源程序
 (生成程序只用到了 C 的语法),
@@ -79,10 +101,18 @@
       <pubDate>Sat, 02 Mar 2024 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/20231111153704-partial_evaluation_for_lambda_calculus/</guid>
-      <description>这是 [1] 第 8 章 Partial Evaluation for Lambda Calculus 的笔记.
-在 Partial Evaluation for Functional Language 和 Partial Evaluation For Flow Chart Langauge 中, partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.
-但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数, 那么考虑一个简单的场景, 返回一个常量的函数, 应该标记为是 Static 还是 Dynamic ? 比如: (lambda (x) 1)
-如果标记为 S, 那这个函数在 residual program 中对应什么? 似乎也只能是 (lambda (x) 1) 如果标记为 D, 为什么一个这么简单的函数会返回一个常量的函数需要标记为 D? 是不是对于 lambda 表达式 partial evaluation 都无能为力? 我会有这样的疑惑主要有两个原因:</description>
+      <description>&lt;p&gt;这是 &lt;a href=&#34;#citeproc_bib_item_1&#34;&gt;[1]&lt;/a&gt; 第 8 章 &lt;em&gt;Partial Evaluation for Lambda Calculus&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;在 &lt;a href=&#34;http://butter-xz.com/articles/partial-evaluation-for-functional/&#34;&gt;Partial Evaluation for Functional Language&lt;/a&gt; 和 &lt;a href=&#34;http://butter-xz.com/articles/partial-evaluation-for-flow-chart/&#34;&gt;Partial Evaluation For Flow Chart Langauge&lt;/a&gt; 中,
+partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.&lt;/p&gt;
+&lt;p&gt;但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数,
+那么考虑一个简单的场景, 返回一个常量的函数, 应该标记为是 Static 还是 Dynamic ?
+比如: &lt;code&gt;(lambda (x) 1)&lt;/code&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;如果标记为 S, 那这个函数在 residual program 中对应什么? 似乎也只能是 &lt;code&gt;(lambda (x) 1)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;如果标记为 D, 为什么一个这么简单的函数会返回一个常量的函数需要标记为 D?
+是不是对于 lambda 表达式 partial evaluation 都无能为力?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;我会有这样的疑惑主要有两个原因:&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>这是 <a href="#citeproc_bib_item_1">[1]</a> 第 8 章 <em>Partial Evaluation for Lambda Calculus</em> 的笔记.</p>
 <p>在 <a href="/articles/partial-evaluation-for-functional/">Partial Evaluation for Functional Language</a> 和 <a href="/articles/partial-evaluation-for-flow-chart/">Partial Evaluation For Flow Chart Langauge</a> 中,
 partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.</p>
@@ -376,11 +406,16 @@ Binding Time Analysis 会被简写为 BTA.</li>
       <pubDate>Sun, 05 Nov 2023 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/20231014172106-offline_and_online_partial_evaluation/</guid>
-      <description>关于 [1] 的第7章 Offline and Online Partial Evaluation 的笔记
-Offline 和 Online 指的是什么? Offline 和 Online 的区别在于 Binding Time Analysis 的时机: Offline 会提前把 Binding Time Analysis (BTA)做完, 并保证 binding time 的相合性, 再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize; Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.
-Figure 1: Online 方法和 Offline 方法的结构
-Figure 2: Online 方法和 Offline 方法的定义
-Online 方法的分析 OnPE 方法的类型签名: \[ Expression \rightarrow On-Env \rightarrow On-Value \]</description>
+      <description>&lt;p&gt;关于 &lt;a href=&#34;#citeproc_bib_item_1&#34;&gt;[1]&lt;/a&gt; 的第7章 &lt;em&gt;Offline and Online Partial Evaluation&lt;/em&gt; 的笔记&lt;/p&gt;
+&lt;h2 id=&#34;offline-和-online-指的是什么&#34;&gt;Offline 和 Online 指的是什么?&lt;/h2&gt;
+&lt;p&gt;Offline 和 Online 的区别在于 Binding Time Analysis 的时机:
+Offline 会提前把 &lt;a href=&#34;http://butter-xz.com/articles/partial-evaluation-for-flow-chart/#division&#34;&gt;Binding Time Analysis&lt;/a&gt; (BTA)做完, 并保证 binding time 的相合性,
+再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize;
+Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img loading=&#34;lazy&#34; src=&#34;http://butter-xz.com/ox-hugo/2023-11-05_20-22-15_screenshot.png&#34;
+         alt=&#34;Figure 1: Online 方法和 Offline 方法的结构&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;&lt;span class=&#34;figure-number&#34;&gt;Figure 1: &lt;/span&gt;Online 方法和 Offline 方法的结构&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>关于 <a href="#citeproc_bib_item_1">[1]</a> 的第7章 <em>Offline and Online Partial Evaluation</em> 的笔记</p>
 <h2 id="offline-和-online-指的是什么">Offline 和 Online 指的是什么?</h2>
 <p>Offline 和 Online 的区别在于 Binding Time Analysis 的时机:
@@ -530,17 +565,47 @@ Offline PE 会首先通过 <a href="/articles/partial-evaluation-for-flow-chart/
       <pubDate>Tue, 05 Sep 2023 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/20230901095515-local_type_inference/</guid>
-      <description>ML语言的背后 众所周知, ML系语言十分强大, 这不仅仅得益于它们丰富的语义(高阶函数, local binding, lambda), 还得益于这套语义背后强大的类型系统. ML语言的类型系统通常支持十分强大类型推导功能, 强大到什么程度呢? 理论上开发者可以忽略所有类型签名, type checker仍然可以推导出所有的类型签名.
-类型推导的两个&amp;quot;端点&amp;quot; 但是, 如此强大的类型推导技术居然也不小心带来了一些负面影响:
-重要的类型签名被忽略. 很多情况下, 类型签名并不是开发者的负担而是起到了 &amp;ldquo;verified document&amp;rdquo; 的作用, 对可读性有着关键的影响. 类型系统的复杂度增加(主要是类型推导部分). 直观来看这点是在语言实现上的负面影响, 但是过于复杂的类型推导除了会提升类型检查的复杂度也会带来编程的&amp;quot;负担&amp;quot;. 比如说开发者如果不能明确知道哪些类型能推导哪些类型不能推导, 那么考虑&amp;quot;要不要加上类型签名&amp;quot;的这个问题就会给程序员带来心智负担. 对于这些负面的影响, 最极端的做法就是我们要求把所有的类型都加上, 直接抛弃类型推导功能.
-你不是说我推导不好吗, 那你自己写上吧.
-但是这又带来了新的问题:
-为所有类型写上类型签名实在是太啰嗦了, 维护一个冗长但是又没有意义的类型签名, 反而会带来编程时的心智负担. 很多类型签名实际上是&amp;quot;噪音&amp;quot;. 如果完全抛弃类型推导, 那么在一个程序中, 有可能类型签名比描述程序执行信息的核心部分还要多, 这样的类型噪音甚至反而会影响程序的可读性. 尝试找到类型推导平衡点 那么有没有一种办法设计一个类型系统, 可以在描述ML丰富的语义的同时引入&amp;quot;适量&amp;quot;的类型推导: 当显式写出类型签名的对开发者有益的时候不推导这个类型, 只选择推导&amp;quot;显式写出时无意义&amp;quot;的类型签名.
-局部类型推导(Local-Type inference)技术就诞生了
-作者总结了3种ML编程中常见的类型推导, 并通过局部类型推导技术完成这三种类型推导:
-函数调用时类型参数的推导是必要的 匿名函数的类型推导是需要的 local binding的类型推导是需要的 局部类型推导(Local-Type inference) 局部类型推导尝试在保持ML编程的前提下尽可能的减弱类型推导的能力以简化类型推导算法, 局部的含义是类型推导只用到了局部的语法树的类型信息.
-通过Local Type Argument Synthesis可以解决第一个问题, 通过双向类型检查(Bidirectional Type Checking)可以解决问题2, 3.
-语言定义 先介绍了一个用于展示的简单的语言, 是沿用的一个叫 (Kernel F≤_) 的语言, 这个语言支持subtype, 参数化多态, 匿名函数, 局部绑定.</description>
+      <description>&lt;h2 id=&#34;ml语言的背后&#34;&gt;ML语言的背后&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;众所周知&lt;/strong&gt;, ML系语言十分强大, 这不仅仅得益于它们丰富的语义(高阶函数, local binding, lambda), 还得益于这套语义背后强大的类型系统.
+ML语言的类型系统通常支持十分强大类型推导功能, 强大到什么程度呢?
+理论上开发者可以忽略所有类型签名, type checker仍然可以推导出所有的类型签名.&lt;/p&gt;
+&lt;h3 id=&#34;类型推导的两个-端点&#34;&gt;类型推导的两个&amp;quot;端点&amp;quot;&lt;/h3&gt;
+&lt;p&gt;但是, 如此强大的类型推导技术居然也不小心带来了一些负面影响:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;重要的类型签名被忽略. 很多情况下, 类型签名并不是开发者的负担而是起到了 &amp;ldquo;verified document&amp;rdquo; 的作用, 对可读性有着关键的影响.&lt;/li&gt;
+&lt;li&gt;类型系统的复杂度增加(主要是类型推导部分).
+直观来看这点是在语言实现上的负面影响,
+但是过于复杂的类型推导除了会提升类型检查的复杂度也会带来编程的&amp;quot;负担&amp;quot;.
+比如说开发者如果不能明确知道哪些类型能推导哪些类型不能推导,
+那么考虑&amp;quot;要不要加上类型签名&amp;quot;的这个问题就会给程序员带来心智负担.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;对于这些负面的影响, 最极端的做法就是我们要求把所有的类型都加上, 直接抛弃类型推导功能.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;你不是说我推导不好吗, 那你自己写上吧.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;但是这又带来了新的问题:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;为所有类型写上类型签名实在是太啰嗦了, 维护一个冗长但是又没有意义的类型签名,
+反而会带来编程时的心智负担.&lt;/li&gt;
+&lt;li&gt;很多类型签名实际上是&amp;quot;噪音&amp;quot;. 如果完全抛弃类型推导,
+那么在一个程序中, 有可能类型签名比描述程序执行信息的核心部分还要多,
+这样的类型噪音甚至反而会影响程序的可读性.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;尝试找到类型推导平衡点&#34;&gt;尝试找到类型推导平衡点&lt;/h3&gt;
+&lt;p&gt;那么有没有一种办法设计一个类型系统,
+可以在描述ML丰富的语义的同时引入&amp;quot;适量&amp;quot;的类型推导:
+当显式写出类型签名的对开发者有益的时候不推导这个类型,
+只选择推导&amp;quot;显式写出时无意义&amp;quot;的类型签名.&lt;/p&gt;
+&lt;p&gt;局部类型推导(Local-Type inference)技术就诞生了&lt;/p&gt;
+&lt;p&gt;作者总结了3种ML编程中常见的类型推导, 并通过局部类型推导技术完成这三种类型推导:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;函数调用时类型参数的推导是必要的&lt;/li&gt;
+&lt;li&gt;匿名函数的类型推导是需要的&lt;/li&gt;
+&lt;li&gt;local binding的类型推导是需要的&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;局部类型推导--local-type-inference&#34;&gt;局部类型推导(Local-Type inference)&lt;/h2&gt;
+&lt;p&gt;局部类型推导尝试在保持ML编程的前提下尽可能的减弱类型推导的能力以简化类型推导算法,
+局部的含义是类型推导只用到了局部的语法树的类型信息.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<h2 id="ml语言的背后">ML语言的背后</h2>
 <p><strong>众所周知</strong>, ML系语言十分强大, 这不仅仅得益于它们丰富的语义(高阶函数, local binding, lambda), 还得益于这套语义背后强大的类型系统.
 ML语言的类型系统通常支持十分强大类型推导功能, 强大到什么程度呢?
@@ -767,11 +832,40 @@ infer过程是: &ldquo;对于一个term, 不知道这个term所在的上下文�
       <pubDate>Sat, 02 Sep 2023 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/20230825121425-disscuss-on-mainline/</guid>
-      <description>最近经常和各类人高强度的讨论各种事情, 我在读研期间和经常需要线上/线下和我的导师讨论各种问题, 但是我也没有感受到像最近这样的疲惫感.
-我总结了一下, 主要原因还是在于讨论的时候没有确立讨论主题问题, 比如说对于一个问题X的解决方案的讨论, x提出了A解决方法, y指出了A解决方法中存在的问题P. 在听到了这些问题后, 如果x认为应该继续采用A方法, 正常的做法首先应该是论证P的影响, 比如说:
-P到底是否存在? P的影响有多大? 给问题X的解决造成了多大程度的负面影响? P是否是为了解决某个问题而必然引入的新问题? 如果P确实是一个不可忽视的问题, 然后应该讨论解决方法A的的&amp;quot;补救&amp;quot;措施:
-能否修改方案A以弥补问题P? 是否需要重新设计方案B以同时解决问题X和问题P? 如果沟通不是按照这个步骤结构化的进行, 那么必然产生心智负担. 实际沟通中常常会有如下几种情况:
-如果y提出问题P后, x通过与问题本身无关的方式否认这个问题, 比如说解决问题P不会成为我们的优势, 解决问题P也不会让别人更想用我们的产品. 这种情况相当于直接回避问题. 如果y是个负责的人, 必然会想方设法的说服x问题P的存在性. 另一方面这也会让y感觉到疲惫, 因为&amp;quot;问题P是否存在&amp;quot;和&amp;quot;解决问题P是否会成为优势&amp;quot;是两个十分不相同的事情, 所用到的知识也很有可能属于完全不同的领域, 而y在讨论前可能并没有准备好另一部分的知识. 如果x确认问题P的存在后, 但是并不直面这个问题P, 而是说谁谁的a,b,c方案是用类似于A方案这么解决的, 根本没事. 这就给y带来了心智负担: 如果y没有了解过a,b,c方案, 他还需要再去确认这些方案是否真的是如x所说, 如果不如x所说又要和x对这些a,b,c方案的做法进行对齐. 如果想用别人的方案来说明, 正常的做法应当是x首先尽量详细介绍一下a,b,c方案, 说服y这些方案确实是为了x而存在, 且真的与解法A存在同构. 最后一种情况, 也是最折磨人的情况: 那你搞一个方案解决问题X吧, 我只能想到这种解法. 工作中的分工是明确的, 此时如果y是个对产品负责的人, 必然会在自己的工作量基础上增加额外的工作量. </description>
+      <description>&lt;p&gt;最近经常和各类人高强度的讨论各种事情,
+我在读研期间和经常需要线上/线下和我的导师讨论各种问题,
+但是我也没有感受到像最近这样的疲惫感.&lt;/p&gt;
+&lt;p&gt;我总结了一下, 主要原因还是在于讨论的时候没有确立讨论主题问题,
+比如说对于一个问题X的解决方案的讨论, x提出了A解决方法,
+y指出了A解决方法中存在的问题P.
+在听到了这些问题后, 如果x认为应该继续采用A方法,
+正常的做法首先应该是论证P的影响, 比如说:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;P到底是否存在?&lt;/li&gt;
+&lt;li&gt;P的影响有多大? 给问题X的解决造成了多大程度的负面影响?&lt;/li&gt;
+&lt;li&gt;P是否是为了解决某个问题而必然引入的新问题?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如果P确实是一个不可忽视的问题, 然后应该讨论解决方法A的的&amp;quot;补救&amp;quot;措施:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;能否修改方案A以弥补问题P?&lt;/li&gt;
+&lt;li&gt;是否需要重新设计方案B以同时解决问题X和问题P?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;如果沟通不是按照这个步骤结构化的进行, 那么必然产生心智负担.
+实际沟通中常常会有如下几种情况:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;如果y提出问题P后, x通过与问题本身无关的方式否认这个问题,
+比如说解决问题P不会成为我们的优势, 解决问题P也不会让别人更想用我们的产品.
+这种情况相当于直接回避问题. 如果y是个负责的人,
+必然会想方设法的说服x问题P的存在性. 另一方面这也会让y感觉到疲惫,
+因为&amp;quot;问题P是否存在&amp;quot;和&amp;quot;解决问题P是否会成为优势&amp;quot;是两个十分不相同的事情,
+所用到的知识也很有可能属于完全不同的领域, 而y在讨论前可能并没有准备好另一部分的知识.&lt;/li&gt;
+&lt;li&gt;如果x确认问题P的存在后, 但是并不直面这个问题P, 而是说谁谁的a,b,c方案是用类似于A方案这么解决的, 根本没事.
+这就给y带来了心智负担: 如果y没有了解过a,b,c方案, 他还需要再去确认这些方案是否真的是如x所说,
+如果不如x所说又要和x对这些a,b,c方案的做法进行对齐.
+如果想用别人的方案来说明, 正常的做法应当是x首先尽量详细介绍一下a,b,c方案, 说服y这些方案确实是为了x而存在, 且真的与解法A存在同构.&lt;/li&gt;
+&lt;li&gt;最后一种情况, 也是最折磨人的情况: 那你搞一个方案解决问题X吧, 我只能想到这种解法.
+工作中的分工是明确的, 此时如果y是个对产品负责的人, 必然会在自己的工作量基础上增加额外的工作量.&lt;/li&gt;
+&lt;/ol&gt;</description>
       <content:encoded><![CDATA[<p>最近经常和各类人高强度的讨论各种事情,
 我在读研期间和经常需要线上/线下和我的导师讨论各种问题,
 但是我也没有感受到像最近这样的疲惫感.</p>
@@ -815,13 +909,27 @@ y指出了A解决方法中存在的问题P.
       <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/partial-evaluation-for-functional/</guid>
-      <description>partial evaluation 的第五章 Partial Evaluation for a First-Order Functional Language 的笔记.
-前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:
-确定源程序每个程序点可以静态确定的状态(Binding Time Analysis); 依据这些静态状态, 把源程序的每个基本块&amp;quot;展开&amp;quot;到目标程序, 这些静态状态在目标程序中不再需要被计算, 而是直接&amp;quot;嵌入&amp;quot;到了目标程序中. 该目标程序被称之为&amp;quot;残差程序&amp;quot;(residual program). 那么对于更加复杂的语言应该如何做partial evaluation呢?
-这一章的介绍了一门比flow chart稍微强大(同时也复杂)一点的语言, 叫做Scheme0, 并展示了如何对这个语言进行partial evaluation. Scheme0仍然是采用lisp的语法, 支持全局的函数定义, 不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.
-从flow chart到Scheme0 在对Scheme0进行partial evaluation的过程中, 有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?
-所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念. 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.
-Flow Chart Scheme0 解释 Program point Function&amp;rsquo;s entry Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西 Global Variable Parameter Global Variable对应函数的Parameter, 也只有这里的静态值会&amp;quot;嵌入&amp;quot;至residual program Transition Compression Function&amp;rsquo;s Unfolding - Binding Time Analysis 通过抽象解释进行BTA 采用抽象解释的方式分析binding time, 此时抽象域为 参数 -&amp;gt; binding time 的partial mapping, 称之为 Binding Time Environment(BTEnv).</description>
+      <description>&lt;p&gt;&lt;em&gt;partial evaluation&lt;/em&gt; 的第五章 &lt;em&gt;Partial Evaluation for a First-Order Functional Language&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial
+evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:&lt;br /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;确定源程序每个程序点可以静态确定的状态(Binding Time Analysis);&lt;/li&gt;
+&lt;li&gt;依据这些静态状态, 把源程序的每个基本块&amp;quot;展开&amp;quot;到目标程序,
+这些静态状态在目标程序中不再需要被计算, 而是直接&amp;quot;嵌入&amp;quot;到了目标程序中.
+该目标程序被称之为&amp;quot;残差程序&amp;quot;(residual program).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;那么对于更加复杂的语言应该如何做partial evaluation呢?&lt;/p&gt;
+&lt;p&gt;这一章的介绍了一门比flow chart稍微强大(同时也复杂)一点的语言, 叫做Scheme0,
+并展示了如何对这个语言进行partial evaluation.
+Scheme0仍然是采用lisp的语法, 支持全局的函数定义,
+不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img loading=&#34;lazy&#34; src=&#34;http://butter-xz.com/ox-hugo/Pasted-image-20221127220632.png&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;从flow-chart到scheme0&#34;&gt;从flow chart到Scheme0&lt;/h2&gt;
+&lt;p&gt;在对Scheme0进行partial evaluation的过程中,
+有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p><em>partial evaluation</em> 的第五章 <em>Partial Evaluation for a First-Order Functional Language</em> 的笔记.</p>
 <p>前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial
 evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:<br /></p>
@@ -846,30 +954,30 @@ Scheme0仍然是采用lisp的语法, 支持全局的函数定义,
 <p>所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念.
 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.</p>
 <table>
-<thead>
-<tr>
-<th>Flow Chart</th>
-<th>Scheme0</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Program point</td>
-<td>Function&rsquo;s entry</td>
-<td>Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西</td>
-</tr>
-<tr>
-<td>Global Variable</td>
-<td>Parameter</td>
-<td>Global Variable对应函数的Parameter, 也只有这里的静态值会&quot;嵌入&quot;至residual program</td>
-</tr>
-<tr>
-<td>Transition Compression</td>
-<td>Function&rsquo;s Unfolding</td>
-<td>-</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Flow Chart</th>
+          <th style="text-align: left">Scheme0</th>
+          <th style="text-align: left">解释</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Program point</td>
+          <td style="text-align: left">Function&rsquo;s entry</td>
+          <td style="text-align: left">Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Global Variable</td>
+          <td style="text-align: left">Parameter</td>
+          <td style="text-align: left">Global Variable对应函数的Parameter, 也只有这里的静态值会&quot;嵌入&quot;至residual program</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Transition Compression</td>
+          <td style="text-align: left">Function&rsquo;s Unfolding</td>
+          <td style="text-align: left">-</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="binding-time-analysis">Binding Time Analysis</h2>
 <h3 id="通过抽象解释进行bta">通过抽象解释进行BTA</h3>
@@ -1003,11 +1111,24 @@ unfold strategy的最终目的还是为了提升residual程序的质量(比如�
       <pubDate>Sat, 19 Nov 2022 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/partial-evaluation-for-flow-chart/</guid>
-      <description>partial evaluation 的第四章 Partial Evaluation for a Flow Chart Language 的笔记.
-这一章介绍了一个叫做 Flow Chart 的语言, 是一个以基本块组成的语言. 然后通过这个语言实现了两个二村映射来介绍Partial Evaluation的技巧.
-程序和状态 然后就是程序点和程序状态的概念: 程序点就是程序执行的位置, 程序状态指的是程序执行的状态, 具体的状态的值域取决于语义的定义. 这一点和静态分析里的定义是类似的.
-程序的状态可能有很多, 但大部分的语言都可以通过 变量 - 值 的映射来表示. 其中对于每个 program point, 变量的值可以分为 static 和 dynamic 分为两类. static 表示变量的值可以在静态确定, 而 dynamic 的值只能在运行时确定. 将每个 program point 的变量区分为 static 和 dynamic 的过程叫做 division.
-基于 static 程序状态做 partial evaluation 这就引出了一个概念叫做 poly, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大程度地确认多少程序点的 static 变量? 这个问题的求解结果可以通过一个由 程序点-static value 序对组成的集合来表示 poly. 这些 poly 就对应着 residual program (specialized program) 的 program point.</description>
+      <description>&lt;p&gt;&lt;em&gt;partial evaluation&lt;/em&gt; 的第四章 &lt;em&gt;Partial Evaluation for a Flow Chart
+Language&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;这一章介绍了一个叫做 &lt;em&gt;Flow Chart&lt;/em&gt; 的语言, 是一个以基本块组成的语言.
+然后通过这个语言实现了两个二村映射来介绍&lt;a href=&#34;http://butter-xz.com/articles/partial-evaluation/&#34;&gt;Partial Evaluation&lt;/a&gt;的技巧.&lt;/p&gt;
+&lt;h2 id=&#34;程序和状态&#34;&gt;程序和状态&lt;/h2&gt;
+&lt;p&gt;然后就是程序点和程序状态的概念: 程序点就是程序执行的位置,
+程序状态指的是程序执行的状态, 具体的状态的值域取决于语义的定义.
+这一点和静态分析里的定义是类似的.&lt;/p&gt;
+&lt;p&gt;程序的状态可能有很多, 但大部分的语言都可以通过 &lt;code&gt;变量 - 值&lt;/code&gt; 的映射来表示.
+其中对于每个 program point, 变量的值可以分为 static 和 dynamic 分为两类.
+static 表示变量的值可以在静态确定, 而 dynamic 的值只能在运行时确定.
+将每个 program point 的变量区分为 static 和 dynamic 的过程叫做
+&lt;em&gt;division&lt;/em&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;基于-static-程序状态做-partial-evaluation&#34;&gt;基于 static 程序状态做 partial evaluation&lt;/h2&gt;
+&lt;p&gt;这就引出了一个概念叫做 &lt;em&gt;poly&lt;/em&gt;, 指的是基于输入和已知的程序点的 static
+变量的值, 可以最大程度地确认多少程序点的 static 变量?
+这个问题的求解结果可以通过一个由 &lt;code&gt;程序点-static value&lt;/code&gt; 序对组成的集合来表示 &lt;em&gt;poly&lt;/em&gt;.
+这些 &lt;em&gt;poly&lt;/em&gt; 就对应着 residual program (specialized program) 的 program point.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p><em>partial evaluation</em> 的第四章 <em>Partial Evaluation for a Flow Chart
 Language</em> 的笔记.</p>
 <p>这一章介绍了一个叫做 <em>Flow Chart</em> 的语言, 是一个以基本块组成的语言.
@@ -1221,14 +1342,23 @@ y = case t of
       <pubDate>Tue, 08 Nov 2022 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/language-and-interpreters/</guid>
-      <description>partial evaluation 的第三章 Programming Languages and Interpreters 的笔记.
-这一章主要是形式化的介绍了一下 Partial Evaluation 中的基本概念: 程序, 解释和编译.
-程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是程序执行语义的描述, 比如说 Operational Semantic, 就提供了一套指导程序应该如何进行规约(reduction)的规则.
-定义语言 = 定义抽象机 所有编程语言的语义都隐式定义了一个用于执行程序的抽象机, 可以把抽象机看作是程序的&amp;quot;解释器&amp;quot;(有的资料也称之为&amp;quot;元解释器&amp;quot;, 但我还没想明白&amp;quot;元&amp;quot;在哪里), 这也是大家经常说 所有语言本质上都是解释执行 的原因.
-解释器和解释器开销 与直接在这个编程语言的抽象机来执行不同, 用另外一个程序来实现程序的语义可以称之为 解释执行, 也就是我们常说的解释器 (注意: 解释器本身也是在解释器对应语言的抽象机上执行的).
-对于某个目标程序 P, 解释器 int 在对应抽象机上的解释程序 P 所需要的执行步数, 一般要比 P 在 P 对应的抽象机上的执行步数要多, 而且往往是成倍数的多.
-比如说, 对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步 \(x \rightarrow Env[ [ x ] ]\) ; 而在解释器中, 这个求值会 对应 到 5 步:
-解释函数 (如 eval) 的调用 模式匹配判断当前表达式是一个变量 读取环境 读取变量名 读取环境中对应变量名的值 所以我们可以通过 case by case 的分析各种语义的对应解释器步数得到一个大致的倍数, 从而估算解释的开销(overhead), 这个开销被称为 解释器开销(Interpretation Overhand).</description>
+      <description>&lt;p&gt;&lt;em&gt;partial evaluation&lt;/em&gt; 的第三章 &lt;em&gt;Programming Languages and Interpreters&lt;/em&gt;
+的笔记.&lt;/p&gt;
+&lt;p&gt;这一章主要是形式化的介绍了一下 &lt;a href=&#34;http://butter-xz.com/articles/partial-evaluation/&#34;&gt;Partial Evaluation&lt;/a&gt; 中的基本概念: 程序, 解释和编译.&lt;/p&gt;
+&lt;p&gt;程序只是一种表示, 程序的语义决定了程序的含义, 在这里程序的语义指的是程序执行语义的描述,
+比如说 &lt;em&gt;Operational Semantic&lt;/em&gt;, 就提供了一套指导程序应该如何进行规约(reduction)的规则.&lt;/p&gt;
+&lt;h2 id=&#34;定义语言-定义抽象机&#34;&gt;定义语言 = 定义抽象机&lt;/h2&gt;
+&lt;p&gt;所有编程语言的语义都隐式定义了一个用于执行程序的抽象机,
+可以把抽象机看作是程序的&amp;quot;解释器&amp;quot;(有的资料也称之为&amp;quot;元解释器&amp;quot;, 但我还没想明白&amp;quot;元&amp;quot;在哪里),
+这也是大家经常说 &lt;strong&gt;&lt;strong&gt;所有语言本质上都是解释执行&lt;/strong&gt;&lt;/strong&gt; 的原因.&lt;/p&gt;
+&lt;h2 id=&#34;解释器和解释器开销&#34;&gt;解释器和解释器开销&lt;/h2&gt;
+&lt;p&gt;与直接在这个编程语言的抽象机来执行不同,
+用另外一个程序来实现程序的语义可以称之为 &lt;em&gt;解释执行&lt;/em&gt;, 也就是我们常说的解释器
+(注意: 解释器本身也是在解释器对应语言的抽象机上执行的).&lt;/p&gt;
+&lt;p&gt;对于某个目标程序 &lt;code&gt;P&lt;/code&gt;, 解释器 &lt;code&gt;int&lt;/code&gt; 在对应抽象机上的解释程序 &lt;code&gt;P&lt;/code&gt; 所需要的执行步数,
+一般要比 &lt;code&gt;P&lt;/code&gt; 在 &lt;code&gt;P&lt;/code&gt; 对应的抽象机上的执行步数要多, 而且往往是成倍数的多.&lt;/p&gt;
+&lt;p&gt;比如说, 对于一个变量的求值, 在代表程序语义的抽象机上一共只需要一步 \(x \rightarrow Env[ [ x ] ]\) ;
+而在解释器中, 这个求值会 &lt;strong&gt;对应&lt;/strong&gt; 到 5 步:&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p><em>partial evaluation</em> 的第三章 <em>Programming Languages and Interpreters</em>
 的笔记.</p>
 <p>这一章主要是形式化的介绍了一下 <a href="/articles/partial-evaluation/">Partial Evaluation</a> 中的基本概念: 程序, 解释和编译.</p>
@@ -1305,12 +1435,23 @@ version)</p>
       <pubDate>Sat, 22 Oct 2022 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/partial-evaluation/</guid>
-      <description>关于 Partial Evaluation 的第一章 Introduction 的笔记.
-从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 in1 和 in2, 如果该程序的输入 in1 是可以在运行之前确定的, 那么我们就可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&amp;quot;优化器&amp;quot;可以叫做 specializer. 所以 Partial Evaluation 可以看作做了两件事情:
-计算可以预先知道的输入 为提前知道的输入进行特化, 生成一个针对预先输入优化的程序 二村映射 我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:
-+--------+ P --&amp;gt; | interp | --&amp;gt; out input --&amp;gt; | | +--------+ 对于这个 interpreter, 如果有一个可以针对解释器的源程序输入 P 的 specializer, 那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样, 下图中的 PE 就是我们的 specializer, interpP 就是一个可执行程序.
-图 1:
-+----+ interp --&amp;gt; | PE | --&amp;gt; interpP P --&amp;gt; | | +----+ 这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(下图中的 PEinterp).</description>
+      <description>&lt;p&gt;关于 &lt;em&gt;Partial Evaluation&lt;/em&gt; 的第一章 &lt;em&gt;Introduction&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 &lt;code&gt;in1&lt;/code&gt; 和 &lt;code&gt;in2&lt;/code&gt;,
+如果该程序的输入 &lt;code&gt;in1&lt;/code&gt; 是可以在运行之前确定的,
+那么我们就可以生成一个针对 &lt;code&gt;in1&lt;/code&gt; 优化的程序, 这个过程就叫做 specialization(特化).
+针对 &lt;code&gt;in1&lt;/code&gt; 优化的&amp;quot;优化器&amp;quot;可以叫做 specializer.
+所以 Partial Evaluation 可以看作做了两件事情:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;计算可以预先知道的输入&lt;/li&gt;
+&lt;li&gt;为提前知道的输入进行特化, 生成一个针对预先输入优化的程序&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;二村映射&#34;&gt;二村映射&lt;/h2&gt;
+&lt;p&gt;我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           +--------+
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;P      --&amp;gt; | interp | --&amp;gt; out
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;input  --&amp;gt; |        |
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           +--------+
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pr</description>
       <content:encoded><![CDATA[<p>关于 <em>Partial Evaluation</em> 的第一章 <em>Introduction</em> 的笔记.</p>
 <p>从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 <code>in1</code> 和 <code>in2</code>,
 如果该程序的输入 <code>in1</code> 是可以在运行之前确定的,
@@ -1359,12 +1500,12 @@ PE 的功能都是为 <code>in2</code> 生成一个特化在 <code>in1</code> �
 <p>上面的 specialize 的过程有时候也叫 stage: 通过 specialize 把原来的程序分成了好几步.</p>
 <h2 id="partial-evaluation-和-partial-application--柯里化">Partial Evaluation 和 Partial Application(柯里化)</h2>
 <p>Partial Evaluation 和编程语言中的 Partial Application(柯里化)还是很不一样的 在 Partial
-Application 中, 得到的是一个同一个语言的函数; 而 partial evaluation 中, 得到的是一个*新的程序*.
+Application 中, 得到的是相同语言中的函数; 而 partial evaluation 中, 得到的是一个 <strong><strong>新的程序</strong></strong>.
 这里就体现了一个 program text 和 running program 的区别:
 program text 是一个 syntactic world 里的东西, 比如说符号, 表达式, 只是程序的 <strong><strong>表示</strong></strong>;
-function 是数学意义上的东西, 需要把 program text 传给语义函数后(通俗的说就是要把程序运行起来)才能通过把
-program text 和 function 关联起来.
-所以 partial evaluation 和 <a href="https://en.wikipedia.org/wiki/Currying">柯里化</a> 时的 partial application 并是一回事.</p>
+function 是数学意义(语义)上的东西,
+需要把 program text 传给语义函数后(通俗的说就是要把程序运行起来)才能把 program text 和 function 关联起来.
+所以 partial evaluation 和 <a href="https://en.wikipedia.org/wiki/Currying">柯里化</a> 时的 partial application 并不是一回事.</p>
 <p>感谢 kokic 为本文找到的 typo!</p>
 ]]></content:encoded>
     </item>

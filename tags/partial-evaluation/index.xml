@@ -15,10 +15,18 @@
       <pubDate>Sat, 02 Mar 2024 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/20231111153704-partial_evaluation_for_lambda_calculus/</guid>
-      <description>这是 [1] 第 8 章 Partial Evaluation for Lambda Calculus 的笔记.
-在 Partial Evaluation for Functional Language 和 Partial Evaluation For Flow Chart Langauge 中, partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.
-但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数, 那么考虑一个简单的场景, 返回一个常量的函数, 应该标记为是 Static 还是 Dynamic ? 比如: (lambda (x) 1)
-如果标记为 S, 那这个函数在 residual program 中对应什么? 似乎也只能是 (lambda (x) 1) 如果标记为 D, 为什么一个这么简单的函数会返回一个常量的函数需要标记为 D? 是不是对于 lambda 表达式 partial evaluation 都无能为力? 我会有这样的疑惑主要有两个原因:</description>
+      <description>&lt;p&gt;这是 &lt;a href=&#34;#citeproc_bib_item_1&#34;&gt;[1]&lt;/a&gt; 第 8 章 &lt;em&gt;Partial Evaluation for Lambda Calculus&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;在 &lt;a href=&#34;http://butter-xz.com/articles/partial-evaluation-for-functional/&#34;&gt;Partial Evaluation for Functional Language&lt;/a&gt; 和 &lt;a href=&#34;http://butter-xz.com/articles/partial-evaluation-for-flow-chart/&#34;&gt;Partial Evaluation For Flow Chart Langauge&lt;/a&gt; 中,
+partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.&lt;/p&gt;
+&lt;p&gt;但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数,
+那么考虑一个简单的场景, 返回一个常量的函数, 应该标记为是 Static 还是 Dynamic ?
+比如: &lt;code&gt;(lambda (x) 1)&lt;/code&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;如果标记为 S, 那这个函数在 residual program 中对应什么? 似乎也只能是 &lt;code&gt;(lambda (x) 1)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;如果标记为 D, 为什么一个这么简单的函数会返回一个常量的函数需要标记为 D?
+是不是对于 lambda 表达式 partial evaluation 都无能为力?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;我会有这样的疑惑主要有两个原因:&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>这是 <a href="#citeproc_bib_item_1">[1]</a> 第 8 章 <em>Partial Evaluation for Lambda Calculus</em> 的笔记.</p>
 <p>在 <a href="/articles/partial-evaluation-for-functional/">Partial Evaluation for Functional Language</a> 和 <a href="/articles/partial-evaluation-for-flow-chart/">Partial Evaluation For Flow Chart Langauge</a> 中,
 partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.</p>
@@ -312,11 +320,16 @@ Binding Time Analysis 会被简写为 BTA.</li>
       <pubDate>Sun, 05 Nov 2023 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/20231014172106-offline_and_online_partial_evaluation/</guid>
-      <description>关于 [1] 的第7章 Offline and Online Partial Evaluation 的笔记
-Offline 和 Online 指的是什么? Offline 和 Online 的区别在于 Binding Time Analysis 的时机: Offline 会提前把 Binding Time Analysis (BTA)做完, 并保证 binding time 的相合性, 再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize; Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.
-Figure 1: Online 方法和 Offline 方法的结构
-Figure 2: Online 方法和 Offline 方法的定义
-Online 方法的分析 OnPE 方法的类型签名: \[ Expression \rightarrow On-Env \rightarrow On-Value \]</description>
+      <description>&lt;p&gt;关于 &lt;a href=&#34;#citeproc_bib_item_1&#34;&gt;[1]&lt;/a&gt; 的第7章 &lt;em&gt;Offline and Online Partial Evaluation&lt;/em&gt; 的笔记&lt;/p&gt;
+&lt;h2 id=&#34;offline-和-online-指的是什么&#34;&gt;Offline 和 Online 指的是什么?&lt;/h2&gt;
+&lt;p&gt;Offline 和 Online 的区别在于 Binding Time Analysis 的时机:
+Offline 会提前把 &lt;a href=&#34;http://butter-xz.com/articles/partial-evaluation-for-flow-chart/#division&#34;&gt;Binding Time Analysis&lt;/a&gt; (BTA)做完, 并保证 binding time 的相合性,
+再基于 BTA 的结果(可以由 Division 或 Annotated Program 表示)进行 specialize;
+Online 会直接基于输入的程序做 specialize, 在 specialize 的过程中保证 congruence.&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img loading=&#34;lazy&#34; src=&#34;http://butter-xz.com/ox-hugo/2023-11-05_20-22-15_screenshot.png&#34;
+         alt=&#34;Figure 1: Online 方法和 Offline 方法的结构&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;&lt;span class=&#34;figure-number&#34;&gt;Figure 1: &lt;/span&gt;Online 方法和 Offline 方法的结构&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p>关于 <a href="#citeproc_bib_item_1">[1]</a> 的第7章 <em>Offline and Online Partial Evaluation</em> 的笔记</p>
 <h2 id="offline-和-online-指的是什么">Offline 和 Online 指的是什么?</h2>
 <p>Offline 和 Online 的区别在于 Binding Time Analysis 的时机:
@@ -466,13 +479,27 @@ Offline PE 会首先通过 <a href="/articles/partial-evaluation-for-flow-chart/
       <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/partial-evaluation-for-functional/</guid>
-      <description>partial evaluation 的第五章 Partial Evaluation for a First-Order Functional Language 的笔记.
-前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:
-确定源程序每个程序点可以静态确定的状态(Binding Time Analysis); 依据这些静态状态, 把源程序的每个基本块&amp;quot;展开&amp;quot;到目标程序, 这些静态状态在目标程序中不再需要被计算, 而是直接&amp;quot;嵌入&amp;quot;到了目标程序中. 该目标程序被称之为&amp;quot;残差程序&amp;quot;(residual program). 那么对于更加复杂的语言应该如何做partial evaluation呢?
-这一章的介绍了一门比flow chart稍微强大(同时也复杂)一点的语言, 叫做Scheme0, 并展示了如何对这个语言进行partial evaluation. Scheme0仍然是采用lisp的语法, 支持全局的函数定义, 不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.
-从flow chart到Scheme0 在对Scheme0进行partial evaluation的过程中, 有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?
-所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念. 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.
-Flow Chart Scheme0 解释 Program point Function&amp;rsquo;s entry Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西 Global Variable Parameter Global Variable对应函数的Parameter, 也只有这里的静态值会&amp;quot;嵌入&amp;quot;至residual program Transition Compression Function&amp;rsquo;s Unfolding - Binding Time Analysis 通过抽象解释进行BTA 采用抽象解释的方式分析binding time, 此时抽象域为 参数 -&amp;gt; binding time 的partial mapping, 称之为 Binding Time Environment(BTEnv).</description>
+      <description>&lt;p&gt;&lt;em&gt;partial evaluation&lt;/em&gt; 的第五章 &lt;em&gt;Partial Evaluation for a First-Order Functional Language&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial
+evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:&lt;br /&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;确定源程序每个程序点可以静态确定的状态(Binding Time Analysis);&lt;/li&gt;
+&lt;li&gt;依据这些静态状态, 把源程序的每个基本块&amp;quot;展开&amp;quot;到目标程序,
+这些静态状态在目标程序中不再需要被计算, 而是直接&amp;quot;嵌入&amp;quot;到了目标程序中.
+该目标程序被称之为&amp;quot;残差程序&amp;quot;(residual program).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;那么对于更加复杂的语言应该如何做partial evaluation呢?&lt;/p&gt;
+&lt;p&gt;这一章的介绍了一门比flow chart稍微强大(同时也复杂)一点的语言, 叫做Scheme0,
+并展示了如何对这个语言进行partial evaluation.
+Scheme0仍然是采用lisp的语法, 支持全局的函数定义,
+不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img loading=&#34;lazy&#34; src=&#34;http://butter-xz.com/ox-hugo/Pasted-image-20221127220632.png&#34;/&gt; 
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;从flow-chart到scheme0&#34;&gt;从flow chart到Scheme0&lt;/h2&gt;
+&lt;p&gt;在对Scheme0进行partial evaluation的过程中,
+有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p><em>partial evaluation</em> 的第五章 <em>Partial Evaluation for a First-Order Functional Language</em> 的笔记.</p>
 <p>前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial
 evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:<br /></p>
@@ -497,30 +524,30 @@ Scheme0仍然是采用lisp的语法, 支持全局的函数定义,
 <p>所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念.
 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.</p>
 <table>
-<thead>
-<tr>
-<th>Flow Chart</th>
-<th>Scheme0</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Program point</td>
-<td>Function&rsquo;s entry</td>
-<td>Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西</td>
-</tr>
-<tr>
-<td>Global Variable</td>
-<td>Parameter</td>
-<td>Global Variable对应函数的Parameter, 也只有这里的静态值会&quot;嵌入&quot;至residual program</td>
-</tr>
-<tr>
-<td>Transition Compression</td>
-<td>Function&rsquo;s Unfolding</td>
-<td>-</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Flow Chart</th>
+          <th style="text-align: left">Scheme0</th>
+          <th style="text-align: left">解释</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Program point</td>
+          <td style="text-align: left">Function&rsquo;s entry</td>
+          <td style="text-align: left">Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Global Variable</td>
+          <td style="text-align: left">Parameter</td>
+          <td style="text-align: left">Global Variable对应函数的Parameter, 也只有这里的静态值会&quot;嵌入&quot;至residual program</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Transition Compression</td>
+          <td style="text-align: left">Function&rsquo;s Unfolding</td>
+          <td style="text-align: left">-</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="binding-time-analysis">Binding Time Analysis</h2>
 <h3 id="通过抽象解释进行bta">通过抽象解释进行BTA</h3>
@@ -654,11 +681,24 @@ unfold strategy的最终目的还是为了提升residual程序的质量(比如�
       <pubDate>Sat, 19 Nov 2022 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/partial-evaluation-for-flow-chart/</guid>
-      <description>partial evaluation 的第四章 Partial Evaluation for a Flow Chart Language 的笔记.
-这一章介绍了一个叫做 Flow Chart 的语言, 是一个以基本块组成的语言. 然后通过这个语言实现了两个二村映射来介绍Partial Evaluation的技巧.
-程序和状态 然后就是程序点和程序状态的概念: 程序点就是程序执行的位置, 程序状态指的是程序执行的状态, 具体的状态的值域取决于语义的定义. 这一点和静态分析里的定义是类似的.
-程序的状态可能有很多, 但大部分的语言都可以通过 变量 - 值 的映射来表示. 其中对于每个 program point, 变量的值可以分为 static 和 dynamic 分为两类. static 表示变量的值可以在静态确定, 而 dynamic 的值只能在运行时确定. 将每个 program point 的变量区分为 static 和 dynamic 的过程叫做 division.
-基于 static 程序状态做 partial evaluation 这就引出了一个概念叫做 poly, 指的是基于输入和已知的程序点的 static 变量的值, 可以最大程度地确认多少程序点的 static 变量? 这个问题的求解结果可以通过一个由 程序点-static value 序对组成的集合来表示 poly. 这些 poly 就对应着 residual program (specialized program) 的 program point.</description>
+      <description>&lt;p&gt;&lt;em&gt;partial evaluation&lt;/em&gt; 的第四章 &lt;em&gt;Partial Evaluation for a Flow Chart
+Language&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;这一章介绍了一个叫做 &lt;em&gt;Flow Chart&lt;/em&gt; 的语言, 是一个以基本块组成的语言.
+然后通过这个语言实现了两个二村映射来介绍&lt;a href=&#34;http://butter-xz.com/articles/partial-evaluation/&#34;&gt;Partial Evaluation&lt;/a&gt;的技巧.&lt;/p&gt;
+&lt;h2 id=&#34;程序和状态&#34;&gt;程序和状态&lt;/h2&gt;
+&lt;p&gt;然后就是程序点和程序状态的概念: 程序点就是程序执行的位置,
+程序状态指的是程序执行的状态, 具体的状态的值域取决于语义的定义.
+这一点和静态分析里的定义是类似的.&lt;/p&gt;
+&lt;p&gt;程序的状态可能有很多, 但大部分的语言都可以通过 &lt;code&gt;变量 - 值&lt;/code&gt; 的映射来表示.
+其中对于每个 program point, 变量的值可以分为 static 和 dynamic 分为两类.
+static 表示变量的值可以在静态确定, 而 dynamic 的值只能在运行时确定.
+将每个 program point 的变量区分为 static 和 dynamic 的过程叫做
+&lt;em&gt;division&lt;/em&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;基于-static-程序状态做-partial-evaluation&#34;&gt;基于 static 程序状态做 partial evaluation&lt;/h2&gt;
+&lt;p&gt;这就引出了一个概念叫做 &lt;em&gt;poly&lt;/em&gt;, 指的是基于输入和已知的程序点的 static
+变量的值, 可以最大程度地确认多少程序点的 static 变量?
+这个问题的求解结果可以通过一个由 &lt;code&gt;程序点-static value&lt;/code&gt; 序对组成的集合来表示 &lt;em&gt;poly&lt;/em&gt;.
+这些 &lt;em&gt;poly&lt;/em&gt; 就对应着 residual program (specialized program) 的 program point.&lt;/p&gt;</description>
       <content:encoded><![CDATA[<p><em>partial evaluation</em> 的第四章 <em>Partial Evaluation for a Flow Chart
 Language</em> 的笔记.</p>
 <p>这一章介绍了一个叫做 <em>Flow Chart</em> 的语言, 是一个以基本块组成的语言.
@@ -872,12 +912,23 @@ y = case t of
       <pubDate>Sat, 22 Oct 2022 00:00:00 +0000</pubDate>
       <author>azhong.934@gmail.com (butterunderflow)</author>
       <guid>http://butter-xz.com/articles/partial-evaluation/</guid>
-      <description>关于 Partial Evaluation 的第一章 Introduction 的笔记.
-从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 in1 和 in2, 如果该程序的输入 in1 是可以在运行之前确定的, 那么我们就可以生成一个针对 in1 优化的程序, 这个过程就叫做 specialization(特化). 针对 in1 优化的&amp;quot;优化器&amp;quot;可以叫做 specializer. 所以 Partial Evaluation 可以看作做了两件事情:
-计算可以预先知道的输入 为提前知道的输入进行特化, 生成一个针对预先输入优化的程序 二村映射 我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:
-+--------+ P --&amp;gt; | interp | --&amp;gt; out input --&amp;gt; | | +--------+ 对于这个 interpreter, 如果有一个可以针对解释器的源程序输入 P 的 specializer, 那么我们可以通过在解释器上 specialize 得到一个可执行程序. 用图画出来就是这样, 下图中的 PE 就是我们的 specializer, interpP 就是一个可执行程序.
-图 1:
-+----+ interp --&amp;gt; | PE | --&amp;gt; interpP P --&amp;gt; | | +----+ 这个时候我们可以看到, 这个 specialzer 本身也是多参数的函数, 如果我们已经有了一个 specialzer, 如果再把这个 specializer 对 interp 参数进行 specialization, 我们就可以得到一个编译器(下图中的 PEinterp).</description>
+      <description>&lt;p&gt;关于 &lt;em&gt;Partial Evaluation&lt;/em&gt; 的第一章 &lt;em&gt;Introduction&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 &lt;code&gt;in1&lt;/code&gt; 和 &lt;code&gt;in2&lt;/code&gt;,
+如果该程序的输入 &lt;code&gt;in1&lt;/code&gt; 是可以在运行之前确定的,
+那么我们就可以生成一个针对 &lt;code&gt;in1&lt;/code&gt; 优化的程序, 这个过程就叫做 specialization(特化).
+针对 &lt;code&gt;in1&lt;/code&gt; 优化的&amp;quot;优化器&amp;quot;可以叫做 specializer.
+所以 Partial Evaluation 可以看作做了两件事情:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;计算可以预先知道的输入&lt;/li&gt;
+&lt;li&gt;为提前知道的输入进行特化, 生成一个针对预先输入优化的程序&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;二村映射&#34;&gt;二村映射&lt;/h2&gt;
+&lt;p&gt;我们通过一个解释器程序来举例子, 一个解释器可以通过下图描述:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           +--------+
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;P      --&amp;gt; | interp | --&amp;gt; out
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;input  --&amp;gt; |        |
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;           +--------+
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pr</description>
       <content:encoded><![CDATA[<p>关于 <em>Partial Evaluation</em> 的第一章 <em>Introduction</em> 的笔记.</p>
 <p>从抽象上来看, 程序都可以看作是一个输入到输出的函数. 比如说某个程序输入可以拆分为 <code>in1</code> 和 <code>in2</code>,
 如果该程序的输入 <code>in1</code> 是可以在运行之前确定的,
@@ -926,12 +977,12 @@ PE 的功能都是为 <code>in2</code> 生成一个特化在 <code>in1</code> �
 <p>上面的 specialize 的过程有时候也叫 stage: 通过 specialize 把原来的程序分成了好几步.</p>
 <h2 id="partial-evaluation-和-partial-application--柯里化">Partial Evaluation 和 Partial Application(柯里化)</h2>
 <p>Partial Evaluation 和编程语言中的 Partial Application(柯里化)还是很不一样的 在 Partial
-Application 中, 得到的是一个同一个语言的函数; 而 partial evaluation 中, 得到的是一个*新的程序*.
+Application 中, 得到的是相同语言中的函数; 而 partial evaluation 中, 得到的是一个 <strong><strong>新的程序</strong></strong>.
 这里就体现了一个 program text 和 running program 的区别:
 program text 是一个 syntactic world 里的东西, 比如说符号, 表达式, 只是程序的 <strong><strong>表示</strong></strong>;
-function 是数学意义上的东西, 需要把 program text 传给语义函数后(通俗的说就是要把程序运行起来)才能通过把
-program text 和 function 关联起来.
-所以 partial evaluation 和 <a href="https://en.wikipedia.org/wiki/Currying">柯里化</a> 时的 partial application 并是一回事.</p>
+function 是数学意义(语义)上的东西,
+需要把 program text 传给语义函数后(通俗的说就是要把程序运行起来)才能把 program text 和 function 关联起来.
+所以 partial evaluation 和 <a href="https://en.wikipedia.org/wiki/Currying">柯里化</a> 时的 partial application 并不是一回事.</p>
 <p>感谢 kokic 为本文找到的 typo!</p>
 ]]></content:encoded>
     </item>
