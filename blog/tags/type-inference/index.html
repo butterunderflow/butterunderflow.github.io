@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="cn" dir="auto">
+
+<head><script src="/blog/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=blog/livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Type-Inference | Butter&#39;s space</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="author" content="map[email:azhong.934@gmail.com name:butterunderflow website:butter-xz.com]">
+<link rel="canonical" href="http://localhost:1313/blog/tags/type-inference/">
+<link crossorigin="anonymous" href="/blog/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/assets/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/assets/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/assets/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/assets/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/assets/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/blog/tags/type-inference/index.xml">
+<link rel="alternate" hreflang="cn" href="http://localhost:1313/blog/tags/type-inference/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="list" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/blog/" accesskey="h" title="Butter&#39;s space (Alt + H)">Butter&#39;s space</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/blog/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/blog/archives/" title="Archives">
+                    <span>Archives</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/blog/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/blog/demos/" title="Demos">
+                    <span>Demos</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main"> 
+<header class="page-header">
+  <h1>
+    Type-Inference
+  </h1>
+</header>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Local Type Inference
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>ML语言的背后 众所周知, ML系语言十分强大, 这不仅仅得益于它们丰富的语义(高阶函数, local binding, lambda), 还得益于这套语义背后强大的类型系统. ML语言的类型系统通常支持十分强大类型推导功能, 强大到什么程度呢? 理论上开发者可以忽略所有类型签名, type checker仍然可以推导出所有的类型签名.
+类型推导的两个&#34;端点&#34; 但是, 如此强大的类型推导技术居然也不小心带来了一些负面影响:
+重要的类型签名被忽略. 很多情况下, 类型签名并不是开发者的负担而是起到了 “verified document” 的作用, 对可读性有着关键的影响. 类型系统的复杂度增加(主要是类型推导部分). 直观来看这点是在语言实现上的负面影响, 但是过于复杂的类型推导除了会提升类型检查的复杂度也会带来编程的&#34;负担&#34;. 比如说开发者如果不能明确知道哪些类型能推导哪些类型不能推导, 那么考虑&#34;要不要加上类型签名&#34;的这个问题就会给程序员带来心智负担. 对于这些负面的影响, 最极端的做法就是我们要求把所有的类型都加上, 直接抛弃类型推导功能.
+你不是说我推导不好吗, 那你自己写上吧.
+但是这又带来了新的问题:
+为所有类型写上类型签名实在是太啰嗦了, 维护一个冗长但是又没有意义的类型签名, 反而会带来编程时的心智负担. 很多类型签名实际上是&#34;噪音&#34;. 如果完全抛弃类型推导, 那么在一个程序中, 有可能类型签名比描述程序执行信息的核心部分还要多, 这样的类型噪音甚至反而会影响程序的可读性. 尝试找到类型推导平衡点 那么有没有一种办法设计一个类型系统, 可以在描述ML丰富的语义的同时引入&#34;适量&#34;的类型推导: 当显式写出类型签名的对开发者有益的时候不推导这个类型, 只选择推导&#34;显式写出时无意义&#34;的类型签名.
+局部类型推导(Local-Type inference)技术就诞生了
+作者总结了3种ML编程中常见的类型推导, 并通过局部类型推导技术完成这三种类型推导:
+函数调用时类型参数的推导是必要的 匿名函数的类型推导是需要的 local binding的类型推导是需要的 局部类型推导(Local-Type inference) 局部类型推导尝试在保持ML编程的前提下尽可能的减弱类型推导的能力以简化类型推导算法, 局部的含义是类型推导只用到了局部的语法树的类型信息.
+通过Local Type Argument Synthesis可以解决第一个问题, 通过双向类型检查(Bidirectional Type Checking)可以解决问题2, 3.
+语言定义 先介绍了一个用于展示的简单的语言, 是沿用的一个叫 (Kernel F≤_) 的语言, 这个语言支持subtype, 参数化多态, 匿名函数, 局部绑定.
+...</p>
+  </div>
+  <footer class="entry-footer"><span title='2023-09-05 00:00:00 +0000 UTC'>September 5, 2023</span>&nbsp;·&nbsp;butterunderflow</footer>
+  <a class="entry-link" aria-label="post link to Local Type Inference" href="http://localhost:1313/blog/articles/20230901095515-local_type_inference/"></a>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2025 <a href="http://localhost:1313/blog/">Butter&#39;s space</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="cn" dir="auto">
+
+<head><script src="/blog/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=blog/livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Local Type Inference | Butter&#39;s space</title>
+<meta name="keywords" content="Type-Inference, Programming-Language">
+<meta name="description" content="ML语言的背后
+众所周知, ML系语言十分强大, 这不仅仅得益于它们丰富的语义(高阶函数, local binding, lambda), 还得益于这套语义背后强大的类型系统.
+ML语言的类型系统通常支持十分强大类型推导功能, 强大到什么程度呢?
+理论上开发者可以忽略所有类型签名, type checker仍然可以推导出所有的类型签名.
+类型推导的两个&quot;端点&quot;
+但是, 如此强大的类型推导技术居然也不小心带来了一些负面影响:
+
+重要的类型签名被忽略. 很多情况下, 类型签名并不是开发者的负担而是起到了 &ldquo;verified document&rdquo; 的作用, 对可读性有着关键的影响.
+类型系统的复杂度增加(主要是类型推导部分).
+直观来看这点是在语言实现上的负面影响,
+但是过于复杂的类型推导除了会提升类型检查的复杂度也会带来编程的&quot;负担&quot;.
+比如说开发者如果不能明确知道哪些类型能推导哪些类型不能推导,
+那么考虑&quot;要不要加上类型签名&quot;的这个问题就会给程序员带来心智负担.
+
+对于这些负面的影响, 最极端的做法就是我们要求把所有的类型都加上, 直接抛弃类型推导功能.
+
+你不是说我推导不好吗, 那你自己写上吧.
+但是这又带来了新的问题:
+
+为所有类型写上类型签名实在是太啰嗦了, 维护一个冗长但是又没有意义的类型签名,
+反而会带来编程时的心智负担.
+很多类型签名实际上是&quot;噪音&quot;. 如果完全抛弃类型推导,
+那么在一个程序中, 有可能类型签名比描述程序执行信息的核心部分还要多,
+这样的类型噪音甚至反而会影响程序的可读性.
+
+尝试找到类型推导平衡点
+那么有没有一种办法设计一个类型系统,
+可以在描述ML丰富的语义的同时引入&quot;适量&quot;的类型推导:
+当显式写出类型签名的对开发者有益的时候不推导这个类型,
+只选择推导&quot;显式写出时无意义&quot;的类型签名.
+局部类型推导(Local-Type inference)技术就诞生了
+作者总结了3种ML编程中常见的类型推导, 并通过局部类型推导技术完成这三种类型推导:
+
+函数调用时类型参数的推导是必要的
+匿名函数的类型推导是需要的
+local binding的类型推导是需要的
+
+局部类型推导(Local-Type inference)
+局部类型推导尝试在保持ML编程的前提下尽可能的减弱类型推导的能力以简化类型推导算法,
+局部的含义是类型推导只用到了局部的语法树的类型信息.
+通过Local Type Argument Synthesis可以解决第一个问题, 通过双向类型检查(Bidirectional Type Checking)可以解决问题2, 3.
+语言定义
+先介绍了一个用于展示的简单的语言, 是沿用的一个叫 (Kernel F≤_) 的语言, 这个语言支持subtype, 参数化多态, 匿名函数, 局部绑定.">
+<meta name="author" content="butterunderflow">
+<link rel="canonical" href="http://localhost:1313/blog/articles/20230901095515-local_type_inference/">
+<link crossorigin="anonymous" href="/blog/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/assets/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/assets/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/assets/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/assets/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/assets/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="cn" href="http://localhost:1313/blog/articles/20230901095515-local_type_inference/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/blog/" accesskey="h" title="Butter&#39;s space (Alt + H)">Butter&#39;s space</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/blog/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/blog/archives/" title="Archives">
+                    <span>Archives</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/blog/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/blog/demos/" title="Demos">
+                    <span>Demos</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Local Type Inference
+    </h1>
+    <div class="post-meta"><span title='2023-09-05 00:00:00 +0000 UTC'>September 5, 2023</span>&nbsp;·&nbsp;butterunderflow
+
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#ml%e8%af%ad%e8%a8%80%e7%9a%84%e8%83%8c%e5%90%8e" aria-label="ML语言的背后">ML语言的背后</a><ul>
+                        
+                <li>
+                    <a href="#%e7%b1%bb%e5%9e%8b%e6%8e%a8%e5%af%bc%e7%9a%84%e4%b8%a4%e4%b8%aa-%e7%ab%af%e7%82%b9" aria-label="类型推导的两个&quot;端点&quot;">类型推导的两个&quot;端点&quot;</a></li>
+                <li>
+                    <a href="#%e5%b0%9d%e8%af%95%e6%89%be%e5%88%b0%e7%b1%bb%e5%9e%8b%e6%8e%a8%e5%af%bc%e5%b9%b3%e8%a1%a1%e7%82%b9" aria-label="尝试找到类型推导平衡点">尝试找到类型推导平衡点</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%b1%80%e9%83%a8%e7%b1%bb%e5%9e%8b%e6%8e%a8%e5%af%bc--local-type-inference" aria-label="局部类型推导(Local-Type inference)">局部类型推导(Local-Type inference)</a><ul>
+                        
+                <li>
+                    <a href="#%e8%af%ad%e8%a8%80%e5%ae%9a%e4%b9%89" aria-label="语言定义">语言定义</a></li>
+                <li>
+                    <a href="#local-type-argument-synthesis" aria-label="Local Type Argument Synthesis">Local Type Argument Synthesis</a><ul>
+                        
+                <li>
+                    <a href="#%e7%ba%a6%e6%9d%9f%e7%94%9f%e6%88%90" aria-label="约束生成">约束生成</a></li>
+                <li>
+                    <a href="#%e7%ba%a6%e6%9d%9f%e6%b1%82%e8%a7%a3" aria-label="约束求解">约束求解</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%8f%8c%e5%90%91%e7%b1%bb%e5%9e%8b%e6%a3%80%e6%9f%a5--bidirectional-checking" aria-label="双向类型检查(Bidirectional Checking)">双向类型检查(Bidirectional Checking)</a><ul>
+                        
+                <li>
+                    <a href="#bidirectional" aria-label="Bidirectional?">Bidirectional?</a></li></ul>
+                </li></ul>
+                </li>
+                <li>
+                    <a href="#%e7%8e%b0%e5%ae%9e%e4%b8%96%e7%95%8c%e7%9a%84%e7%bc%96%e7%a8%8b%e8%af%ad%e8%a8%80" aria-label="现实世界的编程语言">现实世界的编程语言</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="ml语言的背后">ML语言的背后<a hidden class="anchor" aria-hidden="true" href="#ml语言的背后">#</a></h2>
+<p><strong>众所周知</strong>, ML系语言十分强大, 这不仅仅得益于它们丰富的语义(高阶函数, local binding, lambda), 还得益于这套语义背后强大的类型系统.
+ML语言的类型系统通常支持十分强大类型推导功能, 强大到什么程度呢?
+理论上开发者可以忽略所有类型签名, type checker仍然可以推导出所有的类型签名.</p>
+<h3 id="类型推导的两个-端点">类型推导的两个&quot;端点&quot;<a hidden class="anchor" aria-hidden="true" href="#类型推导的两个-端点">#</a></h3>
+<p>但是, 如此强大的类型推导技术居然也不小心带来了一些负面影响:</p>
+<ol>
+<li>重要的类型签名被忽略. 很多情况下, 类型签名并不是开发者的负担而是起到了 &ldquo;verified document&rdquo; 的作用, 对可读性有着关键的影响.</li>
+<li>类型系统的复杂度增加(主要是类型推导部分).
+直观来看这点是在语言实现上的负面影响,
+但是过于复杂的类型推导除了会提升类型检查的复杂度也会带来编程的&quot;负担&quot;.
+比如说开发者如果不能明确知道哪些类型能推导哪些类型不能推导,
+那么考虑&quot;要不要加上类型签名&quot;的这个问题就会给程序员带来心智负担.</li>
+</ol>
+<p>对于这些负面的影响, 最极端的做法就是我们要求把所有的类型都加上, 直接抛弃类型推导功能.</p>
+<blockquote>
+<p>你不是说我推导不好吗, 那你自己写上吧.</p></blockquote>
+<p>但是这又带来了新的问题:</p>
+<ol>
+<li>为所有类型写上类型签名实在是太啰嗦了, 维护一个冗长但是又没有意义的类型签名,
+反而会带来编程时的心智负担.</li>
+<li>很多类型签名实际上是&quot;噪音&quot;. 如果完全抛弃类型推导,
+那么在一个程序中, 有可能类型签名比描述程序执行信息的核心部分还要多,
+这样的类型噪音甚至反而会影响程序的可读性.</li>
+</ol>
+<h3 id="尝试找到类型推导平衡点">尝试找到类型推导平衡点<a hidden class="anchor" aria-hidden="true" href="#尝试找到类型推导平衡点">#</a></h3>
+<p>那么有没有一种办法设计一个类型系统,
+可以在描述ML丰富的语义的同时引入&quot;适量&quot;的类型推导:
+当显式写出类型签名的对开发者有益的时候不推导这个类型,
+只选择推导&quot;显式写出时无意义&quot;的类型签名.</p>
+<p>局部类型推导(Local-Type inference)技术就诞生了</p>
+<p>作者总结了3种ML编程中常见的类型推导, 并通过局部类型推导技术完成这三种类型推导:</p>
+<ol>
+<li>函数调用时类型参数的推导是必要的</li>
+<li>匿名函数的类型推导是需要的</li>
+<li>local binding的类型推导是需要的</li>
+</ol>
+<h2 id="局部类型推导--local-type-inference">局部类型推导(Local-Type inference)<a hidden class="anchor" aria-hidden="true" href="#局部类型推导--local-type-inference">#</a></h2>
+<p>局部类型推导尝试在保持ML编程的前提下尽可能的减弱类型推导的能力以简化类型推导算法,
+局部的含义是类型推导只用到了局部的语法树的类型信息.</p>
+<p>通过Local Type Argument Synthesis可以解决第一个问题, 通过双向类型检查(Bidirectional Type Checking)可以解决问题2, 3.</p>
+<h3 id="语言定义">语言定义<a hidden class="anchor" aria-hidden="true" href="#语言定义">#</a></h3>
+<p>先介绍了一个用于展示的简单的语言, 是沿用的一个叫 <em>(Kernel F</em>≤_) 的语言, 这个语言支持subtype, 参数化多态, 匿名函数, 局部绑定.</p>
+<p>我觉得很有意思的一点是, 文中把同一个语言区分了两层: 分别是内部语言(internal language)和外部语言(external langauge).
+内部语言是full typed language, 外部语言是程序员日常接触的语言是可以省略一些类型签名的.
+而类型推导的过程就是把外部语言翻译成内部语言的过程. 这个隔离可以让&quot;推导了什么东西&quot;很清楚的展现.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_23-30-15_screenshot.png"
+         alt="Figure 1: 内部语言的定义: 类型表达式, 表达式, 类型环境"/> <figcaption>
+            <p><span class="figure-number">Figure 1: </span>内部语言的定义: 类型表达式, 表达式, 类型环境</p>
+        </figcaption>
+</figure>
+
+<p>Bottom Type的引入可以让任意两个类型都有最大下界, 可以让类型推导总有解.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-17_23-35-40_screenshot.png"
+         alt="Figure 2: 子类型规则"/> <figcaption>
+            <p><span class="figure-number">Figure 2: </span>子类型规则</p>
+        </figcaption>
+</figure>
+
+<p>需要注意这里是有forall类型的子类型关系的, 之后理解约束生成/求解规则需要用到.</p>
+<ul>
+<li>note: 参数类型也可以有forall, 那是不是说local type inference并没有rank-2 type的限制呢?</li>
+</ul>
+<h3 id="local-type-argument-synthesis">Local Type Argument Synthesis<a hidden class="anchor" aria-hidden="true" href="#local-type-argument-synthesis">#</a></h3>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-18_00-04-58_screenshot.png"
+         alt="Figure 3: Declarative Rule"/> <figcaption>
+            <p><span class="figure-number">Figure 3: </span>Declarative Rule</p>
+        </figcaption>
+</figure>
+
+<p>这条规则的有2个要点: <br /></p>
+<ol>
+<li>如果调用目标的类型是 \( All(X)T \rightarrow R \), 并且调用的时候没有显式的给出类型参数, 那么需要通过推导 <strong>类型实参</strong>;</li>
+<li>类型实参需要满足: 应用该类型实参后可以得到最小的函数返回类型.</li>
+</ol>
+<p>但是这条规则是声明式的, 为了能够得到一个可用的类型推导算法,
+我们还要知道如何得到这个&quot;可以让返回值最小的类型实参&quot;.</p>
+<p>于是就有了算法式规则.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-18_00-03-51_screenshot.png"
+         alt="Figure 4: Algorithmic Rule"/> <figcaption>
+            <p><span class="figure-number">Figure 4: </span>Algorithmic Rule</p>
+        </figcaption>
+</figure>
+
+<p>该规则的算法含义是: 当需要infer \(f(\bar e)\) 的类型时, 我们需要做以下几件事情:</p>
+<ol>
+<li>先infer \(f\) 的类型;</li>
+<li>infer 函数调用参数 \(e\) 的类型 \(\bar S\) ;</li>
+<li>如果 \(f\) 的类型是一个需要类型参数的函数(即 \(|X| &gt; 0\)), 那么就需要类型推导推导出函数的类型参数;</li>
+<li>把空集 \(\emptyset\), 类型 \(\bar S\), 形参类型 \(\bar S\),
+类型形参 \(\bar X\), 喂给由关系 \(\vdash  \Rightarrow\) 定义的函数, 从而生成类型变量 \(\bar X\) 上的约束集合 \(\bar D\) ;</li>
+<li>通过运算符 \(\wedge\) 合并 \(\bar D\) 得到 \(\bar C\) ;</li>
+<li>求解约束 \(\bar C\) 得到能够让 \(R\) 最小的 unifier \(\sigma\)</li>
+<li>将 \(\sigma\) 再apply到 \(\bar X\), 返回在internal term中填补空缺的类型实参.</li>
+</ol>
+<p>可以看到, 相比与声明式规则, 算法式规则中多了 \(C\) 和 \(\sigma\) .
+其中 \(C\) 是在检查函数调用表达式时收集到的约束结合, \(\sigma\) 是对这些约束求解的结果.</p>
+<ul>
+<li>疑惑: 这里是不是有遗漏? 应该要像声明式规则一样把 <code>f</code> 翻译成 <code>f'</code> 的过程.</li>
+</ul>
+<p>很清晰对吧!</p>
+<h4 id="约束生成">约束生成<a hidden class="anchor" aria-hidden="true" href="#约束生成">#</a></h4>
+<p>约束生成规则关系 \(V \vdash_{\bar X} S &lt;: T \Rightarrow D \), 描述了对于包含类型变量\(\bar X\)的子类型关系 \(S &lt;: T\)
+和可以替换成任意类型的类型变量集合\(V\), 需要生成的关于 \(\bar X\) 类型约束集合 \(D\).
+对于任意的 \(V\) 的替换都能满足  \(S &lt;: T\), 当且仅当 \(\bar X\) 满足类型约束 \(D\).</p>
+<p>为什么要有一个 \(V\) 呢? 因为文章中用于展示的语言的类型并没有rank-2的限制,
+当我们尝试为一个子类型关系生成约束时, 类型中有的变量是free的(我们需要生成约束的变量),
+有的变量是被 \(ALL\) capture 的.
+而对于这些captrured变量, 我们不知道关于它们的任何信息,
+所以需要按照这个目标来生成free变量约束:
+对于所有被capture的变量的替换, 子类型关系都能成立.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-30_14-34-25_screenshot.png"
+         alt="Figure 5: 约束生成的关系"/> <figcaption>
+            <p><span class="figure-number">Figure 5: </span>约束生成的关系</p>
+        </figcaption>
+</figure>
+
+<p>这个关系中用到了两个辅助的关系 \(\Uparrow\) 和 \(\Downarrow\), 叫做 Variable Elimination. 这两个关系就不复杂了, 而且是完全对称的.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-30_15-27-55_screenshot.png"
+         alt="Figure 6: Variable Elimination关系"/> <figcaption>
+            <p><span class="figure-number">Figure 6: </span>Variable Elimination关系</p>
+        </figcaption>
+</figure>
+
+<p>\(S \Uparrow^V T\) 表示对于类型 \(S\), \(T\) 是满足以下条件的最小上界类型: \(T\) 大于\(S&rsquo;\), \(S&rsquo;\)为任意把 \(S\) 中的 \(V\) 替换为任意类型后得到的类型.</p>
+<p>原文中的描述更加简单, 就说要eliminate掉这些变量.</p>
+<blockquote>
+<p>In the constraint generation algorithm that we present in the next section, it will
+sometimes be necessary to eliminate all occurrences of a certain set of variables
+from a given type by promoting (or demoting) the type until we reach a supertype
+(or subtype) in which these variables do not occur.</p></blockquote>
+<h4 id="约束求解">约束求解<a hidden class="anchor" aria-hidden="true" href="#约束求解">#</a></h4>
+<p>约束生成将为\(\bar X\)中的每个变量生成一个上限和下限, 约束求解将给每个\(X\)一个具体的类型,
+具体来说就是取能让返回类型最小的边界条件.</p>
+<p>类型变量\(X\)在类型\(T\)中出现的位置可以分为4类covariant, invariant, contravariant和constant. 个人通俗的解释是:</p>
+<ol>
+<li>Covariant: 表示类型X增长, 类型T也会随之增长(如\(T = (&hellip;) \rightarrow X\));</li>
+<li>Contravariant: 表示类型X增长, 类型T也法内容会随之下降 (如\(T = (&hellip; X &hellip;) \rightarrow &hellip;\));</li>
+<li>Invariant: X发生变化为X&rsquo;后, 只要X与X&rsquo;不同, T&rsquo;与之前的T是不存在子类型关系的;</li>
+<li>Constant: X随便替换成什么, 替换后的类型均有子类型关系.</li>
+</ol>
+<p>严谨的定义如下:</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-30_18-22-44_screenshot.png"
+         alt="Figure 7: covariant, invariant, contravariant和constant"/> <figcaption>
+            <p><span class="figure-number">Figure 7: </span>covariant, invariant, contravariant和constant</p>
+        </figcaption>
+</figure>
+
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-30_17-58-07_screenshot.png"
+         alt="Figure 8: 约束求解"/> <figcaption>
+            <p><span class="figure-number">Figure 8: </span>约束求解</p>
+        </figcaption>
+</figure>
+
+<p>因为有subtype的存在, 这里的约束求解与let polymorphism中的unification稍微有些不同, unification基于 \(=\) 约束得到unifier,
+此处基于 \(\le\) 约束和类型变量在返回类型中所处的位置得到unifier.</p>
+<h3 id="双向类型检查--bidirectional-checking">双向类型检查(Bidirectional Checking)<a hidden class="anchor" aria-hidden="true" href="#双向类型检查--bidirectional-checking">#</a></h3>
+<p>双向类型检查更像是一种类型检查的风格,
+把类型检查分为了两个过程: check和infer.</p>
+<p>check过程是: &ldquo;已经有一个term出现在了一个需要类型T的上下文中,
+我们需要check这个term是否真的为类型T&rdquo;; <br />
+infer过程是: &ldquo;对于一个term, 不知道这个term所在的上下文需要什么类型,
+我们需要在上下文中infer这个term的类型&rdquo;.</p>
+<p>这也是Bidirectional名称的由来: 我们既可以通过check把类型信息传递给子节点,
+也可以通过infer把类型信息传递给父节点.</p>
+<figure>
+    <img loading="lazy" src="/ox-hugo/2023-09-30_18-53-12_screenshot.png"
+         alt="Figure 9: Bidirectional Checking的规则"/> <figcaption>
+            <p><span class="figure-number">Figure 9: </span>Bidirectional Checking的规则</p>
+        </figcaption>
+</figure>
+
+<p>从规则中可以看到, 每一个term分别有两条规则, 一类是C开头的check,
+另一类是S开头的Synthesis(就是Infer).</p>
+<p>比较复杂的是Application节点的check&amp;infer:</p>
+<ol>
+<li>只有在Application节点, check会调用infer推导调用目标的类型,
+然后根据该类型再check调用参数的类型是否兼容, 并生成类型兼容需要满足的约束条件:
+<ol>
+<li>类型信息就是这样被带到了函数调用的实际参数;</li>
+<li>类型实参也是在这个时候被上一节描述的算法被推导出来.</li>
+</ol>
+</li>
+<li>Abstraction的check过程就是利用了1的类型信息以推导函数的参数类型.</li>
+</ol>
+<p>从规则中我们也能看到相比与let-polymorphism的不足, 在Abstraction的infer中,
+我们必须写出类型参数, local-type-inference是不支持自动推导泛型参数的.</p>
+<h4 id="bidirectional">Bidirectional?<a hidden class="anchor" aria-hidden="true" href="#bidirectional">#</a></h4>
+<p>相比与原版的let polymorphism, 对于推导let binding type annotation的能力是要弱很多的,
+虽然Bidirectional checking这个词是被local type inference提出的,
+但是我觉得类型推导算法实际上都有类似 &ldquo;bidirectional&rdquo; 的过程.</p>
+<p>类型推导还是一个收集约束然后求解约束的过程,</p>
+<p>比如说在HM类型系统中, 我们需要不断的基于类型约束更新类型环境(环境如果关联了语法树上的类型信息的话,
+那么语法树上的类型信息也会被更新).
+这不也可以算是 <code>environment &lt;-&gt; term</code> 之间的bidirectional吗:
+在environment中检查term; 在检查的过程中将收集到的约束&quot;反馈&quot;给environment.</p>
+<p>HM type system在类型检查的过程中无时无刻不在基于新发现的约束更新环境;
+而local type inference不会在类型检查过程中更新类型环境, 只允许利用局部的类型信息进行推导.</p>
+<h2 id="现实世界的编程语言">现实世界的编程语言<a hidden class="anchor" aria-hidden="true" href="#现实世界的编程语言">#</a></h2>
+<p>目前看到的编程语言, 要么采用像Haskell和OCaml这样的全局类型推导, 要么采用局部类型推导(Java, Scala), 并且都没有超过rank-2的限制(也就是说从理论上来说, local type inference还可以做更多).
+然而局部类型推导是没有像let-polymorphism这样 <em>泛化(generalize)</em> 一个函数的能力的,</p>
+<p>最近出的MoonBit采用了一种以前从来没见过的方案, 我觉得挺机智:</p>
+<ol>
+<li>模块级别的函数必须手动标注类型;</li>
+<li>局部函数可以具有类似let-polymorphism的能力</li>
+</ol>
+<p>这样即可以限制类型推导的实际开销(只要\(O(n^2)\)的n足够小, 那就和常量差不多), 又具有let-polymorphism.</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/blog/tags/type-inference/">Type-Inference</a></li>
+      <li><a href="http://localhost:1313/blog/tags/programming-language/">Programming-Language</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2025 <a href="http://localhost:1313/blog/">Butter&#39;s space</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+
+
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+
+</html>
