@@ -1,21 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>想法 on Butter&#39;s space</title>
-    <link>http://localhost:1313/blog/tags/%E6%83%B3%E6%B3%95/</link>
-    <description>Recent content in 想法 on Butter&#39;s space</description>
-    <generator>Hugo -- 0.148.2</generator>
-    <language>zh-CN</language>
-    <managingEditor>azhong.934@gmail.com (butterunderflow)</managingEditor>
-    <webMaster>azhong.934@gmail.com (butterunderflow)</webMaster>
-    <lastBuildDate>Sat, 02 Sep 2023 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/blog/tags/%E6%83%B3%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>讨论主题的重要性</title>
-      <link>http://localhost:1313/blog/articles/20230825121425-disscuss-on-mainline/</link>
-      <pubDate>Sat, 02 Sep 2023 00:00:00 +0000</pubDate><author>azhong.934@gmail.com (butterunderflow)</author>
-      <guid>http://localhost:1313/blog/articles/20230825121425-disscuss-on-mainline/</guid>
-      <description>&lt;p&gt;最近经常和各类人高强度的讨论各种事情,
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>想法 on Butter's space</title><link>https://butter-xz.com/blog/tags/%E6%83%B3%E6%B3%95/</link><description>Recent content in 想法 on Butter's space</description><generator>Hugo -- 0.157.0</generator><language>zh-CN</language><managingEditor>azhong.934@gmail.com (butterunderflow)</managingEditor><webMaster>azhong.934@gmail.com (butterunderflow)</webMaster><lastBuildDate>Sat, 02 Sep 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://butter-xz.com/blog/tags/%E6%83%B3%E6%B3%95/index.xml" rel="self" type="application/rss+xml"/><item><title>讨论主题的重要性</title><link>https://butter-xz.com/blog/articles/20230825121425-disscuss-on-mainline/</link><pubDate>Sat, 02 Sep 2023 00:00:00 +0000</pubDate><author>azhong.934@gmail.com (butterunderflow)</author><guid>https://butter-xz.com/blog/articles/20230825121425-disscuss-on-mainline/</guid><description>&lt;p&gt;最近经常和各类人高强度的讨论各种事情,
 我在读研期间和经常需要线上/线下和我的导师讨论各种问题,
 但是我也没有感受到像最近这样的疲惫感.&lt;/p&gt;
 &lt;p&gt;我总结了一下, 主要原因还是在于讨论的时候没有确立讨论主题问题,
@@ -48,8 +31,7 @@ y指出了A解决方法中存在的问题P.
 如果想用别人的方案来说明, 正常的做法应当是x首先尽量详细介绍一下a,b,c方案, 说服y这些方案确实是为了x而存在, 且真的与解法A存在同构.&lt;/li&gt;
 &lt;li&gt;最后一种情况, 也是最折磨人的情况: 那你搞一个方案解决问题X吧, 我只能想到这种解法.
 工作中的分工是明确的, 此时如果y是个对产品负责的人, 必然会在自己的工作量基础上增加额外的工作量.&lt;/li&gt;
-&lt;/ol&gt;</description>
-      <content:encoded><![CDATA[<p>最近经常和各类人高强度的讨论各种事情,
+&lt;/ol&gt;</description><content:encoded><![CDATA[<p>最近经常和各类人高强度的讨论各种事情,
 我在读研期间和经常需要线上/线下和我的导师讨论各种问题,
 但是我也没有感受到像最近这样的疲惫感.</p>
 <p>我总结了一下, 主要原因还是在于讨论的时候没有确立讨论主题问题,
@@ -83,7 +65,4 @@ y指出了A解决方法中存在的问题P.
 <li>最后一种情况, 也是最折磨人的情况: 那你搞一个方案解决问题X吧, 我只能想到这种解法.
 工作中的分工是明确的, 此时如果y是个对产品负责的人, 必然会在自己的工作量基础上增加额外的工作量.</li>
 </ol>
-]]></content:encoded>
-    </item>
-  </channel>
-</rss>
+]]></content:encoded></item></channel></rss>

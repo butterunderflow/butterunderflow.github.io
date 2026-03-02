@@ -1,22 +1,5 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>Abstrtact-Interpretation on Butter&#39;s space</title>
-    <link>http://localhost:1313/blog/tags/abstrtact-interpretation/</link>
-    <description>Recent content in Abstrtact-Interpretation on Butter&#39;s space</description>
-    <generator>Hugo -- 0.148.2</generator>
-    <language>zh-CN</language>
-    <managingEditor>azhong.934@gmail.com (butterunderflow)</managingEditor>
-    <webMaster>azhong.934@gmail.com (butterunderflow)</webMaster>
-    <lastBuildDate>Sat, 02 Mar 2024 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/blog/tags/abstrtact-interpretation/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Partial Evaluation for Lambda Calculus</title>
-      <link>http://localhost:1313/blog/articles/20231111153704-partial_evaluation_for_lambda_calculus/</link>
-      <pubDate>Sat, 02 Mar 2024 00:00:00 +0000</pubDate><author>azhong.934@gmail.com (butterunderflow)</author>
-      <guid>http://localhost:1313/blog/articles/20231111153704-partial_evaluation_for_lambda_calculus/</guid>
-      <description>&lt;p&gt;这是 &lt;a href=&#34;#citeproc_bib_item_1&#34;&gt;[1]&lt;/a&gt; 第 8 章 &lt;em&gt;Partial Evaluation for Lambda Calculus&lt;/em&gt; 的笔记.&lt;/p&gt;
-&lt;p&gt;在 &lt;a href=&#34;http://localhost:1313/blog/articles/partial-evaluation-for-functional/&#34;&gt;Partial Evaluation for Functional Language&lt;/a&gt; 和 &lt;a href=&#34;http://localhost:1313/blog/articles/partial-evaluation-for-flow-chart/&#34;&gt;Partial Evaluation For Flow Chart Langauge&lt;/a&gt; 中,
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Abstrtact-Interpretation on Butter's space</title><link>https://butter-xz.com/blog/tags/abstrtact-interpretation/</link><description>Recent content in Abstrtact-Interpretation on Butter's space</description><generator>Hugo -- 0.157.0</generator><language>zh-CN</language><managingEditor>azhong.934@gmail.com (butterunderflow)</managingEditor><webMaster>azhong.934@gmail.com (butterunderflow)</webMaster><lastBuildDate>Sat, 02 Mar 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://butter-xz.com/blog/tags/abstrtact-interpretation/index.xml" rel="self" type="application/rss+xml"/><item><title>Partial Evaluation for Lambda Calculus</title><link>https://butter-xz.com/blog/articles/20231111153704-partial_evaluation_for_lambda_calculus/</link><pubDate>Sat, 02 Mar 2024 00:00:00 +0000</pubDate><author>azhong.934@gmail.com (butterunderflow)</author><guid>https://butter-xz.com/blog/articles/20231111153704-partial_evaluation_for_lambda_calculus/</guid><description>&lt;p&gt;这是 &lt;a href="#citeproc_bib_item_1"&gt;[1]&lt;/a&gt; 第 8 章 &lt;em&gt;Partial Evaluation for Lambda Calculus&lt;/em&gt; 的笔记.&lt;/p&gt;
+&lt;p&gt;在 &lt;a href="https://butter-xz.com/blog/articles/partial-evaluation-for-functional/"&gt;Partial Evaluation for Functional Language&lt;/a&gt; 和 &lt;a href="https://butter-xz.com/blog/articles/partial-evaluation-for-flow-chart/"&gt;Partial Evaluation For Flow Chart Langauge&lt;/a&gt; 中,
 partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.&lt;/p&gt;
 &lt;p&gt;但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数,
 那么考虑一个简单的场景, 返回一个常量的函数, 应该标记为是 Static 还是 Dynamic ?
@@ -37,8 +20,7 @@ residual program 长什么样主要看 partial evaluation 的结果,
 &lt;p&gt;本文将介绍 lambda calculus 的 partial evaluation.
 首先将定义一个简单的 lambda calculus, 然后介绍它的 binding time annotation 和 annotated version,
 最后再分别展示它的 Binding Time Analysis(由 lambda calculus 得到 Annotated Program)和
-具体的 staging(由 annotated program 得到 residual program)算法.&lt;/p&gt;</description>
-      <content:encoded><![CDATA[<p>这是 <a href="#citeproc_bib_item_1">[1]</a> 第 8 章 <em>Partial Evaluation for Lambda Calculus</em> 的笔记.</p>
+具体的 staging(由 annotated program 得到 residual program)算法.&lt;/p&gt;</description><content:encoded><![CDATA[<p>这是 <a href="#citeproc_bib_item_1">[1]</a> 第 8 章 <em>Partial Evaluation for Lambda Calculus</em> 的笔记.</p>
 <p>在 <a href="/blog/articles/partial-evaluation-for-functional/">Partial Evaluation for Functional Language</a> 和 <a href="/blog/articles/partial-evaluation-for-flow-chart/">Partial Evaluation For Flow Chart Langauge</a> 中,
 partial evaluation 所 eval 的东西很直观, 就是一个具体的像 int, bool 这样具体的值, 没有考虑高阶函数.</p>
 <p>但是对于有高阶函数的语言, 情况变得复杂, 因为一个表达式的求值结果可能是一个函数,
@@ -69,7 +51,7 @@ Binding Time Analysis 会被简写为 BTA.</li>
 </ul>
 <h2 id="lambda-calculus-的语法">Lambda-calculus 的语法</h2>
 <p>labmda 表达式的语法定义如下:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#75715e">(* expr1.ml, level 1 expression*)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#75715e">(* expr1.ml, level 1 expression*)</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> expr <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">EInt</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">int</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">EVar</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span>
@@ -114,7 +96,7 @@ Binding Time Analysis 会被简写为 BTA.</li>
 <li>note: variable 没有标记, variable 的 pe 结果是从当前的 environment 中 lookup 的结果.</li>
 </ul>
 <!--listend-->
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#75715e">(* expr2.ml, level 2 expression *)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#75715e">(* expr2.ml, level 2 expression *)</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">type</span> expr <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">(* use variable lookup as specialize result *)</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">Var</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span>
@@ -131,13 +113,13 @@ Binding Time Analysis 会被简写为 BTA.</li>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">[@@</span>deriving sexp<span style="color:#f92672">]</span>
 </span></span></code></pre></div><h2 id="binding-time-analysis">Binding Time Analysis</h2>
 <p>LC 的 Binding Time Analysis 就是把 LC 编译到 2LC 的过程, 我们可以这样定义 BTA 的接口:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">BTA_Sig</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">sig</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> <span style="color:#66d9ef">type</span> <span style="color:#a6e22e">BTA_Sig</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">sig</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">val</span> analysis <span style="color:#f92672">:</span> Expr1.expr <span style="color:#f92672">-&gt;</span> Expr2.expr
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div><h3 id="naive-bta">Naive BTA</h3>
 <p>BTA 是一个比较泛的概念, 并没有唯一正确的做法, 比如说什么都不干,
 把所有东西都当作 Dynamic 也是一种可行的 BTA:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> <span style="color:#a6e22e">NaiveBTA</span> <span style="color:#f92672">:</span> <span style="color:#a6e22e">BTA_Sig</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">struct</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">module</span> <span style="color:#a6e22e">NaiveBTA</span> <span style="color:#f92672">:</span> <span style="color:#a6e22e">BTA_Sig</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">struct</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#75715e">(* blindly push every thing to runtime *)</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> analysis <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> E1.expr<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> E2.expr <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">rec</span> go e <span style="color:#f92672">=</span>
@@ -152,7 +134,7 @@ Binding Time Analysis 会被简写为 BTA.</li>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">end</span>
 </span></span></code></pre></div><h3 id="naive-bta">Naive BTA'</h3>
 <p>另一个极端是把所有东西都当作 static, 这么做当然也是可行的(只是没什么意义):</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#75715e">(* blindly stage every thing to compile time *)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#75715e">(* blindly stage every thing to compile time *)</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> analysis <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> E1.expr<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> E2.expr <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">let</span> <span style="color:#66d9ef">rec</span> go e <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">match</span> e <span style="color:#66d9ef">with</span>
@@ -171,7 +153,7 @@ Binding Time Analysis 会被简写为 BTA.</li>
 <p>前面提到了, BTA 的结果是不唯一的, 既然不唯一, 那要如何选择一个表达式的 annotation 呢?</p>
 <p>比如说下面的代码, f 既 apply 到了 1(a static)上, 又 apply 到了 y(a dynamic)上, 如何确定 f 的 annotation?
 很多种可行解.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f <span style="color:#f92672">=</span> <span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x <span style="color:#66d9ef">in</span>  <span style="color:#75715e">(* f: D; D-&gt;D; S-&gt;S; (S-&gt;S) -&gt; (S-&gt;S) ... *)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> f <span style="color:#f92672">=</span> <span style="color:#66d9ef">fun</span> x <span style="color:#f92672">-&gt;</span> x <span style="color:#66d9ef">in</span>  <span style="color:#75715e">(* f: D; D-&gt;D; S-&gt;S; (S-&gt;S) -&gt; (S-&gt;S) ... *)</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">...</span> f 1 <span style="color:#f92672">...</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">...</span> f y <span style="color:#f92672">...</span> <span style="color:#75715e">(* y is dynamic *)</span>
 </span></span></code></pre></div><p>如果我们只看 <code>f 1</code> , 那么 <code>f</code> 只能是 <code>S -&gt; 'a</code>, <code>D</code> , <code>D -&gt; 'a</code> (1可以被lift为Dynamic);
@@ -182,7 +164,7 @@ Binding Time Analysis 会被简写为 BTA.</li>
 <p>这里选择另一种简单点的方法作为实现.
 首先, 为了让 bta 变得简单, 我们给 LC1 加上一个 binding time annotation 注解的语法,
 让我们可以手动的为表达式添加 annotation.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#f92672">and</span> expr <span style="color:#f92672">=</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#f92672">and</span> expr <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">EConst</span> <span style="color:#66d9ef">of</span> constant
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">EVar</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> <span style="color:#a6e22e">ELam</span> <span style="color:#66d9ef">of</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">*</span> expr
@@ -201,7 +183,7 @@ Binding Time Analysis 会被简写为 BTA.</li>
 <p>bidirectional type checking 可以把已经推导出的类型信息传递到相邻的语法树节点,
 使得我们可以仅仅只写少量的 binding time annotation 注解就可以推导所有节点的 annotation.</p>
 <p>具体的代码实现如下:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#66d9ef">rec</span> infer <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> E1.expr<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>env <span style="color:#f92672">:</span> ann_env<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> E2.expr <span style="color:#f92672">*</span> ann <span style="color:#f92672">=</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#66d9ef">rec</span> infer <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> E1.expr<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>env <span style="color:#f92672">:</span> ann_env<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> E2.expr <span style="color:#f92672">*</span> ann <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">match</span> e <span style="color:#66d9ef">with</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EConst</span> c <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">(</span>E2.<span style="color:#a6e22e">SConst</span> c<span style="color:#f92672">,</span> <span style="color:#a6e22e">S</span><span style="color:#f92672">)</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#f92672">|</span> E1.<span style="color:#a6e22e">EVar</span> x <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">(</span>E2.<span style="color:#a6e22e">Var</span> x<span style="color:#f92672">,</span> get x env<span style="color:#f92672">)</span>
@@ -259,7 +241,8 @@ Binding Time Analysis 会被简写为 BTA.</li>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">let</span> analysis <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> E1.expr<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> E2.expr <span style="color:#f92672">=</span> infer e empty_env <span style="color:#f92672">|&gt;</span> fst
 </span></span></code></pre></div><h2 id="staging">Staging!</h2>
 <blockquote>
-<p>万事俱备, 只欠 staging.</p></blockquote>
+<p>万事俱备, 只欠 staging.</p>
+</blockquote>
 <p>LC 的 two-level syntax 类似于之前在 partial evaluation for Scheme0 提到的 <a href="/blog/articles/partial-evaluation-for-functional/#通过binding-time-annotation提高specialization算法的效率">Binding Time Annotation</a> ,
 但是在值域上有所差异:</p>
 <ol>
@@ -281,7 +264,7 @@ Binding Time Analysis 会被简写为 BTA.</li>
 但是这里为什么要用 <code>newname</code>? 书上说是为了避免 confusion,
 我理解这个完全是为了 residual program 可读性和 specialize 算法的可维护性考虑的, 就算不重命名也不会导致 bug.</p>
 <p>staging的代码实现如下:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#66d9ef">rec</span> eval <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> expr<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>env <span style="color:#f92672">:</span> env<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">value</span> <span style="color:#f92672">=</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-ocaml" data-lang="ocaml"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#66d9ef">rec</span> eval <span style="color:#f92672">(</span>e <span style="color:#f92672">:</span> expr<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>env <span style="color:#f92672">:</span> env<span style="color:#f92672">)</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">value</span> <span style="color:#f92672">=</span>
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">match</span> e <span style="color:#66d9ef">with</span>
 </span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">Var</span> x <span style="color:#f92672">-&gt;</span> List.assoc x env
 </span></span><span style="display:flex;"><span><span style="color:#f92672">|</span> <span style="color:#a6e22e">DLam</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">,</span> e<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
@@ -321,14 +304,7 @@ Binding Time Analysis 会被简写为 BTA.</li>
     <div class="csl-left-margin">[1]</div><div class="csl-right-inline">N. D. Jones, C. K. Gomard, and P. Sestoft, <i>Partial Evaluation and Automatic Program Generation</i>. USA: Prentice-Hall, Inc., 1993.</div>
   </div>
 </div>
-]]></content:encoded>
-    </item>
-    <item>
-      <title>Partial Evaluation for Functional Language</title>
-      <link>http://localhost:1313/blog/articles/partial-evaluation-for-functional/</link>
-      <pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate><author>azhong.934@gmail.com (butterunderflow)</author>
-      <guid>http://localhost:1313/blog/articles/partial-evaluation-for-functional/</guid>
-      <description>&lt;p&gt;&lt;em&gt;partial evaluation&lt;/em&gt; 的第五章 &lt;em&gt;Partial Evaluation for a First-Order Functional Language&lt;/em&gt; 的笔记.&lt;/p&gt;
+]]></content:encoded></item><item><title>Partial Evaluation for Functional Language</title><link>https://butter-xz.com/blog/articles/partial-evaluation-for-functional/</link><pubDate>Wed, 30 Aug 2023 00:00:00 +0000</pubDate><author>azhong.934@gmail.com (butterunderflow)</author><guid>https://butter-xz.com/blog/articles/partial-evaluation-for-functional/</guid><description>&lt;p&gt;&lt;em&gt;partial evaluation&lt;/em&gt; 的第五章 &lt;em&gt;Partial Evaluation for a First-Order Functional Language&lt;/em&gt; 的笔记.&lt;/p&gt;
 &lt;p&gt;前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial
 evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:&lt;br /&gt;&lt;/p&gt;
 &lt;ol&gt;
@@ -343,46 +319,44 @@ evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以�
 Scheme0仍然是采用lisp的语法, 支持全局的函数定义,
 不支持高阶函数(将函数绑定至临时变量/将函数作为参数传递/将函数作为返回值), 没有副作用.&lt;/p&gt;
 &lt;figure&gt;
-    &lt;img loading=&#34;lazy&#34; src=&#34;http://localhost:1313/blog/ox-hugo/Pasted-image-20221127220632.png&#34;/&gt; 
+&lt;img loading="lazy" src="https://butter-xz.com/blog/ox-hugo/Pasted-image-20221127220632.png"/&gt;
 &lt;/figure&gt;
-
-&lt;h2 id=&#34;从flow-chart到scheme0&#34;&gt;从flow chart到Scheme0&lt;/h2&gt;
+&lt;h2 id="从flow-chart到scheme0"&gt;从flow chart到Scheme0&lt;/h2&gt;
 &lt;p&gt;在对Scheme0进行partial evaluation的过程中,
 有哪些概念/技巧/思想是可以从flow chart语言的partial evaluation中复用的呢? 我们需不需要对一个新的语言从头设计partial evaluation算法呢?&lt;/p&gt;
 &lt;p&gt;所幸, 绝大部分都是相似且可以复用的, 下表展示了这些可以直接对应起来的概念.
 还有一些其他partial evaluation中的概念Scheme0和Flow Chart是完全没有变化的.&lt;/p&gt;
 &lt;table&gt;
-  &lt;thead&gt;
-      &lt;tr&gt;
-          &lt;th&gt;Flow Chart&lt;/th&gt;
-          &lt;th&gt;Scheme0&lt;/th&gt;
-          &lt;th&gt;解释&lt;/th&gt;
-      &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-      &lt;tr&gt;
-          &lt;td&gt;Program point&lt;/td&gt;
-          &lt;td&gt;Function&amp;rsquo;s entry&lt;/td&gt;
-          &lt;td&gt;Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;Global Variable&lt;/td&gt;
-          &lt;td&gt;Parameter&lt;/td&gt;
-          &lt;td&gt;Global Variable对应函数的Parameter, 也只有这里的静态值会&amp;quot;嵌入&amp;quot;至residual program&lt;/td&gt;
-      &lt;/tr&gt;
-      &lt;tr&gt;
-          &lt;td&gt;Transition Compression&lt;/td&gt;
-          &lt;td&gt;Function&amp;rsquo;s Unfolding&lt;/td&gt;
-          &lt;td&gt;-&lt;/td&gt;
-      &lt;/tr&gt;
-  &lt;/tbody&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Flow Chart&lt;/th&gt;
+&lt;th&gt;Scheme0&lt;/th&gt;
+&lt;th&gt;解释&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Program point&lt;/td&gt;
+&lt;td&gt;Function&amp;rsquo;s entry&lt;/td&gt;
+&lt;td&gt;Flow Chart的program point直接对应函数的入口, 是specialize过程中始终保留的东西&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Global Variable&lt;/td&gt;
+&lt;td&gt;Parameter&lt;/td&gt;
+&lt;td&gt;Global Variable对应函数的Parameter, 也只有这里的静态值会&amp;quot;嵌入&amp;quot;至residual program&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Transition Compression&lt;/td&gt;
+&lt;td&gt;Function&amp;rsquo;s Unfolding&lt;/td&gt;
+&lt;td&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
 &lt;/table&gt;
-&lt;h2 id=&#34;binding-time-analysis&#34;&gt;Binding Time Analysis&lt;/h2&gt;
-&lt;h3 id=&#34;通过抽象解释进行bta&#34;&gt;通过抽象解释进行BTA&lt;/h3&gt;
+&lt;h2 id="binding-time-analysis"&gt;Binding Time Analysis&lt;/h2&gt;
+&lt;h3 id="通过抽象解释进行bta"&gt;通过抽象解释进行BTA&lt;/h3&gt;
 &lt;p&gt;采用抽象解释的方式分析binding time, 此时抽象域为 &lt;code&gt;参数 -&amp;gt; binding time&lt;/code&gt; 的partial mapping,
 称之为 &lt;strong&gt;Binding Time Environment(BTEnv)&lt;/strong&gt;.
-而binding time的序也十分简单, 就是 \(D \ge S\).&lt;/p&gt;</description>
-      <content:encoded><![CDATA[<p><em>partial evaluation</em> 的第五章 <em>Partial Evaluation for a First-Order Functional Language</em> 的笔记.</p>
+而binding time的序也十分简单, 就是 \(D \ge S\).&lt;/p&gt;</description><content:encoded><![CDATA[<p><em>partial evaluation</em> 的第五章 <em>Partial Evaluation for a First-Order Functional Language</em> 的笔记.</p>
 <p>前一章通过对一个简单的 flow chart (基本块) 语言的 partial evaluation 介绍了许多 partial
 evaluation 的概念技巧. 一个partial evaluation算法基本可以分为以下两步:<br /></p>
 <ol>
@@ -513,7 +487,8 @@ function更新每个函数参数的BTEnv, 直到无法更新任何函数的BTEnv
 <h2 id="static-bound-variation--the-trick">Static Bound Variation(The Trick)</h2>
 <p>在对Scheme0进行partial evaluation的过程中也会遇到Static Bound Variation的问题:</p>
 <blockquote>
-<p>当一个值是依赖于动态值, 但是其取值范围是静态的, 应该如何利用这样的静态信息.</p></blockquote>
+<p>当一个值是依赖于动态值, 但是其取值范围是静态的, 应该如何利用这样的静态信息.</p>
+</blockquote>
 <p>解法也是相似的(The Trick), 对包含Static Bound Variation的程序进行一次程序变换,
 对取值范围中的每一个值进行一次分支判定, 从而该Static Bound Variation就可以看作Static的,
 增加了可specialize的内容.</p>
@@ -553,7 +528,4 @@ unfold strategy的最终目的还是为了提升residual程序的质量(比如�
 <p><a href="/blog/articles/partial-evaluation/">Partial Evaluation</a>: Partial Evaluation的基本概念</p>
 <p><a href="/blog/articles/partial-evaluation-for-flow-chart/">Partial Evaluation For Flow Chart Langauge</a>: Flow chart语言的Partial Evaluation</p>
 <p><a href="/404">Abstract Interpretation</a>: 抽象解释</p>
-]]></content:encoded>
-    </item>
-  </channel>
-</rss>
+]]></content:encoded></item></channel></rss>
