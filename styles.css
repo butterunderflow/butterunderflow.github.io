@@ -74,6 +74,7 @@ nav {
     background: linear-gradient(90deg, #e8eff8 0%, #edf3fa 100%);
     box-shadow: 0 6px 16px rgba(15, 31, 54, 0.08);
     backdrop-filter: blur(6px);
+    min-height: 58px;
 }
 
 nav a {
@@ -103,6 +104,7 @@ section {
     box-shadow: var(--shadow);
     padding: 22px 24px;
     margin-bottom: 16px;
+    scroll-margin-top: 92px;
 }
 
 h2 {
